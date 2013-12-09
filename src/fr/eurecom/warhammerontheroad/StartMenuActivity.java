@@ -1,14 +1,13 @@
 package fr.eurecom.warhammerontheroad;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.View;
-import android.widget.EditText;
 
-public class StartMenuActivity extends Activity {
-	public final static String EXTRA_MESSAGE = "fr.eurecom.warhammerontheroad.MESSAGE";
+public class StartMenuActivity extends WotrActivity {
+	@SuppressWarnings("unused")
+	private final static String TAG = 			"StartMenuActivity";
 
 
 	@Override
@@ -23,24 +22,30 @@ public class StartMenuActivity extends Activity {
 		getMenuInflater().inflate(R.menu.start_menu, menu);
 		return true;
 	}
-	
+
 	/** Called when the user clicks the createGame button */
 	public void createGame(View view) {
-		Intent intent = new Intent(this, MainActivity.class);
-		intent.putExtra(EXTRA_MESSAGE, MainActivity.EXTRA_MESSAGE_CREATEGAME);
-	    startActivity(intent);
+		Intent intent = new Intent(this, CreateGameActivity.class);
+		startActivity(intent);
 	}
-	
+
 	/** Called when the user clicks the joinGame button */
 	public void joinGame(View view) {
-		Intent intent = new Intent(this, MainActivity.class);
-		intent.putExtra(EXTRA_MESSAGE, MainActivity.EXTRA_MESSAGE_JOINGAME);
-	    startActivity(intent);
+		Intent intent = new Intent(this, JoinGameActivity.class);
+		startActivity(intent);
 	}
-	
+
 	/** Called when the user clicks the quit button */
 	public void quit(View view) {
 		this.finish();
+	}
+
+	public void onResume() {
+		super.onResume();
+	}
+
+	public void onPause() {
+		super.onPause();
 	}
 
 }

@@ -7,5 +7,15 @@
     <string name="joinGame">Join Game</string>
     <string name="quit">Quit</string>
     <string name="backgroundImageDesc">Background Image</string>
+    <string name="connect">Connect to the server</string>
+    <string name="bind">Bind to the server</string>
+    <string name="idServer">Id of the game</string>
+    <string name="name">Your name</string>
+    <string name="title_activity_chat_room">Chat Room</string>
+    <string name="sendMessage">Write your message</string>
+    <string name="buttonSendMessage">Send Message</string>
+    <string name="listAvailGames">List Games</string>
+    <string name="title_activity_create_game">Create Game</string>
+    <string name="hello_world">Hello world!</string>
 
 </resources>
