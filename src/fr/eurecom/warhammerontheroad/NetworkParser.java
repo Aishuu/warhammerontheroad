@@ -6,15 +6,18 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.InetAddress;
 import java.net.Socket;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 
 import android.util.Log;
 import static fr.eurecom.warhammerontheroad.Cmds.*;
 
-public class NetworkParser extends Thread {
+public class NetworkParser implements Runnable {
 	private final static String TAG =	"NetworkParser";
 
-	public final static String SERVER_ADDR = 	"82.236.41.149";
+	//public final static String SERVER_ADDR = 	"82.236.41.149";
+	public final static String SERVER_ADDR = 	"172.24.10.37";
+
 	public final static int SERVER_PORT = 		33000;
 
 	Socket sock;
@@ -30,6 +33,7 @@ public class NetworkParser extends Thread {
 	public void run(){
 		BufferedReader in;
 		try {
+			connect(NetworkParser.SERVER_ADDR, NetworkParser.SERVER_PORT);
 			in = new BufferedReader(new InputStreamReader(this.sock.getInputStream()));
 			String line = "";
 			int r;
@@ -59,8 +63,9 @@ public class NetworkParser extends Thread {
 				}
 				else if(parts[0].equals(CMD_DISCONNECTED))
 					mService.userDisconnected(parts[1]);
-				else if(parts[0].equals(CMD_CONNECTED))
+				else if(parts[0].equals(CMD_CONNECTED)) {
 					mService.userConnected(parts[1]);
+				}
 				else if(parts[0].equals(CMD_ANS_CREATE)) {
 					if(parts[1].length() == 0) {
 						line = "";
@@ -95,33 +100,45 @@ public class NetworkParser extends Thread {
 
 	}
 
-	public void sendCommand(String command, String... args) throws IOException {
+	public void sendCommand(final String command, final String... args) throws IOException {
 		if(this.sock == null || !this.sock.isConnected())
 			throw(new IOException("Socket not connected"));
 
-		DataOutputStream dos = new DataOutputStream(this.sock.getOutputStream());
-		dos.write(command.getBytes());
-		dos.writeByte('#');
+		new Thread (new Runnable() {
+			public void run() {
+				DataOutputStream dos;
+				try {
+					dos = new DataOutputStream(NetworkParser.this.sock.getOutputStream());
+					dos.write(command.getBytes());
+					dos.writeByte('#');
 
-		for(int i = 0; i < args.length; i++) {
-			dos.write(args[i].getBytes());
-			if(i != args.length-1)
-				dos.writeByte('#');
-		}
-		dos.writeByte('\n');
+					for(int i = 0; i < args.length; i++) {
+						dos.write(args[i].getBytes());
+						if(i != args.length-1)
+							dos.writeByte('#');
+					}
+					dos.writeByte('\n');
+				} catch (IOException e) {
+					Log.e(NetworkParser.TAG, "Could not send command...");
+				}
+			}}).start();
+
 	}
 
-	public void connect(String addr, int port) throws IOException {
+	private void connect(String addr, int port) throws UnknownHostException, IOException {
 		this.sock = new Socket(InetAddress.getByName(addr), port);
 	}
 
 	public void close() {
 		if(this.sock != null)
-			try {
-				this.sock.close();
-				this.sock = null;
-			} catch (IOException e) {
-				Log.e(TAG, "Couldn't close the socket...");
-			}
+			new Thread (new Runnable() {
+				public void run() {
+					try {
+						NetworkParser.this.sock.close();
+						NetworkParser.this.sock = null;
+					} catch (IOException e) {
+						Log.e(TAG, "Couldn't close the socket...");
+					}
+				}}).start();
 	}
 }

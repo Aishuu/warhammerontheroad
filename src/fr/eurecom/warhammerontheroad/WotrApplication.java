@@ -29,17 +29,18 @@ public class WotrApplication extends Application {
 			mBound = false;
 		}
 	};
-	
+
 	@Override
 	public void onCreate() {
 		super.onCreate();
 		mBound = false;
 
 		// Bind to LocalService
-		Intent intent = new Intent(this, WotrService.class);
+		Intent intent = new Intent(WotrApplication.this, WotrService.class);
 		bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
+
 	}
-	
+
 	public WotrService getService() {
 		return this.mService;
 	}

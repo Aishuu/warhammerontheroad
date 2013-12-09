@@ -141,7 +141,7 @@ int main(int argc, char *argv[]) {
     int optval = 1;
     setsockopt(sock_serv, SOL_SOCKET, SO_REUSEADDR, &optval, sizeof optval);
 
-    printf("La socket %d est maintenant ouverte en mode TCP/IP\n", sock_serv);
+    printf("\rServer now listening on socket %d\n", sock_serv);
     if (sock_serv == -1) {
         perror("socket");
         exit(EXIT_FAILURE);
@@ -171,7 +171,7 @@ int main(int argc, char *argv[]) {
         to client requests and echo input  */
     while(1) {
         printf("\r            ");
-        printf("\r>");
+        printf("\r> ");
         fflush(stdout);
 
         //clear the socket set
@@ -195,7 +195,7 @@ int main(int argc, char *argv[]) {
         activity = select(fd_max + 1, &rfds, NULL, NULL, NULL);
 
         if(activity < 0)
-            printf("select error\n");
+            printf("\rselect error\n");
 
         if(FD_ISSET(fileno(stdin), &rfds)) {
             fgets(buffer, sizeof(buffer), stdin);
@@ -218,13 +218,13 @@ int main(int argc, char *argv[]) {
                 }
                 players[nb_client]->fd = new_socket;
                 nb_client ++;
-                printf("--- New connection, socket n° : %d (total : %d) ---\n", new_socket, nb_client);
+                printf("\rNew connection, socket n° : %d (total : %d)\n", new_socket, nb_client);
             }
             else {
                 // TODO: if there are too many players, fire a player that is not yet registered (the first in the tab)
                 sendline(new_socket, "ERR#Too many players !\n");
                 close(new_socket);
-                printf("--- A client has been rejected ! ---\n");
+                printf("\rA client has been rejected !\n");
             }
 
         }
@@ -237,7 +237,7 @@ int main(int argc, char *argv[]) {
                 continue;
 
             if(readline(sd, buffer, MAXBUF-1) == 0) {
-                printf("---       Socket closed : %d (total : %d)       ---\n", sd, nb_client-1);
+                printf("\rSocket closed : %d (total : %d)\n", sd, nb_client-1);
                 close(sd);
                 game g;
                 if((g = players[i]->game)) {
@@ -249,14 +249,14 @@ int main(int argc, char *argv[]) {
                         if(g->players[j] == players[i]) {
                             for(k=j; k<g->nb_players-1;k++)
                                 g->players[k] = g->players[k+1];
-                            break;
+                            g->nb_players--;
+                            j--;
                         }
                         else
                             sendline(g->players[j]->fd, msg);
                     free(msg);
-                    g->nb_players--;
                     if(g->nb_players == 0) {
-                        printf("---   No more players in game %d : game deleted   ---\n", g->id);
+                        printf("\rNo more players in game %d : game deleted\n", g->id);
                         for(j=0; j<nb_game; j++)
                             if(g == games[j]) {
                                 for(k=j; k<nb_game-1; k++)
@@ -267,9 +267,9 @@ int main(int argc, char *argv[]) {
                     }
                 }
                 free(players[i]);
-                nb_client --;
-                for(k=j; k<nb_client-1; k++)
+                for(k=i; k<nb_client-1; k++)
                     players[k] = players[k+1];
+                nb_client --;
             }
             else {
                 /* Les messages sont sous forme
@@ -281,7 +281,6 @@ int main(int argc, char *argv[]) {
                  * ou
                  * CRT#name
                  */
-                printf("message : \"%s\"\n", buffer);
                 if(buffer[3] == '#') { // nouveau message
                     buffer[3] = 0;
                     game g;
@@ -310,11 +309,11 @@ int main(int argc, char *argv[]) {
 
                         if(!g) {
                             if(nb_game >= MAX_GAME) {
-                                printf("--- Can't create a new game ! ---\n");
+                                printf("\rThere are so many games boy...\n");
                                 sendline(sd, "ERR#Can't create a new game !");
                             }
                             else {    
-                                printf("--- New game created by %s ---\n", buffer+10);
+                                printf("\rNew game created by %s\n", buffer+10);
                                 games[nb_game] = g = malloc(sizeof(struct _game));
                                 g->nb_players = 0;
                                 g->id = id;
@@ -330,7 +329,8 @@ int main(int argc, char *argv[]) {
                                 char * msg = malloc(sizeof(char)*(6+strlen(players[i]->name)));
                                 sprintf(msg, "CNT#%s\n", players[i]->name);
                                 for(j=0;j<g->nb_players; j++)
-                                    sendline(sd, msg);
+                                    if(g->players[j] != players[i])
+                                        sendline(g->players[j]->fd, msg);
                                 free(msg);
                                 players[i]->game = g;
                                 g->players[g->nb_players] = players[i];
@@ -377,11 +377,12 @@ int main(int argc, char *argv[]) {
         }
     }
 
+    printf("\r");
 
     close(sock_serv);
     for(j = 0 ; j < nb_client; j ++) {
         close(players[j]->fd);
-        printf("La socket n°: %d est maintenant fermée.\n", players[j]->fd);
+        printf("Socket n°: %d is now closed.\n", players[j]->fd);
         free(players[j]);
     }
     for(j=0; j<nb_game; j++)

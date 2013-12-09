@@ -104,7 +104,6 @@ public class ChatRoomActivity extends WotrActivity implements ChatListener {
 		this.newline = this.newline + name + " is now connected...\n";
 		runOnUiThread(new Runnable() {
 			public void run() {
-
 				ChatRoomActivity.this.chatRoom.append(ChatRoomActivity.this.newline);
 				ChatRoomActivity.this.newline = "";
 

@@ -18,12 +18,17 @@ public class Chat {
     
     public void userConnected(String name) {
     	// TODO: store in history
-    	fireUserDisconnected(name);
+    	fireUserConnected(name);
     }
     
     private void fireUserDisconnected(String name) {
     	for(ChatListener l: chatListeners)
     		l.userDisconnected(name);
+    }
+    
+    private void fireUserConnected(String name) {
+    	for(ChatListener l: chatListeners)
+    		l.userConnected(name);
     }
     
     private void fireMessageReceived(String name, String message) {

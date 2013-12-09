@@ -69,13 +69,8 @@ public class WotrService extends Service {
 		this.chat = new Chat();
 		this.game = new Game();
 		this.np = new NetworkParser(this);
-		try {
-			Log.d(TAG, "Creating the socket..");
-			this.np.connect(NetworkParser.SERVER_ADDR, NetworkParser.SERVER_PORT);
-			this.np.start();
-		} catch (IOException e) {
-			Log.e(TAG, "Server is unreachable...");
-		}
+		Log.d(TAG, "Creating the socket..");
+		new Thread(this.np).start();
 	}
 
 	@Override
@@ -87,30 +82,30 @@ public class WotrService extends Service {
 	public Player getPlayer() {
 		return this.player;
 	}
-	
+
 	public void receiveMessage(String name, String message) {
 		this.chat.receiveMessage(name,  message);
 	}
-	
+
 	public void userDisconnected(String name) {
 		this.chat.userDisconnected(name);
 		this.game.userDisconnected(name);
 	}
-	
+
 	public void userConnected(String name) {
 		this.chat.userConnected(name);
 		this.game.userConnected(name);
 	}
-	
+
 	public void sendMessage(String message) {
 		try {
 			this.np.sendCommand(CMD_MESSAGE, message);
 		} catch (IOException e) {
 			Log.e(TAG, "Failed to send the message...");
 		}
-		
+
 	}
-	
+
 	public void bind(int id) {
 		try {
 			if(this.game.getState() != Game.STATE_NO_GAME && this.game.getState() != Game.STATE_GAME_CREATE_WAIT)
@@ -125,7 +120,7 @@ public class WotrService extends Service {
 			Log.e(TAG, "Could not bind to server...");
 		}
 	}
-	
+
 	public void create() {
 		try {
 			this.np.sendCommand(CMD_CREATE);
@@ -134,18 +129,18 @@ public class WotrService extends Service {
 			Log.e(TAG, "Unable to create a game...");
 		}
 	}
-	
+
 	private String getName() {
 		String name = "anonymous";
 		if(this.player != null && this.player.getName() != null)
 			name = this.player.getName();
 		return name;
 	}
-	
+
 	public Game getGame() {
 		return this.game;
 	}
-	
+
 	public void listAvailableGames() {
 		try {
 			this.np.sendCommand(CMD_LIST);
@@ -153,21 +148,21 @@ public class WotrService extends Service {
 			Log.e(TAG, "Couldn't send list command...");
 		}
 	}
-	
+
 	public void addChatListener(ChatListener l) {
 		this.chat.addChatListener(l);
 	}
-	
+
 	public void removeChatListener(ChatListener l) {
 		this.chat.removeChatListener(l);
 	}
-	
+
 	public void addGameServiceListener(GameServiceListener l) {
 		this.game.addGameServiceListener(l);
 	}
-	
+
 	public void removeGameServiceListener(GameServiceListener l) {
 		this.game.removeGameServiceListener(l);
 	}
-	
+
 }
