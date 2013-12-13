@@ -14,8 +14,9 @@
     <string name="title_activity_chat_room">Chat Room</string>
     <string name="sendMessage">Write your message</string>
     <string name="buttonSendMessage">Send Message</string>
+    <string name="sendFile">Name of a file to send</string>
+    <string name="buttonSendFile">Send File</string>
     <string name="listAvailGames">List Games</string>
     <string name="title_activity_create_game">Create Game</string>
-    <string name="hello_world">Hello world!</string>
 
 </resources>

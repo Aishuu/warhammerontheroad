@@ -29,17 +29,18 @@ public final class R {
         public static final int warhammerbg=0x7f020005;
     }
     public static final class id {
-        public static final int action_settings=0x7f08000a;
-        public static final int availGames=0x7f080004;
-        public static final int backgroundImage=0x7f080005;
-        public static final int btnCreateGame=0x7f080007;
-        public static final int btnJoinGame=0x7f080008;
-        public static final int btnQuit=0x7f080009;
-        public static final int chatRoom=0x7f080001;
-        public static final int editId=0x7f080003;
+        public static final int action_settings=0x7f08000b;
+        public static final int availGames=0x7f080005;
+        public static final int backgroundImage=0x7f080006;
+        public static final int btnCreateGame=0x7f080008;
+        public static final int btnJoinGame=0x7f080009;
+        public static final int btnQuit=0x7f08000a;
+        public static final int chatRoom=0x7f080002;
+        public static final int editFile=0x7f080001;
+        public static final int editId=0x7f080004;
         public static final int editMessage=0x7f080000;
-        public static final int editName=0x7f080002;
-        public static final int titleImage=0x7f080006;
+        public static final int editName=0x7f080003;
+        public static final int titleImage=0x7f080007;
     }
     public static final class layout {
         public static final int activity_chat_room=0x7f030000;
@@ -58,18 +59,19 @@ public final class R {
         public static final int app_name=0x7f050000;
         public static final int backgroundImageDesc=0x7f050005;
         public static final int bind=0x7f050007;
+        public static final int buttonSendFile=0x7f05000e;
         public static final int buttonSendMessage=0x7f05000c;
         public static final int connect=0x7f050006;
         public static final int createGame=0x7f050002;
-        public static final int hello_world=0x7f05000f;
         public static final int idServer=0x7f050008;
         public static final int joinGame=0x7f050003;
-        public static final int listAvailGames=0x7f05000d;
+        public static final int listAvailGames=0x7f05000f;
         public static final int name=0x7f050009;
         public static final int quit=0x7f050004;
+        public static final int sendFile=0x7f05000d;
         public static final int sendMessage=0x7f05000b;
         public static final int title_activity_chat_room=0x7f05000a;
-        public static final int title_activity_create_game=0x7f05000e;
+        public static final int title_activity_create_game=0x7f050010;
     }
     public static final class style {
         /** 
