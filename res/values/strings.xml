@@ -8,4 +8,21 @@
     <string name="quit">Quit</string>
     <string name="backgroundImageDesc">Background Image</string>
 
+    <string name="new_gm">All Hail the new Game Master! You will reign upon the crowds of game n°</string>
+    <string name="give_number">Don\'t forget this number to access your game. Give it to your fellow players, so they can join!</string>
+    <string name="access_gm_menu">Begin your Adventure</string>
+    <string name="cancel_game_creation">Renounce to your role</string>
+    
+    <string name="enter_game_nb">Please enter the number of the game you want to join</string>
+    <string name="enter_game">Start playing</string>
+    
+    <string name="create_chara">Create your character</string>
+    <string name="access_chat">Talk</string>
+    <string name="read_story">Read the story</string>
+    <string name="access_play">Play</string>
+    
+    <string name="open_book">Open Warhammer book</string>
+    <string name="write_story">Write the story</string>
+    <string name="create_support_chara">Add standard character</string>
+    <string name="players_data">See all players stats</string>
 </resources>

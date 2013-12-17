@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/parchemin_vierge_vert"
+    android:orientation="vertical"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin" >
+
+    <fr.eurecom.warhammerontheroad.WotrButton
+        android:id="@+id/btnAccessChatGM"
+        style="@style/ButtonSize"
+        android:layout_weight="1"
+        android:onClick="accessChat"
+        android:text="@string/access_chat" />
+
+    <fr.eurecom.warhammerontheroad.WotrButton
+        android:id="@+id/btnMenuOpenBook"
+        style="@style/ButtonSize"
+        android:layout_weight="1"
+        android:onClick="openBook"
+        android:text="@string/open_book" />
+
+    <fr.eurecom.warhammerontheroad.WotrButton
+        android:id="@+id/btnWriteStory"
+        style="@style/ButtonSize"
+        android:layout_weight="1"
+        android:onClick="writeStory"
+        android:text="@string/write_story" />
+
+    <fr.eurecom.warhammerontheroad.WotrButton
+        android:id="@+id/btnMenuCreateSupportChara"
+        style="@style/ButtonSize"
+        android:layout_weight="1"
+        android:onClick="createSupportChara"
+        android:text="@string/create_support_chara" />
+
+    <fr.eurecom.warhammerontheroad.WotrButton
+        android:id="@+id/btnMenuPlayersData"
+        style="@style/ButtonSize"
+        android:layout_weight="1"
+        android:onClick="seePlayersData"
+        android:text="@string/players_data" />
+
+    <fr.eurecom.warhammerontheroad.WotrButton
+        android:id="@+id/btnGMAccessPlay"
+        style="@style/ButtonSize"
+        android:layout_weight="2"
+        android:onClick="accessPlay"
+        android:text="@string/access_play" />
+
+</LinearLayout>
