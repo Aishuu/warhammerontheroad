@@ -56,13 +56,12 @@ public final class R {
         public static final int titleImage=0x7f080001;
     }
     public static final class layout {
-        public static final int activity_main=0x7f030000;
-        public static final int activity_start_menu=0x7f030001;
-        public static final int chara_creation_details=0x7f030002;
-        public static final int gm_menu=0x7f030003;
-        public static final int join_game=0x7f030004;
-        public static final int new_game_intro=0x7f030005;
-        public static final int player_menu=0x7f030006;
+        public static final int activity_start_menu=0x7f030000;
+        public static final int chara_creation_details=0x7f030001;
+        public static final int gm_menu=0x7f030002;
+        public static final int join_game=0x7f030003;
+        public static final int new_game_intro=0x7f030004;
+        public static final int player_menu=0x7f030005;
     }
     public static final class menu {
         public static final int main=0x7f070000;
