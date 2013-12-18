@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <!-- Strings of activity start menu -->
     <string name="app_name">Warhammer on the Road</string>
     <string name="action_settings">Settings</string>
     <string name="createGame">Create Game</string>
@@ -8,21 +9,34 @@
     <string name="quit">Quit</string>
     <string name="backgroundImageDesc">Background Image</string>
 
+    <!-- Strings of new game intro -->
     <string name="new_gm">All Hail the new Game Master! You will reign upon the crowds of game n°</string>
     <string name="give_number">Don\'t forget this number to access your game. Give it to your fellow players, so they can join!</string>
     <string name="access_gm_menu">Begin your Adventure</string>
     <string name="cancel_game_creation">Renounce to your role</string>
-    
+
+    <!-- Strings of join game -->
     <string name="enter_game_nb">Please enter the number of the game you want to join</string>
     <string name="enter_game">Start playing</string>
-    
+
+    <!-- Strings of player menu -->
     <string name="create_chara">Create your character</string>
     <string name="access_chat">Talk</string>
     <string name="read_story">Read the story</string>
     <string name="access_play">Play</string>
-    
+
+    <!-- Strings of gm menu -->
     <string name="open_book">Open Warhammer book</string>
     <string name="write_story">Write the story</string>
     <string name="create_support_chara">Add standard character</string>
     <string name="players_data">See all players stats</string>
+
+    <!-- Strings of chara creation details -->
+    <string name="name">Name</string>
+    <string name="race">Race</string>
+    <string name="dwarf">Dwarf</string>
+    <string name="elf">Elf</string>
+    <string name="human">Human</string>
+    <string name="halfling">Halfling</string>
+
 </resources>

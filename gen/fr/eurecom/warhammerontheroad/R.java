@@ -24,13 +24,15 @@ public final class R {
         public static final int button_parchment=0x7f020000;
         public static final int dagger_button=0x7f020001;
         public static final int dagger_button_red=0x7f020002;
-        public static final int ic_launcher=0x7f020003;
-        public static final int parchemin_vierge_hor=0x7f020004;
-        public static final int parchemin_vierge_vert=0x7f020005;
-        public static final int parchment=0x7f020006;
-        public static final int parchment_pressed=0x7f020007;
-        public static final int title=0x7f020008;
-        public static final int warhammerbg=0x7f020009;
+        public static final int frise_red=0x7f020003;
+        public static final int ic_launcher=0x7f020004;
+        public static final int parchemin_vierge_hor=0x7f020005;
+        public static final int parchemin_vierge_vert=0x7f020006;
+        public static final int parchment=0x7f020007;
+        public static final int parchment_pressed=0x7f020008;
+        public static final int title=0x7f020009;
+        public static final int warhammerbg=0x7f02000a;
+        public static final int wotr_edittext=0x7f02000b;
     }
     public static final class id {
         public static final int action_settings=0x7f080014;
@@ -118,9 +120,10 @@ public final class R {
         /**  Application theme. 
          */
         public static final int AppTheme=0x7f060001;
-        public static final int ButtonSize=0x7f060004;
-        public static final int TextViewSize=0x7f060005;
+        public static final int ButtonSize=0x7f060005;
+        public static final int TextViewSize=0x7f060006;
         public static final int ThemeButton=0x7f060002;
+        public static final int ThemeEditView=0x7f060004;
         public static final int ThemeTextView=0x7f060003;
     }
 }

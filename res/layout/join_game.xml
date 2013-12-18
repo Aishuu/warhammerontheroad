@@ -24,12 +24,11 @@
         android:gravity="center"
         android:orientation="vertical" >
 
-    <EditText
+    <fr.eurecom.warhammerontheroad.WotrEditText
         android:id="@+id/join_game_number"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
-        android:textColor="#8B0000"
         android:inputType="number" />
     </LinearLayout>
 
