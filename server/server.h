@@ -14,6 +14,8 @@
 #define TIMEOUT_FILE        15                          // Timeout (in seconds) to make the child process close when the sender is not sending anything
 #define QUIT_MESSAGE        "quit\n"                    // Command to send to server to stop
 
+#define DEBUG
+
 typedef struct _player * player;
 typedef struct _game * game;
 typedef struct _fproc * fproc;

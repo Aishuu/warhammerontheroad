@@ -74,7 +74,7 @@ public class JoinGameActivity extends WotrActivity implements GameServiceListene
 			this.mService.getNetworkParser().bind(Integer.parseInt(editId.getText().toString()));
 		}
 	}
-	
+
 	public void list(View view) {
 		this.mService.getNetworkParser().listAvailableGames();
 	}
@@ -82,7 +82,7 @@ public class JoinGameActivity extends WotrActivity implements GameServiceListene
 	@Override
 	public void userDisconnected(String name) {
 	}
-	
+
 	@Override
 	public void userConnected(String name) {
 	}
@@ -105,9 +105,12 @@ public class JoinGameActivity extends WotrActivity implements GameServiceListene
 		runOnUiThread(new Runnable() {
 			public void run() {
 				JoinGameActivity.this.availGames.setText("");
-				for(String l: JoinGameActivity.this.avail) {
-					JoinGameActivity.this.availGames.append(l+"\n");
-				}
+				if(JoinGameActivity.this.avail == null)
+					JoinGameActivity.this.availGames.append("No game available !");
+				else
+					for(String l: JoinGameActivity.this.avail) {
+						JoinGameActivity.this.availGames.append(l+"\n");
+					}
 
 			}
 		});

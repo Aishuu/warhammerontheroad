@@ -13,9 +13,11 @@ import java.net.InetAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import fr.eurecom.warhammerontheroad.application.ConnectionStateListener;
 import fr.eurecom.warhammerontheroad.model.Game;
 import fr.eurecom.warhammerontheroad.model.WotrService;
 import android.os.Environment;
@@ -38,19 +40,28 @@ public class NetworkParser implements Runnable {
 	 * IP address of the server
 	 */
 	//public final static String SERVER_ADDR = 	"82.236.41.149";
-	public final static String SERVER_ADDR = 	"172.24.10.37";
-	//public final static String SERVER_ADDR =	"192.168.0.11";
+	//public final static String SERVER_ADDR = 	"172.24.10.37";
+	public final static String SERVER_ADDR =	"192.168.0.11";
 
 	/**
 	 * Port of the server
 	 */
 	public final static int SERVER_PORT = 		33000;
 
+	/**
+	 * Rate at which the client tries to reconnect
+	 */
+	public final static long RECO_RATE =		5000;
+
 	private Socket sock;
 	private WotrService mService;
 	private boolean autobind;
 	private ArrayList<String> filesToSend;
 	private Timer timer;
+	private  boolean mainThreadRunning;
+	private boolean connected;
+	private ArrayList<String> delayedCommands;
+	private final Collection<ConnectionStateListener> connectionStateListeners = new ArrayList<ConnectionStateListener>();
 
 	/**
 	 * Default constructor
@@ -63,6 +74,8 @@ public class NetworkParser implements Runnable {
 		this.mService = mService;
 		this.autobind = false;
 		this.filesToSend = new ArrayList<String>();
+		this.delayedCommands = new ArrayList<String>();
+		this.timer = null;
 	}
 
 	/**
@@ -76,22 +89,26 @@ public class NetworkParser implements Runnable {
 
 	@Override
 	public void run(){
+		this.mainThreadRunning = true;
 		BufferedReader in;
 		try {
-			// open the socket to the server
-			connect(NetworkParser.SERVER_ADDR, NetworkParser.SERVER_PORT);
+			if(this.sock == null || !this.sock.isConnected())
+				// open the socket to the server
+				connect(NetworkParser.SERVER_ADDR, NetworkParser.SERVER_PORT);
 
 			// autobind
 			if(this.autobind)
 				this.bind(this.mService.getGame().getIdGame());
-
+			
 			// BufferedReader from the socket
 			in = new BufferedReader(new InputStreamReader(this.sock.getInputStream()));
 
 			// read from socket
 			String line = "";
 			int r;
-			while ((r = in.read()) != -1) {
+			for(;;) {
+				if((r = in.read()) == -1)
+					throw(new IOException("No more connected !"));
 				char ch = (char) r;
 				if(ch != '\n') {
 					line = line + ch;
@@ -132,45 +149,6 @@ public class NetworkParser implements Runnable {
 				else if(parts[0].equals(CMD_CONNECTED)) {
 					mService.getChat().userConnected(parts[1]);
 					mService.getGame().userConnected(parts[1]);
-				}
-
-				// Id of the game to be created
-				else if(parts[0].equals(CMD_ANS_CREATE)) {
-					if(parts[1].length() == 0) {
-						line = "";
-						continue;
-					}
-					try {
-						int id = Integer.parseInt(parts[1]);
-						bind(id);
-						mService.getGame().setIdGame(id);
-					}catch(NumberFormatException e){
-						Log.e(TAG, "This is no fuckin number !");
-					}
-				}
-
-				// Answer to the LIST command
-				else if(parts[0].equals(CMD_ANS_LIST)) {
-					ArrayList<String> avail = new ArrayList<String>();
-					for(int i=1;i<parts.length;i++) {
-						if(parts[i].length() < 5)
-							continue;
-
-						String l = new String(parts[i].substring(0, 5));
-
-						try {
-							Integer.parseInt(l);
-							String name = parts[i].substring(5);
-							if(name.length() == 0)
-								l = l+"   (empty)";
-							else
-								l = l+" : "+name;
-							avail.add(l);
-						} catch(NumberFormatException e){
-							Log.e(TAG, "This is no fuckin number !");
-						}
-					}
-					mService.getGame().listAvailableGames(avail);
 				}
 
 				// Ready to broadcast a file on this port
@@ -287,15 +265,64 @@ public class NetworkParser implements Runnable {
 						Log.d(TAG, "File successfully broadcasted !");
 						// TODO: notify sender
 					}
+
+					// Answer to the LIST command
+					else if(parts[1].equals(CMD_LIST)) {
+						if(parts.length < 3) {
+							mService.getGame().listAvailableGames(null);
+							line = "";
+							continue;
+						}
+						ArrayList<String> avail = new ArrayList<String>();
+						for(int i=2;i<parts.length;i++) {
+							if(parts[i].length() < 5)
+								continue;
+
+							String l = new String(parts[i].substring(0, 5));
+
+							try {
+								Integer.parseInt(l);
+								String name = parts[i].substring(5);
+								if(name.length() == 0)
+									l = l+"   (empty)";
+								else
+									l = l+" : "+name;
+								avail.add(l);
+							} catch(NumberFormatException e){
+								Log.e(TAG, "This is no fuckin number !");
+							}
+						}
+						mService.getGame().listAvailableGames(avail);
+					}
+
+					// Id of the game to be created
+					else if(parts[1].equals(CMD_CREATE)) {
+						if(parts.length < 3 || parts[2].length() == 0) {
+							line = "";
+							continue;
+						}
+						try {
+							int id = Integer.parseInt(parts[2]);
+							bind(id);
+							mService.getGame().setIdGame(id);
+						}catch(NumberFormatException e){
+							Log.e(TAG, "This is no fuckin number !");
+						}
+					}
 				}
 				line = "";
 			}
 		} catch (IOException e) {
 			Log.e(TAG, "Socket is disconnected...");
-
-			// TODO: connection lost
+			this.setConnected(false);
+			tryToReconnect(NetworkParser.RECO_RATE);
 		} finally {
-			this.mService.setConnected(false);
+			try {
+				this.sock.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			this.mainThreadRunning = false;
 		}
 	}
 
@@ -305,19 +332,14 @@ public class NetworkParser implements Runnable {
 	 * @param command The command to send
 	 * @param args List of arguments
 	 */
-	private void sendCommand(final String command, final String... args) {
-		if(this.sock == null || !this.sock.isConnected()) {
-			Log.e(TAG, "Socket not connected !");
-
-			// TODO: connection lost
-			return;
-		}
+	synchronized private void sendCommand(final String command, final String... args) {
 
 		new Thread (new Runnable() {
 			@Override
 			public void run() {
 				DataOutputStream dos;
 				try {
+					
 					dos = new DataOutputStream(NetworkParser.this.sock.getOutputStream());
 					dos.write(command.getBytes());
 					dos.writeByte('#');
@@ -328,9 +350,42 @@ public class NetworkParser implements Runnable {
 							dos.writeByte('#');
 					}
 					dos.writeByte('\n');
+					dos.flush();
 				} catch (IOException e) {
-					// TODO: connection lost
 					Log.e(NetworkParser.TAG, "Could not send command...");
+					String l = new String(command);
+					l += "#";
+					for(int i = 0; i < args.length; i++) {
+						l += args[i];
+						if(i != args.length-1)
+							l += "#";
+					}
+					NetworkParser.this.delayedCommands.add(l);
+					NetworkParser.this.setConnected(false);
+					tryToReconnect(NetworkParser.RECO_RATE);
+				}
+			}}).start();
+
+	}
+
+	/**
+	 * Send a command (as a line) to the Wotr Server
+	 * 
+	 * @param command The command to send
+	 */
+	synchronized private void sendCommandLine(final String command) {
+
+		new Thread (new Runnable() {
+			@Override
+			public void run() {
+				DataOutputStream dos;
+				try {
+					dos = new DataOutputStream(NetworkParser.this.sock.getOutputStream());
+					dos.write(command.getBytes());
+					dos.writeByte('\n');
+				} catch (IOException e) {
+					Log.e(NetworkParser.TAG, "Could not send command...");
+					//NetworkParser.this.delayedCommands.add(command);
 				}
 			}}).start();
 
@@ -345,6 +400,12 @@ public class NetworkParser implements Runnable {
 	 * @throws IOException If the socket can't be connected
 	 */
 	private void connect(String addr, int port) throws UnknownHostException, IOException {
+		if(this.sock != null)
+			try {
+				this.sock.close();
+			} catch(IOException e) {
+				e.printStackTrace();
+			}
 		this.sock = new Socket(InetAddress.getByName(addr), port);
 	}
 
@@ -381,8 +442,6 @@ public class NetworkParser implements Runnable {
 	 */
 	public void bind(int id) {
 		Game game = this.mService.getGame();
-		if(game.getState() != Game.STATE_NO_GAME && game.getState() != Game.STATE_GAME_CREATE_WAIT)
-			return;
 		if(id < 100000) {
 			this.sendCommand(CMD_BIND, String.format("%05d", id), this.mService.getName());
 			game.change_state(Game.STATE_GAME_CREATED);
@@ -419,7 +478,7 @@ public class NetworkParser implements Runnable {
 		this.filesToSend.add(filename);
 	}
 
-	public void tryToReconnect(final long timeout) {
+	synchronized public void tryToReconnect(final long timeout) {
 		if(this.timer != null)
 			return;		// already trying to reconnect
 		this.timer =  new Timer();
@@ -429,20 +488,61 @@ public class NetworkParser implements Runnable {
 	private void onTimerTick() {
 		Log.i(TAG, "Trying to reconnect...");
 		try {
-			// open the socket to the server
-			connect(NetworkParser.SERVER_ADDR, NetworkParser.SERVER_PORT);
 
-			// autobind
-			if(this.autobind)
-				this.bind(NetworkParser.this.mService.getGame().getIdGame());
+			connect(NetworkParser.SERVER_ADDR, NetworkParser.SERVER_PORT);
+			
+			setAutobind(false);
+			this.bind(this.mService.getGame().getIdGame());
+
+			// Send commands not yet sent
+			for(String l : delayedCommands)
+				this.sendCommandLine(l);
+			
+			// FIXME: some of the commands may have failed
+			this.delayedCommands = new ArrayList<String>();
+			
+			if(!this.mainThreadRunning)
+				new Thread(this).start();
+
+			// TODO: tell the server we are reconnected
 
 			this.timer.cancel();
 			this.timer = null;
-			new Thread(this).start();
+
+			this.setConnected(true);
 		} catch (IOException e) {
 			Log.w(TAG, "Reconnection failed !");
 			e.printStackTrace();
 		}
 	}
 
+	synchronized public void setConnected(boolean connected) {
+		if(connected && !this.connected) {
+			Log.i(TAG, "connected...");
+			fireConnectionRetrieved();
+		}
+		else if(!connected && this.connected) {
+			fireConnectionLost();
+			Log.w(TAG, "disconnected...");
+		}
+		this.connected = connected;
+	}
+
+	private void fireConnectionLost() {
+		for(ConnectionStateListener l: connectionStateListeners)
+			l.onConnectionLost();
+	}
+
+	private void fireConnectionRetrieved() {
+		for(ConnectionStateListener l: connectionStateListeners)
+			l.onConnectionRetrieved();
+	}
+
+	public void addConnectionStateListener(ConnectionStateListener listener) {
+		this.connectionStateListeners.add(listener);
+	}
+
+	public void removeConnectionStateListener(ConnectionStateListener listener) {
+		this.connectionStateListeners.remove(listener);
+	}
 }

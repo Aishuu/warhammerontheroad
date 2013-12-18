@@ -292,8 +292,8 @@ void listGames(player p) {
     int j;
 
     // initialize message
-    char * msg = malloc(sizeof(char)*(4+nb_game*(5+1+MAX_NAME_SIZE)+1));
-    sprintf(msg, "ALT");
+    char * msg = malloc(sizeof(char)*(8+nb_game*(5+1+MAX_NAME_SIZE)+1));
+    sprintf(msg, "ACK#LST");
 
     // for each game
     for(j=0;j<nb_game;j++) {
@@ -334,8 +334,8 @@ void getAvailableId(player p) {
         return;
     }
 
-    char msg[11];
-    sprintf(msg, "ACT#%05d\n", id);
+    char msg[15];
+    sprintf(msg, "ACK#CRT#%05d\n", id);
     sendline(p->fd, msg);
 }
 
@@ -618,6 +618,9 @@ void parseClientRequest(player p, char * buffer) {
         removeClient(p);
 
     else if(strlen(buffer) > 3 && buffer[3] == '#') { // new message
+#ifdef DEBUG
+        printf("\r[DEBUG] : %s\n", buffer);
+#endif
         buffer[3] = 0;
         game g=p->game;
 
@@ -643,8 +646,12 @@ void parseClientRequest(player p, char * buffer) {
         else
             sendline(p->fd, "ERR#Command not recognized...\n");
     }
-    else
+    else {
+#ifdef DEBUG
+        printf("\r[DEBUG] : %s\n", buffer);
+#endif
         sendline(p->fd, "ERR#This ain't a command bro...\n");
+    }
 }
 
 // remove the reference to a child process
