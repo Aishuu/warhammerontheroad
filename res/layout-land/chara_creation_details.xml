@@ -12,11 +12,10 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="2"
+        android:layout_height="wrap_content"
         android:orientation="horizontal" >
 
-        <fr.eurecom.warhammerontheroad.WotrEditText
+        <fr.eurecom.warhammerontheroad.WotrTextView
             android:layout_width="wrap_content"
             android:layout_height="fill_parent"
             android:text="@string/name" />
@@ -25,13 +24,176 @@
             android:id="@+id/chosedName"
             android:layout_width="wrap_content"
             android:layout_height="fill_parent" />
-        
-        <fr.eurecom.warhammerontheroad.WotrEditText
+
+        <fr.eurecom.warhammerontheroad.WotrTextView
             android:layout_width="wrap_content"
             android:layout_height="fill_parent"
             android:text="@string/race" />
-        
-        
+
+        <Spinner
+            android:id="@+id/spinRace"
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent" />
     </LinearLayout>
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:src="@drawable/frise_red" />
+
+    <ScrollView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content" >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal" >
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical" >
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal" >
+
+                    <fr.eurecom.warhammerontheroad.WotrTextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="fill_parent"
+                        android:text="@string/age" />
+
+                    <fr.eurecom.warhammerontheroad.WotrTextView
+                        android:id="@+id/txtCharaCreaDetailsAge"
+                        android:layout_width="wrap_content"
+                        android:layout_height="fill_parent" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal" >
+                    <fr.eurecom.warhammerontheroad.WotrTextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="fill_parent"
+                        android:text="@string/eye_color" />
+
+                    <fr.eurecom.warhammerontheroad.WotrEditText
+                        android:id="@+id/editCharaCreaDetailsEyeColor"
+                        android:layout_width="wrap_content"
+                        android:layout_height="fill_parent"
+                         />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal" >
+                    <fr.eurecom.warhammerontheroad.WotrTextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="fill_parent"
+                        android:text="@string/hair_color" />
+
+                    <fr.eurecom.warhammerontheroad.WotrEditText
+                        android:id="@+id/editCharaCreaDetailsHairColor"
+                        android:layout_width="wrap_content"
+                        android:layout_height="fill_parent"
+                         />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal" >
+                    <fr.eurecom.warhammerontheroad.WotrTextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="fill_parent"
+                        android:text="@string/birth_place" />
+
+                    <fr.eurecom.warhammerontheroad.WotrTextView
+                        android:id="@+id/txtCharaCreaDetailsBirthPlace"
+                        android:layout_width="wrap_content"
+                        android:layout_height="fill_parent" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical" >
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal" >
+                    <fr.eurecom.warhammerontheroad.WotrTextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="fill_parent"
+                        android:text="@string/sexe" />
+
+                    <Spinner
+                        android:id="@+id/spinSexe"
+                        android:layout_width="wrap_content"
+                        android:layout_height="fill_parent" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal" >
+                    <fr.eurecom.warhammerontheroad.WotrTextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="fill_parent"
+                        android:text="@string/size" />
+
+                    <fr.eurecom.warhammerontheroad.WotrTextView
+                        android:id="@+id/txtCharaCreaDetailsSize"
+                        android:layout_width="wrap_content"
+                        android:layout_height="fill_parent" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal" >
+                    <fr.eurecom.warhammerontheroad.WotrTextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="fill_parent"
+                        android:text="@string/weight" />
+
+                    <fr.eurecom.warhammerontheroad.WotrTextView
+                        android:id="@+id/txtCharaCreaDetailsWeight"
+                        android:layout_width="wrap_content"
+                        android:layout_height="fill_parent" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal" >
+                    <fr.eurecom.warhammerontheroad.WotrTextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="fill_parent"
+                        android:text="@string/siblings_number" />
+
+                    <fr.eurecom.warhammerontheroad.WotrTextView
+                        android:id="@+id/txtCharaCreaDetailsSiblingsNumber"
+                        android:layout_width="wrap_content"
+                        android:layout_height="fill_parent" />
+                </LinearLayout>
+                
+            </LinearLayout>
+        </LinearLayout>
+    </ScrollView>
+
+    <fr.eurecom.warhammerontheroad.WotrButton
+        android:id="@+id/btnCharaDetailsNext"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:onClick="next"
+        android:text="@string/next" />
 
 </LinearLayout>

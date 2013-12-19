@@ -8,6 +8,9 @@
 package fr.eurecom.warhammerontheroad;
 
 public final class R {
+    public static final class array {
+        public static final int race_array=0x7f060000;
+    }
     public static final class attr {
     }
     public static final class dimen {
@@ -35,27 +38,29 @@ public final class R {
         public static final int wotr_edittext=0x7f02000b;
     }
     public static final class id {
-        public static final int action_settings=0x7f080014;
-        public static final int backgroundImage=0x7f080000;
-        public static final int btnAccessChatGM=0x7f080005;
-        public static final int btnAccessChatP=0x7f080010;
-        public static final int btnAccessGMMenu=0x7f08000e;
-        public static final int btnCancelGameCreation=0x7f08000f;
-        public static final int btnCreateChara=0x7f080012;
-        public static final int btnCreateGame=0x7f080002;
-        public static final int btnEnterGame=0x7f08000c;
-        public static final int btnGMAccessPlay=0x7f08000a;
-        public static final int btnJoinGame=0x7f080003;
-        public static final int btnMenuCreateSupportChara=0x7f080008;
-        public static final int btnMenuOpenBook=0x7f080006;
-        public static final int btnMenuPlayersData=0x7f080009;
-        public static final int btnPAccessPlay=0x7f080013;
-        public static final int btnQuit=0x7f080004;
-        public static final int btnReadStory=0x7f080011;
-        public static final int btnWriteStory=0x7f080007;
-        public static final int join_game_number=0x7f08000b;
-        public static final int new_game_number=0x7f08000d;
-        public static final int titleImage=0x7f080001;
+        public static final int action_settings=0x7f090016;
+        public static final int backgroundImage=0x7f090000;
+        public static final int btnAccessChatGM=0x7f090007;
+        public static final int btnAccessChatP=0x7f090012;
+        public static final int btnAccessGMMenu=0x7f090010;
+        public static final int btnCancelGameCreation=0x7f090011;
+        public static final int btnCreateChara=0x7f090014;
+        public static final int btnCreateGame=0x7f090002;
+        public static final int btnEnterGame=0x7f09000e;
+        public static final int btnGMAccessPlay=0x7f09000c;
+        public static final int btnJoinGame=0x7f090003;
+        public static final int btnMenuCreateSupportChara=0x7f09000a;
+        public static final int btnMenuOpenBook=0x7f090008;
+        public static final int btnMenuPlayersData=0x7f09000b;
+        public static final int btnPAccessPlay=0x7f090015;
+        public static final int btnQuit=0x7f090004;
+        public static final int btnReadStory=0x7f090013;
+        public static final int btnWriteStory=0x7f090009;
+        public static final int chosedName=0x7f090005;
+        public static final int join_game_number=0x7f09000d;
+        public static final int new_game_number=0x7f09000f;
+        public static final int spinRace=0x7f090006;
+        public static final int titleImage=0x7f090001;
     }
     public static final class layout {
         public static final int activity_main=0x7f030000;
@@ -67,28 +72,42 @@ public final class R {
         public static final int player_menu=0x7f030006;
     }
     public static final class menu {
-        public static final int main=0x7f070000;
-        public static final int start_menu=0x7f070001;
+        public static final int main=0x7f080000;
+        public static final int start_menu=0x7f080001;
     }
     public static final class string {
         public static final int access_chat=0x7f05000d;
         public static final int access_gm_menu=0x7f050008;
         public static final int access_play=0x7f05000f;
         public static final int action_settings=0x7f050001;
+        /**  Strings of activity start menu 
+         */
         public static final int app_name=0x7f050000;
         public static final int backgroundImageDesc=0x7f050005;
         public static final int cancel_game_creation=0x7f050009;
         public static final int createGame=0x7f050002;
+        /**  Strings of player menu 
+         */
         public static final int create_chara=0x7f05000c;
         public static final int create_support_chara=0x7f050012;
         public static final int enter_game=0x7f05000b;
+        /**  Strings of join game 
+         */
         public static final int enter_game_nb=0x7f05000a;
         public static final int give_number=0x7f050007;
         public static final int joinGame=0x7f050003;
+        /**  Strings of chara creation details 
+         */
+        public static final int name=0x7f050014;
+        /**  Strings of new game intro 
+         */
         public static final int new_gm=0x7f050006;
+        /**  Strings of gm menu 
+         */
         public static final int open_book=0x7f050010;
         public static final int players_data=0x7f050013;
         public static final int quit=0x7f050004;
+        public static final int race=0x7f050015;
         public static final int read_story=0x7f05000e;
         public static final int write_story=0x7f050011;
     }
@@ -116,14 +135,14 @@ public final class R {
     
  API 14 theme customizations can go here. 
          */
-        public static final int AppBaseTheme=0x7f060000;
+        public static final int AppBaseTheme=0x7f070000;
         /**  Application theme. 
          */
-        public static final int AppTheme=0x7f060001;
-        public static final int ButtonSize=0x7f060005;
-        public static final int TextViewSize=0x7f060006;
-        public static final int ThemeButton=0x7f060002;
-        public static final int ThemeEditView=0x7f060004;
-        public static final int ThemeTextView=0x7f060003;
+        public static final int AppTheme=0x7f070001;
+        public static final int ButtonSize=0x7f070005;
+        public static final int TextViewSize=0x7f070006;
+        public static final int ThemeButton=0x7f070002;
+        public static final int ThemeEditView=0x7f070004;
+        public static final int ThemeTextView=0x7f070003;
     }
 }

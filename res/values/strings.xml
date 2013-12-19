@@ -34,9 +34,28 @@
     <!-- Strings of chara creation details -->
     <string name="name">Name</string>
     <string name="race">Race</string>
-    <string name="dwarf">Dwarf</string>
-    <string name="elf">Elf</string>
-    <string name="human">Human</string>
-    <string name="halfling">Halfling</string>
+
+    <string-array name="race_array">
+        <item>Dwarf</item>
+        <item>Elf</item>
+        <item>Human</item>
+        <item>Halfling</item>
+    </string-array>
+
+    <string name="age">Age</string>
+    <string name="eye_color">Eye color</string>
+    <string name="hair_color">Hair color</string>
+    <string name="birth_place">Birth place</string>
+    <string name="sexe">Sexe</string>
+
+    <string-array name="sexe_array">
+        <item>Male</item>
+        <item>Female</item>
+    </string-array>
+
+    <string name="size">Size</string>
+    <string name="weight">Weight</string>
+    <string name="siblings_number">Siblings</string>
+    <string name="next">Next</string>
 
 </resources>

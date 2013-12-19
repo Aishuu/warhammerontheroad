@@ -14,7 +14,7 @@ public class StartMenuActivity extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.join_game);
+		setContentView(R.layout.chara_creation_details);
 	}
 
 	@Override
