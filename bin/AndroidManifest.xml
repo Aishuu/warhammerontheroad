@@ -23,12 +23,36 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="fr.eurecom.warhammerontheroad.MainActivity"
-            android:label="@string/app_name"
+            android:name="fr.eurecom.warhammerontheroad.JoinGameActivity"
+            android:label="@string/joinGame"
             android:parentActivityName="fr.eurecom.warhammerontheroad.StartMenuActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="fr.eurecom.warhammerontheroad.StartMenuActivity" />
+        </activity>
+        <activity
+            android:name="fr.eurecom.warhammerontheroad.NewGameIntroActivity"
+            android:label="@string/createGame"
+            android:parentActivityName="fr.eurecom.warhammerontheroad.StartMenuActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="fr.eurecom.warhammerontheroad.StartMenuActivity" />
+        </activity>
+        <activity
+            android:name="fr.eurecom.warhammerontheroad.GMMenuActivity"
+            android:label="@string/createGame"
+            android:parentActivityName="fr.eurecom.warhammerontheroad.NewGameIntroActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="fr.eurecom.warhammerontheroad.NewGameIntroActivity" />
+        </activity>
+        <activity
+            android:name="fr.eurecom.warhammerontheroad.PlayerMenuActivity"
+            android:label="@string/create_chara"
+            android:parentActivityName="fr.eurecom.warhammerontheroad.JoinGameActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="fr.eurecom.warhammerontheroad.JoinGameActivity" />
         </activity>
     </application>
 

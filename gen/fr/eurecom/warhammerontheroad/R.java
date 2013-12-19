@@ -10,6 +10,7 @@ package fr.eurecom.warhammerontheroad;
 public final class R {
     public static final class array {
         public static final int race_array=0x7f060000;
+        public static final int sexe_array=0x7f060001;
     }
     public static final class attr {
     }
@@ -38,38 +39,46 @@ public final class R {
         public static final int wotr_edittext=0x7f02000b;
     }
     public static final class id {
-        public static final int action_settings=0x7f090016;
+        public static final int action_settings=0x7f09001f;
         public static final int backgroundImage=0x7f090000;
-        public static final int btnAccessChatGM=0x7f090007;
-        public static final int btnAccessChatP=0x7f090012;
-        public static final int btnAccessGMMenu=0x7f090010;
-        public static final int btnCancelGameCreation=0x7f090011;
-        public static final int btnCreateChara=0x7f090014;
+        public static final int btnAccessChatGM=0x7f090010;
+        public static final int btnAccessChatP=0x7f09001b;
+        public static final int btnAccessGMMenu=0x7f090019;
+        public static final int btnCancelGameCreation=0x7f09001a;
+        public static final int btnCharaDetailsNext=0x7f09000f;
+        public static final int btnCreateChara=0x7f09001d;
         public static final int btnCreateGame=0x7f090002;
-        public static final int btnEnterGame=0x7f09000e;
-        public static final int btnGMAccessPlay=0x7f09000c;
+        public static final int btnEnterGame=0x7f090017;
+        public static final int btnGMAccessPlay=0x7f090015;
         public static final int btnJoinGame=0x7f090003;
-        public static final int btnMenuCreateSupportChara=0x7f09000a;
-        public static final int btnMenuOpenBook=0x7f090008;
-        public static final int btnMenuPlayersData=0x7f09000b;
-        public static final int btnPAccessPlay=0x7f090015;
+        public static final int btnMenuCreateSupportChara=0x7f090013;
+        public static final int btnMenuOpenBook=0x7f090011;
+        public static final int btnMenuPlayersData=0x7f090014;
+        public static final int btnPAccessPlay=0x7f09001e;
         public static final int btnQuit=0x7f090004;
-        public static final int btnReadStory=0x7f090013;
-        public static final int btnWriteStory=0x7f090009;
+        public static final int btnReadStory=0x7f09001c;
+        public static final int btnWriteStory=0x7f090012;
         public static final int chosedName=0x7f090005;
-        public static final int join_game_number=0x7f09000d;
-        public static final int new_game_number=0x7f09000f;
+        public static final int editCharaCreaDetailsEyeColor=0x7f090008;
+        public static final int editCharaCreaDetailsHairColor=0x7f090009;
+        public static final int join_game_number=0x7f090016;
+        public static final int new_game_number=0x7f090018;
         public static final int spinRace=0x7f090006;
+        public static final int spinSexe=0x7f09000b;
         public static final int titleImage=0x7f090001;
+        public static final int txtCharaCreaDetailsAge=0x7f090007;
+        public static final int txtCharaCreaDetailsBirthPlace=0x7f09000a;
+        public static final int txtCharaCreaDetailsSiblingsNumber=0x7f09000e;
+        public static final int txtCharaCreaDetailsSize=0x7f09000c;
+        public static final int txtCharaCreaDetailsWeight=0x7f09000d;
     }
     public static final class layout {
-        public static final int activity_main=0x7f030000;
-        public static final int activity_start_menu=0x7f030001;
-        public static final int chara_creation_details=0x7f030002;
-        public static final int gm_menu=0x7f030003;
-        public static final int join_game=0x7f030004;
-        public static final int new_game_intro=0x7f030005;
-        public static final int player_menu=0x7f030006;
+        public static final int activity_start_menu=0x7f030000;
+        public static final int chara_creation_details=0x7f030001;
+        public static final int gm_menu=0x7f030002;
+        public static final int join_game=0x7f030003;
+        public static final int new_game_intro=0x7f030004;
+        public static final int player_menu=0x7f030005;
     }
     public static final class menu {
         public static final int main=0x7f080000;
@@ -80,10 +89,12 @@ public final class R {
         public static final int access_gm_menu=0x7f050008;
         public static final int access_play=0x7f05000f;
         public static final int action_settings=0x7f050001;
+        public static final int age=0x7f050016;
         /**  Strings of activity start menu 
          */
         public static final int app_name=0x7f050000;
         public static final int backgroundImageDesc=0x7f050005;
+        public static final int birth_place=0x7f050019;
         public static final int cancel_game_creation=0x7f050009;
         public static final int createGame=0x7f050002;
         /**  Strings of player menu 
@@ -94,7 +105,9 @@ public final class R {
         /**  Strings of join game 
          */
         public static final int enter_game_nb=0x7f05000a;
+        public static final int eye_color=0x7f050017;
         public static final int give_number=0x7f050007;
+        public static final int hair_color=0x7f050018;
         public static final int joinGame=0x7f050003;
         /**  Strings of chara creation details 
          */
@@ -102,6 +115,7 @@ public final class R {
         /**  Strings of new game intro 
          */
         public static final int new_gm=0x7f050006;
+        public static final int next=0x7f05001e;
         /**  Strings of gm menu 
          */
         public static final int open_book=0x7f050010;
@@ -109,6 +123,10 @@ public final class R {
         public static final int quit=0x7f050004;
         public static final int race=0x7f050015;
         public static final int read_story=0x7f05000e;
+        public static final int sexe=0x7f05001a;
+        public static final int siblings_number=0x7f05001d;
+        public static final int size=0x7f05001b;
+        public static final int weight=0x7f05001c;
         public static final int write_story=0x7f050011;
     }
     public static final class style {
@@ -139,10 +157,13 @@ public final class R {
         /**  Application theme. 
          */
         public static final int AppTheme=0x7f070001;
+        public static final int ButtonLandSize=0x7f070007;
         public static final int ButtonSize=0x7f070005;
+        public static final int EditTextLandSize=0x7f070009;
+        public static final int TextViewLandSize=0x7f070008;
         public static final int TextViewSize=0x7f070006;
         public static final int ThemeButton=0x7f070002;
-        public static final int ThemeEditView=0x7f070004;
+        public static final int ThemeEditText=0x7f070004;
         public static final int ThemeTextView=0x7f070003;
     }
 }
