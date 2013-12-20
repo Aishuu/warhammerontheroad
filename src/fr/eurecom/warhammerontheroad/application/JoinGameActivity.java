@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import fr.eurecom.warhammerontheroad.R;
 import fr.eurecom.warhammerontheroad.model.Game;
+import fr.eurecom.warhammerontheroad.model.Hero;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Build;
@@ -33,6 +34,8 @@ public class JoinGameActivity extends WotrActivity implements GameServiceListene
 		}
 		this.availGames = (TextView) findViewById(R.id.availGames);
 		this.mService.getGame().addGameServiceListener(this);
+		Hero hero = new Hero(this, Hero.RACE_ELF);
+		hero.show();
 		if(savedInstanceState != null)
 			this.availGames.setText(savedInstanceState.getString("availGames"));
 	}

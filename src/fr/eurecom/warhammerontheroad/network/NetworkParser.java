@@ -40,8 +40,8 @@ public class NetworkParser implements Runnable {
 	 * IP address of the server
 	 */
 	//public final static String SERVER_ADDR = 	"82.236.41.149";
-	//public final static String SERVER_ADDR = 	"172.24.10.37";
-	public final static String SERVER_ADDR =	"192.168.0.11";
+	public final static String SERVER_ADDR = 	"172.24.10.37";
+	//public final static String SERVER_ADDR =	"192.168.0.11";
 
 	/**
 	 * Port of the server
@@ -318,7 +318,8 @@ public class NetworkParser implements Runnable {
 			tryToReconnect(NetworkParser.RECO_RATE);
 		} finally {
 			try {
-				this.sock.close();
+				if(this.sock != null)
+					this.sock.close();
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
