@@ -8,6 +8,13 @@
     <string name="joinGame">Join Game</string>
     <string name="quit">Quit</string>
     <string name="backgroundImageDesc">Background Image</string>
+    <string name="title_activity_chat_room">Chat Room</string>
+    <string name="sendMessage">Write your message</string>
+    <string name="buttonSendMessage">Send Message</string>
+    <string name="sendFile">Name of a file to send</string>
+    <string name="buttonSendFile">Send File</string>
+    <string name="listAvailGames">List Games</string>
+    <string name="title_activity_create_game">Create Game</string>
 
     <!-- Strings of new game intro -->
     <string name="new_gm">All Hail the new Game Master! You will reign upon the crowds of game n°</string>
@@ -16,8 +23,9 @@
     <string name="cancel_game_creation">Renounce to your role</string>
 
     <!-- Strings of join game -->
-    <string name="enter_game_nb">Please enter the number of the game you want to join</string>
+    <string name="enter_game_nb">Please enter your character name and the number of the game you want to join</string>
     <string name="enter_game">Start playing</string>
+    <string name="number0">00000</string>
 
     <!-- Strings of player menu -->
     <string name="create_chara">Create your character</string>
@@ -36,9 +44,9 @@
     <string name="race">Race</string>
 
     <string-array name="race_array">
-        <item>Dwarf</item>
-        <item>Elf</item>
         <item>Human</item>
+        <item>Elf</item>
+        <item>Dwarf</item>
         <item>Halfling</item>
     </string-array>
 

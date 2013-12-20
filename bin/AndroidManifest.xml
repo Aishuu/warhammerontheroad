@@ -6,15 +6,22 @@
 
     <uses-sdk
         android:minSdkVersion="8"
-        android:targetSdkVersion="18" />
+        android:targetSdkVersion="19" />
+
+    <uses-feature android:name="android.hardware.wifi" />
+    
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
     <application
+        android:name="fr.eurecom.warhammerontheroad.application.WotrApplication"
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <activity
-            android:name="fr.eurecom.warhammerontheroad.StartMenuActivity"
+            android:name="fr.eurecom.warhammerontheroad.application.StartMenuActivity"
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -23,40 +30,62 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="fr.eurecom.warhammerontheroad.JoinGameActivity"
+            android:name="fr.eurecom.warhammerontheroad.application.JoinGameActivity"
             android:label="@string/joinGame"
-            android:parentActivityName="fr.eurecom.warhammerontheroad.StartMenuActivity" >
+            android:parentActivityName="fr.eurecom.warhammerontheroad.application.StartMenuActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="fr.eurecom.warhammerontheroad.StartMenuActivity" />
+                android:value="fr.eurecom.warhammerontheroad.application.StartMenuActivity" />
         </activity>
         <activity
-            android:name="fr.eurecom.warhammerontheroad.NewGameIntroActivity"
+            android:name="fr.eurecom.warhammerontheroad.application.NewGameIntroActivity"
             android:label="@string/createGame"
-            android:parentActivityName="fr.eurecom.warhammerontheroad.StartMenuActivity" >
+            android:parentActivityName="fr.eurecom.warhammerontheroad.application.StartMenuActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="fr.eurecom.warhammerontheroad.StartMenuActivity" />
+                android:value="fr.eurecom.warhammerontheroad.application.StartMenuActivity" />
         </activity>
         <activity
-            android:name="fr.eurecom.warhammerontheroad.GMMenuActivity"
+            android:name="fr.eurecom.warhammerontheroad.application.GMMenuActivity"
             android:label="@string/createGame"
-            android:parentActivityName="fr.eurecom.warhammerontheroad.NewGameIntroActivity" >
+            android:parentActivityName="fr.eurecom.warhammerontheroad.application.NewGameIntroActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="fr.eurecom.warhammerontheroad.NewGameIntroActivity" />
+                android:value="fr.eurecom.warhammerontheroad.application.NewGameIntroActivity" />
         </activity>
         <activity
-            android:name="fr.eurecom.warhammerontheroad.PlayerMenuActivity"
+            android:name="fr.eurecom.warhammerontheroad.application.PlayerMenuActivity"
             android:label="@string/create_chara"
-            android:parentActivityName="fr.eurecom.warhammerontheroad.JoinGameActivity" >
+            android:parentActivityName="fr.eurecom.warhammerontheroad.application.JoinGameActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="fr.eurecom.warhammerontheroad.JoinGameActivity" />
+                android:value="fr.eurecom.warhammerontheroad.application.JoinGameActivity" />
         </activity>
         <activity
-            android:name="fr.eurecom.warhammerontheroad.CharaCreationProfil"
-            android:label="@string/title_activity_chara_creation_profil" >
+            android:screenOrientation="landscape"
+            android:name="fr.eurecom.warhammerontheroad.application.CharaCreationDetailsActivity"
+            android:label="@string/title_activity_chara_creation_profil"
+            android:parentActivityName="fr.eurecom.warhammerontheroad.application.PlayerMenuActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="fr.eurecom.warhammerontheroad.application.PlayerMenuActivity" />
+        </activity>
+        <activity
+            android:screenOrientation="landscape"
+            android:name="fr.eurecom.warhammerontheroad.application.CharaCreationProfilActivity"
+            android:label="@string/title_activity_chara_creation_profil"
+            android:parentActivityName="fr.eurecom.warhammerontheroad.application.PlayerMenuActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="fr.eurecom.warhammerontheroad.application.PlayerMenuActivity" />
+        </activity>
+        <service
+            android:name="fr.eurecom.warhammerontheroad.model.WotrService"
+            android:exported="false" />
+
+        <activity
+            android:name="fr.eurecom.warhammerontheroad.application.ChatRoomActivity"
+            android:label="@string/title_activity_chat_room" >
         </activity>
     </application>
 

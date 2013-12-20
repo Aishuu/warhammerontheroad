@@ -1,0 +1,52 @@
+package fr.eurecom.warhammerontheroad.network;
+
+/**
+ * Wrapper for constants used to communicate with the server
+ * 
+ * @author aishuu
+ *
+ */
+public final class Cmds {
+	private Cmds(){}
+
+	/**
+	 * Returned when the command failed
+	 */
+	public static final String CMD_ERROR = 			"ERR";
+	/**
+	 * Returned when a command was successfull
+	 */
+	public static final String CMD_ACK = 			"ACK";
+	/**
+	 * Sent to bind to a game
+	 */
+	public static final String CMD_BIND = 			"BND";
+	/**
+	 * Sent to simply broadcast a message
+	 */
+	public static final String CMD_MESSAGE = 		"MSG";
+	/**
+	 * Sent by the server when a player has been disconnected
+	 */
+	public static final String CMD_DISCONNECTED = 	"DSC";
+	/**
+	 * Sent by the server when a player has joined the game
+	 */
+	public static final String CMD_CONNECTED = 		"CNT";
+	/**
+	 * Sent to list the existing games
+	 */
+	public static final String CMD_LIST = 			"LST";
+	/**
+	 * Sent to get a available id for a game (doesn't actually create it)
+	 */
+	public static final String CMD_CREATE =			"CRT";
+	/**
+	 * Sent by the client to ask for a port to transfer a file or by the server to tell the client a file is available
+	 */
+	public static final String CMD_FILE =		 	"FLE";
+	/**
+	 * Sent by the server to give a port as an answer to a CMD_FILE command
+	 */
+	public static final String CMD_PORT =		 	"PRT";
+}

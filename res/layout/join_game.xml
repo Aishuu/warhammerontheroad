@@ -10,26 +10,34 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin" >
 
-    <fr.eurecom.warhammerontheroad.WotrTextView
+    <fr.eurecom.warhammerontheroad.application.WotrTextView
+        android:layout_width="fill_parent"
+        android:layout_height="0dp"
+        android:layout_weight="2"
+        android:gravity="center_vertical"
+        android:text="@string/enter_game_nb" />
+
+    <LinearLayout
         android:layout_width="fill_parent"
         android:layout_height="0dp"
         android:layout_weight="2"
         android:gravity="center"
-        android:text="@string/enter_game_nb" />
-    
-    <LinearLayout
-        android:layout_width="fill_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:gravity="center"
         android:orientation="vertical" >
 
-    <fr.eurecom.warhammerontheroad.WotrEditText
-        android:id="@+id/join_game_number"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:inputType="number" />
+        <fr.eurecom.warhammerontheroad.application.WotrEditText
+            android:id="@+id/join_game_name"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:hint="@string/name" />
+
+        <fr.eurecom.warhammerontheroad.application.WotrEditText
+            android:id="@+id/join_game_number"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:inputType="number"
+            android:hint="00000" />
     </LinearLayout>
 
     <LinearLayout
@@ -39,7 +47,7 @@
         android:gravity="center"
         android:orientation="vertical" >
 
-        <fr.eurecom.warhammerontheroad.WotrButton
+        <fr.eurecom.warhammerontheroad.application.WotrButton
             android:id="@+id/btnEnterGame"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"

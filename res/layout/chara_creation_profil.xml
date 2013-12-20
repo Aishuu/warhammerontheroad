@@ -9,12 +9,13 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context=".CharaCreationProfil" >
+    tools:context=".CharaCreationProfilActivity" >
 
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="3" >
+        android:layout_weight="2"
+        android:gravity="center" >
         
         <LinearLayout
             android:layout_width="match_parent"
@@ -32,7 +33,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" >
 
-                    <fr.eurecom.warhammerontheroad.WotrTextView
+                    <fr.eurecom.warhammerontheroad.application.WotrTextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_span="9"
@@ -44,46 +45,46 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" >
 
-                    <fr.eurecom.warhammerontheroad.WotrTextView android:text="" />
+                    <fr.eurecom.warhammerontheroad.application.WotrTextView android:text="" />
 
-                    <fr.eurecom.warhammerontheroad.WotrTextView android:text="@string/cc" />
+                    <fr.eurecom.warhammerontheroad.application.WotrTextView android:text="@string/cc" />
 
-                    <fr.eurecom.warhammerontheroad.WotrTextView android:text="@string/ct" />
+                    <fr.eurecom.warhammerontheroad.application.WotrTextView android:text="@string/ct" />
 
-                    <fr.eurecom.warhammerontheroad.WotrTextView android:text="@string/f" />
+                    <fr.eurecom.warhammerontheroad.application.WotrTextView android:text="@string/f" />
 
-                    <fr.eurecom.warhammerontheroad.WotrTextView android:text="@string/e" />
+                    <fr.eurecom.warhammerontheroad.application.WotrTextView android:text="@string/e" />
 
-                    <fr.eurecom.warhammerontheroad.WotrTextView android:text="@string/ag" />
+                    <fr.eurecom.warhammerontheroad.application.WotrTextView android:text="@string/ag" />
 
-                    <fr.eurecom.warhammerontheroad.WotrTextView android:text="@string/intelligence" />
+                    <fr.eurecom.warhammerontheroad.application.WotrTextView android:text="@string/intelligence" />
 
-                    <fr.eurecom.warhammerontheroad.WotrTextView android:text="@string/fm" />
+                    <fr.eurecom.warhammerontheroad.application.WotrTextView android:text="@string/fm" />
 
-                    <fr.eurecom.warhammerontheroad.WotrTextView android:text="@string/soc" />
+                    <fr.eurecom.warhammerontheroad.application.WotrTextView android:text="@string/soc" />
                 </TableRow>
 
                 <TableRow
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" >
 
-                    <fr.eurecom.warhammerontheroad.WotrTextView android:text="@string/base" />
+                    <fr.eurecom.warhammerontheroad.application.WotrTextView android:text="@string/base" />
 
-                    <fr.eurecom.warhammerontheroad.WotrTextView android:id="@+id/creationBaseCC" />
+                    <fr.eurecom.warhammerontheroad.application.WotrTextView android:id="@+id/creationBaseCC" />
 
-                    <fr.eurecom.warhammerontheroad.WotrTextView android:id="@+id/creationBaseCT" />
+                    <fr.eurecom.warhammerontheroad.application.WotrTextView android:id="@+id/creationBaseCT" />
 
-                    <fr.eurecom.warhammerontheroad.WotrTextView android:id="@+id/creationBaseF" />
+                    <fr.eurecom.warhammerontheroad.application.WotrTextView android:id="@+id/creationBaseF" />
 
-                    <fr.eurecom.warhammerontheroad.WotrTextView android:id="@+id/creationBaseE" />
+                    <fr.eurecom.warhammerontheroad.application.WotrTextView android:id="@+id/creationBaseE" />
 
-                    <fr.eurecom.warhammerontheroad.WotrTextView android:id="@+id/creationBaseAg" />
+                    <fr.eurecom.warhammerontheroad.application.WotrTextView android:id="@+id/creationBaseAg" />
 
-                    <fr.eurecom.warhammerontheroad.WotrTextView android:id="@+id/creationBaseInt" />
+                    <fr.eurecom.warhammerontheroad.application.WotrTextView android:id="@+id/creationBaseInt" />
 
-                    <fr.eurecom.warhammerontheroad.WotrTextView android:id="@+id/creationBaseFM" />
+                    <fr.eurecom.warhammerontheroad.application.WotrTextView android:id="@+id/creationBaseFM" />
 
-                    <fr.eurecom.warhammerontheroad.WotrTextView android:id="@+id/creationBaseSoc" />
+                    <fr.eurecom.warhammerontheroad.application.WotrTextView android:id="@+id/creationBaseSoc" />
                 </TableRow>
             </TableLayout>
 
@@ -98,7 +99,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" >
 
-                    <fr.eurecom.warhammerontheroad.WotrTextView
+                    <fr.eurecom.warhammerontheroad.application.WotrTextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_span="9"
@@ -110,46 +111,46 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" >
 
-                    <fr.eurecom.warhammerontheroad.WotrTextView android:text="" />
+                    <fr.eurecom.warhammerontheroad.application.WotrTextView android:text="" />
 
-                    <fr.eurecom.warhammerontheroad.WotrTextView android:text="@string/a" />
+                    <fr.eurecom.warhammerontheroad.application.WotrTextView android:text="@string/a" />
 
-                    <fr.eurecom.warhammerontheroad.WotrTextView android:text="@string/b" />
+                    <fr.eurecom.warhammerontheroad.application.WotrTextView android:text="@string/b" />
 
-                    <fr.eurecom.warhammerontheroad.WotrTextView android:text="@string/bf" />
+                    <fr.eurecom.warhammerontheroad.application.WotrTextView android:text="@string/bf" />
 
-                    <fr.eurecom.warhammerontheroad.WotrTextView android:text="@string/be" />
+                    <fr.eurecom.warhammerontheroad.application.WotrTextView android:text="@string/be" />
 
-                    <fr.eurecom.warhammerontheroad.WotrTextView android:text="@string/m" />
+                    <fr.eurecom.warhammerontheroad.application.WotrTextView android:text="@string/m" />
 
-                    <fr.eurecom.warhammerontheroad.WotrTextView android:text="@string/mag" />
+                    <fr.eurecom.warhammerontheroad.application.WotrTextView android:text="@string/mag" />
 
-                    <fr.eurecom.warhammerontheroad.WotrTextView android:text="@string/pf" />
+                    <fr.eurecom.warhammerontheroad.application.WotrTextView android:text="@string/pf" />
 
-                    <fr.eurecom.warhammerontheroad.WotrTextView android:text="@string/pd" />
+                    <fr.eurecom.warhammerontheroad.application.WotrTextView android:text="@string/pd" />
                 </TableRow>
 
                 <TableRow
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" >
 
-                    <fr.eurecom.warhammerontheroad.WotrTextView android:text="@string/base" />
+                    <fr.eurecom.warhammerontheroad.application.WotrTextView android:text="@string/base" />
 
-                    <fr.eurecom.warhammerontheroad.WotrTextView android:id="@+id/creationBaseA" />
+                    <fr.eurecom.warhammerontheroad.application.WotrTextView android:id="@+id/creationBaseA" />
 
-                    <fr.eurecom.warhammerontheroad.WotrTextView android:id="@+id/creationBaseB" />
+                    <fr.eurecom.warhammerontheroad.application.WotrTextView android:id="@+id/creationBaseB" />
 
-                    <fr.eurecom.warhammerontheroad.WotrTextView android:id="@+id/creationBaseBF" />
+                    <fr.eurecom.warhammerontheroad.application.WotrTextView android:id="@+id/creationBaseBF" />
 
-                    <fr.eurecom.warhammerontheroad.WotrTextView android:id="@+id/creationBaseBE" />
+                    <fr.eurecom.warhammerontheroad.application.WotrTextView android:id="@+id/creationBaseBE" />
 
-                    <fr.eurecom.warhammerontheroad.WotrTextView android:id="@+id/creationBaseM" />
+                    <fr.eurecom.warhammerontheroad.application.WotrTextView android:id="@+id/creationBaseM" />
 
-                    <fr.eurecom.warhammerontheroad.WotrTextView android:id="@+id/creationBaseMag" />
+                    <fr.eurecom.warhammerontheroad.application.WotrTextView android:id="@+id/creationBaseMag" />
 
-                    <fr.eurecom.warhammerontheroad.WotrTextView android:id="@+id/creationBasePF" />
+                    <fr.eurecom.warhammerontheroad.application.WotrTextView android:id="@+id/creationBasePF" />
 
-                    <fr.eurecom.warhammerontheroad.WotrTextView android:id="@+id/creationBasePD" />
+                    <fr.eurecom.warhammerontheroad.application.WotrTextView android:id="@+id/creationBasePD" />
                 </TableRow>
             </TableLayout>
         </LinearLayout>
@@ -163,7 +164,7 @@
         android:orientation="horizontal"
         android:layout_weight="1" >
 
-        <fr.eurecom.warhammerontheroad.WotrTextView
+        <fr.eurecom.warhammerontheroad.application.WotrTextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/carrier" />
@@ -174,7 +175,7 @@
             android:layout_height="wrap_content" />
     </LinearLayout>
 
-    <fr.eurecom.warhammerontheroad.WotrButton
+    <fr.eurecom.warhammerontheroad.application.WotrButton
         android:id="@+id/btnTermCreaChara"
         android:layout_width="wrap_content"
         android:layout_height="0dp"

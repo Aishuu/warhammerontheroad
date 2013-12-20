@@ -21,32 +21,32 @@
             android:layout_height="wrap_content"
             android:orientation="vertical" >
 
-            <fr.eurecom.warhammerontheroad.WotrTextView
+            <fr.eurecom.warhammerontheroad.application.WotrTextView
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/new_gm" />
 
-            <fr.eurecom.warhammerontheroad.WotrTextView
+            <fr.eurecom.warhammerontheroad.application.WotrTextView
                 android:id="@+id/new_game_number"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center" />
 
-            <fr.eurecom.warhammerontheroad.WotrTextView
+            <fr.eurecom.warhammerontheroad.application.WotrTextView
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/give_number" />
         </LinearLayout>
     </ScrollView>
 
-    <fr.eurecom.warhammerontheroad.WotrButton
+    <fr.eurecom.warhammerontheroad.application.WotrButton
         android:id="@+id/btnAccessGMMenu"
         style="@style/ButtonSize"
         android:layout_weight="1"
         android:onClick="accessGMMenu"
         android:text="@string/access_gm_menu" />
 
-    <fr.eurecom.warhammerontheroad.WotrButton
+    <fr.eurecom.warhammerontheroad.application.WotrButton
         android:id="@+id/btnCancelGameCreation"
         style="@style/ButtonSize"
         android:layout_weight="1"
