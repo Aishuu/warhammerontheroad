@@ -41,7 +41,7 @@
         <activity
             android:name="fr.eurecom.warhammerontheroad.GMMenuActivity"
             android:label="@string/createGame"
-            android:parentActivityName="fr.eurecom.warhammerontheroad.NewGameIntroActivity">
+            android:parentActivityName="fr.eurecom.warhammerontheroad.NewGameIntroActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="fr.eurecom.warhammerontheroad.NewGameIntroActivity" />
@@ -53,6 +53,10 @@
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="fr.eurecom.warhammerontheroad.JoinGameActivity" />
+        </activity>
+        <activity
+            android:name="fr.eurecom.warhammerontheroad.CharaCreationProfil"
+            android:label="@string/title_activity_chara_creation_profil" >
         </activity>
     </application>
 

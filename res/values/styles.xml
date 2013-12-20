@@ -24,7 +24,7 @@
 
     <style name="ThemeButton" parent="android:style/Widget.Button">
         <item name="android:textColor">#8B0000</item>
-        <item name="android:background">@drawable/dagger_button_red</item>
+        <item name="android:background">@drawable/button_dagger</item>
         <item name="android:textSize">30sp</item>
 	</style>
 	
@@ -37,7 +37,7 @@
     <style name="ThemeEditText" parent="android:style/Widget.EditText">
         <item name="android:textColor">#8B0000</item>
         <item name="android:background">@drawable/wotr_edittext</item>
-        <item name="android:textSize">25sp</item>:
+        <item name="android:textSize">25sp</item>
 	</style>
 	
 
@@ -62,8 +62,9 @@
     </style>
     
     <style name="EditTextLandSize" parent="ThemeEditText">
-        <item name="android:layout_height">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_width">0dp</item>
+        <item name="android:paddingTop">0dp</item>
     </style>
 
 </resources>

@@ -57,5 +57,29 @@
     <string name="weight">Weight</string>
     <string name="siblings_number">Siblings</string>
     <string name="next">Next</string>
+    <string name="title_activity_chara_creation_profil">Character Creation</string>
+    <string name="hello_world">Hello world!</string>
 
+    <!-- Strings of chara creation profil -->
+    <string name="profil_principal">Profil principal</string>
+    <string name="cc">CC</string>
+    <string name="ct">CT</string>
+    <string name="f">F</string>
+    <string name="e">E</string>
+    <string name="ag">Ag</string>
+    <string name="intelligence">Int</string>
+    <string name="fm">FM</string>
+    <string name="soc">Soc</string>
+    <string name="base">Base</string>
+    <string name="profil_secondaire">Profil secondaire</string>
+    <string name="a">A</string>
+    <string name="b">B</string>
+    <string name="bf">BF</string>
+    <string name="be">BE</string>
+    <string name="mag">Mag</string>
+    <string name="m">M</string>
+    <string name="pf">PF</string>
+    <string name="pd">PD</string>
+    <string name="carrier">Carrier</string>
+    <string name="terminate">Terminate</string>
 </resources>
