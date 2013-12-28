@@ -2,6 +2,7 @@
 #include <unistd.h>
 #include <errno.h>
 #include <string.h>
+#include <stdlib.h>
 
 #include "util.h"
 #include "server.h"
@@ -66,4 +67,44 @@ ssize_t sendline(int fd, const void *str) {
         write(fd, "\n", 1);
 
     return max;
+}
+
+void senderror(int fd, const char * subtype, const char * description) {
+    char * msg;
+    if(subtype) {
+        msg = malloc(sizeof(char)*(10+strlen(description)));
+        sprintf(msg, "%s#%s#%s\n", CMD_ERR, subtype, description);
+    }
+    else {
+        msg = malloc(sizeof(char)*(6+strlen(description)));
+        sprintf(msg, "%s#%s\n", CMD_ERR, description);
+    }
+    sendline(fd, msg);
+    free(msg);
+}
+
+void sendack(int fd, const char * subtype, const char * description) {
+    char * msg;
+    if(subtype) {
+        if(description) {
+            msg = malloc(sizeof(char)*(10+strlen(description)));
+            sprintf(msg, "%s#%s#%s\n", CMD_ACK, subtype, description);
+        }
+        else {
+            msg = malloc(sizeof(char)*10);
+            sprintf(msg, "%s#%s\n", CMD_ACK, subtype);
+        }
+    }
+    else {
+        if(description) {
+            msg = malloc(sizeof(char)*(6+strlen(description)));
+            sprintf(msg, "%s#%s#%s\n", CMD_ACK, subtype, description);
+        }
+        else {
+            msg = malloc(sizeof(char)*6);
+            sprintf(msg, "%s#\n", CMD_ACK);
+        }
+    }
+    sendline(fd, msg);
+    free(msg);
 }

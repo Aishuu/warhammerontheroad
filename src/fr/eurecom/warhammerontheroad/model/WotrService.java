@@ -16,7 +16,6 @@ public class WotrService extends Service {
 	private static final String TAG					= "WotrService";
 
 	private NetworkParser np;
-	private Player player;
 	private Chat chat;
 	private Game game;
 
@@ -38,7 +37,6 @@ public class WotrService extends Service {
 	@Override
 	public void onCreate() {
 		super.onCreate();
-		this.player = null;
 		this.chat = new Chat();
 		this.game = new Game();
 		this.np = new NetworkParser(this);
@@ -50,14 +48,6 @@ public class WotrService extends Service {
 	public void onDestroy() {
 		super.onDestroy();
 	}
-
-	public Player getPlayer() {
-		return this.player;
-	}
-	
-	public void setPlayer(Player player) {
-		this.player = player;
-	}
 	
 	public Chat getChat() {
 		return this.chat;
@@ -65,8 +55,8 @@ public class WotrService extends Service {
 
 	public String getName() {
 		String name = "anonymous";
-		if(this.player != null && this.player.getName() != null)
-			name = this.player.getName();
+		if(this.game != null && this.game.getPlayer() != null && this.game.getPlayer().getName() != null)
+			name = this.game.getPlayer().getName();
 		return name;
 	}
 

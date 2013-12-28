@@ -16,7 +16,7 @@ public class NewGameIntroActivity extends WotrActivity implements GameServiceLis
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.new_game_intro);
-		this.mService.setPlayer(new Player(this, "GM"));
+		this.mService.getGame().setPlayer(new Player(this, "GM"));
 		this.mService.getGame().addGameServiceListener(this);
 		this.mService.getNetworkParser().create();
 	}

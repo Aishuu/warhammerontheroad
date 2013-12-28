@@ -13,6 +13,7 @@
 
 #include "server.h"
 #include "util.h"
+#include "error.h"
 
 // global variables
 player   players[MAX_PLAYER];               // set of connected players
@@ -141,7 +142,7 @@ void acceptNewSocket(int sock_serv) {
         printf("\rNew connection, socket n° : %d (total : %d)\n", new_socket, nb_client);
     }
     else {
-        sendline(new_socket, "ERR#Too many players !\n");
+        senderror(new_socket, NULL, ERR_TOO_MANY_PLAYERS);
         close(new_socket);
         printf("\rA client has been rejected !\n");
     }
@@ -158,9 +159,13 @@ void removeClient(player p) {
     game g;
     // if the player was in a game
     if((g = p->game)) {
+        // if the player was the GM, remove it
+        if(p == g->game_master)
+            g->game_master = NULL;
+
         // Notification to send to the others
         char * msg = malloc((strlen(p->name)+6)*sizeof(char));
-        sprintf(msg, "DSC#%s\n", p->name);
+        sprintf(msg, "%s#%s\n", CMD_DISCONNECTED, p->name);
 
         for(j=0; j<g->nb_players; j++)
             if(g->players[j] == p) {
@@ -211,8 +216,13 @@ void removeClient(player p) {
 void broadcastMessage(player p, char * buffer) {
     int j;
 
+    if(!p->game) {
+        senderror(p->fd, buffer, ERR_NOT_IN_GAME);
+        return;
+    }
+
     char * msg = malloc((strlen(buffer+4)+strlen(p->name)+7)*sizeof(char));
-    sprintf(msg, "MSG#%s#%s\n", p->name, buffer+4);
+    sprintf(msg, "%s#%s#%s\n", buffer, p->name, buffer+4);
     for(j=0; j < p->game->nb_players; j++)
         if ( p->game->players[j] != p )
             sendline(p->game->players[j]->fd, msg);
@@ -226,7 +236,7 @@ void bindToGame(player p, char * buffer) {
 
     // already in a game
     if(p->game) {
-        sendline(p->fd, "ERR#Already in a game !\n");
+        senderror(p->fd, NULL, ERR_ALREADY_IN_GAME);
         return;
     }
 
@@ -246,7 +256,7 @@ void bindToGame(player p, char * buffer) {
         // Too many games
         if(nb_game >= MAX_GAME) {
             printf("\rThere are so many games boy...\n");
-            sendline(p->fd, "ERR#Can't create a new game !\n");
+            senderror(p->fd, CMD_BIND, ERR_TOO_MANY_GAMES);
             return;
         }
 
@@ -255,6 +265,7 @@ void bindToGame(player p, char * buffer) {
         games[nb_game] = g = malloc(sizeof(struct _game));
         g->nb_players = 0;
         g->id = id;
+        g->game_master = p;
         nb_game++;
     }
 
@@ -263,20 +274,22 @@ void bindToGame(player p, char * buffer) {
 
     // if game is already full
     if(g->nb_players >= MAX_PLAYER_GAME) {
-        sendline(p->fd, "ERR#Too many players in this game !\n");
+        printf("\rToo many players in this game !\n");
+        senderror(p->fd, CMD_BIND, ERR_TOO_MANY_PLAYERS_IN_GAME);
         return;
     }
 
     // check if the name is already used
     for(j=0; j<g->nb_players; j++)
         if(strcmp(g->players[j]->name, p->name) == 0) {
-            sendline(p->fd, "ERR#Name already used !\n");
+            printf("\rName already used !\n");
+            senderror(p->fd, CMD_BIND, ERR_NAME_USED);
             return;
         }
 
     // send notification to players in the game
     char * msg = malloc(sizeof(char)*(6+strlen(p->name)));
-    sprintf(msg, "CNT#%s\n", p->name);
+    sprintf(msg, "%s#%s\n", CMD_CONNECTED, p->name);
     for(j=0;j<g->nb_players; j++)
         if(g->players[j] != p)
             sendline(g->players[j]->fd, msg);
@@ -291,22 +304,26 @@ void bindToGame(player p, char * buffer) {
 void listGames(player p) {
     int j;
 
+    if(nb_game == 0) {
+        sendack(p->fd, CMD_LIST, NULL);
+        return;
+    }
+
     // initialize message
-    char * msg = malloc(sizeof(char)*(8+nb_game*(5+1+MAX_NAME_SIZE)+1));
-    sprintf(msg, "ACK#LST");
+    char * msg = malloc(sizeof(char)*(nb_game*(5+MAX_NAME_SIZE)+nb_game - 1));
+    *msg = 0;
 
     // for each game
     for(j=0;j<nb_game;j++) {
         char tmp[6];
-        // print id and first player's name
+        // print id and game master's name
         sprintf(tmp, "#%05d", games[j]->id);
         strcat(msg, tmp);
-        if(games[j]->nb_players != 0)
-            strcat(msg, games[j]->players[0]->name);
+        if(games[j]->game_master != NULL)
+            strcat(msg, games[j]->game_master->name);
     }
 
-    strcat(msg, "\n");
-    sendline(p->fd, msg);
+    sendack(p->fd, CMD_LIST, msg);
     free(msg);
 }
 
@@ -334,9 +351,9 @@ void getAvailableId(player p) {
         return;
     }
 
-    char msg[15];
-    sprintf(msg, "ACK#CRT#%05d\n", id);
-    sendline(p->fd, msg);
+    char msg[6];
+    sprintf(msg, "%05d\n", id);
+    sendack(p->fd, CMD_CREATE, msg);
 }
 
 // transfer a file
@@ -348,15 +365,27 @@ void transfer_file(player p, char * buffer) {
     char * filepath;
     buffer[10] = 0;
 
+    // if in a game
+    if(!p->game) {
+        senderror(p->fd, CMD_FILE, ERR_NOT_IN_GAME);
+        return;
+    }
+
+    // if there is no game master or if the player is not game master
+    if(p->game->game_master != p) {
+        senderror(p->fd, CMD_FILE, ERR_ONLY_GM);
+        return;
+    }
+
     // check for file size
     if((size = atoi(buffer+4)) > MAX_FILE_SIZE) {
-        sendline(p->fd, "ERR#FLE#This file is too damn big !\n");
+        senderror(p->fd, CMD_FILE, ERR_FILE_TOO_BIG);
         return;
     }
 
     // path of the file is specified
     if(strlen(buffer+11) == 0) {
-        sendline(p->fd, "ERR#Command not recognized...\n");
+        senderror(p->fd, NULL, ERR_NOT_RECOGNIZED);
         return;
     }
 
@@ -366,8 +395,8 @@ void transfer_file(player p, char * buffer) {
 
     // The file can be transmitted
     if(nb_file_processes >= MAX_FILE_TRANSFER) {
-        printf("\rToo many undergoing file transfers !\n");
-        sendline(p->fd, "ERR#FLE#Too many file transfers at the moment. Try later.\n");
+        printf("\rToo many ongoing file transfers !\n");
+        senderror(p->fd, CMD_FILE, ERR_TOO_MANY_FILE_TRANSFERS);
         return;
     }
 
@@ -377,7 +406,8 @@ void transfer_file(player p, char * buffer) {
 
     // fork
     if((childpid = fork()) == -1) {
-        sendline(p->fd, "ERR#FLE#Server failed to fork !\n");
+        printf("\rServer failed to fork !\n");
+        senderror(p->fd, CMD_FILE, ERR_INTERNAL);
         return;
     }
 
@@ -390,7 +420,7 @@ void transfer_file(player p, char * buffer) {
         // create the listening socket
         int filelistener = socket(AF_INET, SOCK_STREAM, 0);
         if(filelistener == -1) {
-            sendline(out[1], "ERR#Could not open socket\n");
+            senderror(out[1], NULL, "Could not open socket");
             exit(EXIT_FAILURE);
         }
         // enable to reuse addr right after we stopped the server
@@ -405,7 +435,7 @@ void transfer_file(player p, char * buffer) {
 
         // bind socket
         if(bind(filelistener, (struct sockaddr *)&servaddr, sizeof(servaddr)) == -1) {
-            sendline(out[1], "ERR#Error when trying to bind !\n");
+            senderror(out[1], NULL, "Error when trying to bind !");
             exit(EXIT_FAILURE);
         }
 
@@ -416,13 +446,13 @@ void transfer_file(player p, char * buffer) {
 
         // Listen on the port
         if(listen(filelistener, MAX_PLAYER_GAME+2) == -1) {
-            sendline(out[1], "ERR#Error when trying to listen !\n");
+            senderror(out[1], NULL, "Error when trying to listen !");
             exit(EXIT_FAILURE);
         }
 
         // send port to parent
         char * msg = malloc(sizeof(char)*(12+strlen(filepath)));
-        sprintf(msg, "PRT#%05d#%s\n", port, filepath);
+        sprintf(msg, "%s#%05d#%s\n", CMD_PORT, port, filepath);
         sendline(out[1], msg);
         free(msg);
 
@@ -434,7 +464,7 @@ void transfer_file(player p, char * buffer) {
         fd_max = filelistener;
         struct timeval to = {TIMEOUT_FILE, 0};
         if(select(fd_max+1, &rfds, NULL, NULL, &to) < 0) {
-            sendline(out[1], "ERR#Error when trying to select !\n");
+            senderror(out[1], NULL, "Error when trying to select !");
             exit(EXIT_FAILURE);
         }
 
@@ -445,7 +475,7 @@ void transfer_file(player p, char * buffer) {
             sender_socket = accept(filelistener, (struct sockaddr *) &csin, &recsize);
         }
         else {
-            sendline(out[1], "ERR#Timeout before sender tries to connect\n");
+            senderror(out[1], NULL, "Timeout before sender tries to connect !");
             exit(EXIT_FAILURE);
         }
 
@@ -465,7 +495,7 @@ void transfer_file(player p, char * buffer) {
             to.tv_usec = 0;
 
             if(select(fd_max+1, &rfds, NULL, NULL, &to) < 0) {
-                sendline(out[1], "ERR#Error when trying to select !\n");
+                senderror(out[1], NULL, "Error when trying to select !");
                 close(serverfile);
                 unlink(filename);
                 exit(EXIT_FAILURE);
@@ -474,7 +504,7 @@ void transfer_file(player p, char * buffer) {
             if(FD_ISSET(sender_socket, &rfds)) {
                 int rc = read(sender_socket, buffer, MAXBUF);
                 if(write(serverfile, buffer, rc) < 0) {
-                    sendline(out[1], "ERR#Error when writing to tmp file !\n");
+                    senderror(out[1], NULL, "Error when writing to tmp file !");
                     close(serverfile);
                     unlink(filename);
                     exit(EXIT_FAILURE);
@@ -482,7 +512,7 @@ void transfer_file(player p, char * buffer) {
                 sent += rc;
             }
             else {
-                sendline(out[1], "ERR#Timeout when sender was sending data\n");
+                senderror(out[1], NULL, "Timeout when sender was sending data");
                 close(serverfile);
                 unlink(filename);
                 exit(EXIT_FAILURE);
@@ -493,17 +523,17 @@ void transfer_file(player p, char * buffer) {
 
         // send notification to the parent that we are ready to broadcast
         msg = malloc(sizeof(char)*(19+strlen(filepath)));
-        sprintf(msg, "RDY#%05d#%06d#%s\n", port, size, filepath);
+        sprintf(msg, "%s#%05d#%06d#%s\n", CMD_READY, port, size, filepath);
         sendline(out[1], msg);
         readline(in[0], buffer, MAXBUF);
         if(buffer[3] != '#') {
-            sendline(out[1], "ERR#Who are you ?\n");
+            senderror(out[1], NULL, "Who are you ?");
             unlink(filename);
             exit(EXIT_FAILURE);
         }
         buffer[3] = 0;
-        if(strcmp(buffer, "ACK") != 0) {
-            sendline(out[1], "ERR#Who are you ?\n");
+        if(strcmp(buffer, CMD_ACK) != 0) {
+            senderror(out[1], NULL, "Who are you ?");
             unlink(filename);
             exit(EXIT_FAILURE);
         }
@@ -533,12 +563,12 @@ void transfer_file(player p, char * buffer) {
             int return_value;
 
             if((return_value = select(fd_max+1, &rfds, &rfds_write, NULL, &to)) < 0) {
-                sendline(out[1], "ERR#Error when select\n");
+                senderror(out[1], NULL, "Error when trying to select !");
                 unlink(filename);
                 exit(EXIT_FAILURE);
             }
             if(return_value == 0) {
-                sendline(out[1], "ERR#Timeout clients\n");
+                senderror(out[1], NULL, "Timeout clients");
                 unlink(filename);
                 exit(EXIT_FAILURE);
             }
@@ -587,7 +617,7 @@ void transfer_file(player p, char * buffer) {
 
                 }
         }
-        sendline(out[1], "ACK#File successfully broadcasted\n");
+        sendack(out[1], NULL, filepath);
         unlink(filename);
         exit(0);
     }
@@ -610,6 +640,73 @@ void transfer_file(player p, char * buffer) {
     }
 }
 
+// Register as a game master
+void register_game_master(player p) {
+    // Not in a game
+    if(!p->game) {
+        senderror(p->fd, CMD_REGISTER_GM, ERR_NOT_IN_GAME);
+        return;
+    }
+
+    // can't register as Game Master if there is already one
+    if(p->game->game_master) {
+        senderror(p->fd, CMD_REGISTER_GM, ERR_ALREADY_A_GM);
+        return;
+    }
+    
+    p->game->game_master = p;
+}
+
+// Send a message to the game master
+void send_to_game_master(player p, char * buffer) {
+    // Not in a game
+    if(!p->game) {
+        senderror(p->fd, CMD_SEND_GM, ERR_NOT_IN_GAME);
+        return;
+    }
+
+    // No game master in this game
+    if(!p->game->game_master) {
+        senderror(p->fd, CMD_SEND_GM, ERR_NO_GM);
+        return;
+    }
+
+    char * msg = malloc((strlen(buffer+4)+strlen(p->name)+7)*sizeof(char));
+    sprintf(msg, "%s#%s#%s\n", CMD_SEND_GM, p->name, buffer+4);
+    sendline(p->game->game_master->fd, msg);
+    free(msg);
+}
+
+// Send message to a player
+void send_to_player(player p, char * buffer) {
+    int j;
+    
+    // Not in a game
+    if(!p->game) {
+        senderror(p->fd, CMD_SEND_TO_PLAYER, ERR_NOT_IN_GAME);
+        return;
+    }
+
+    // get the name of the receiver
+    char * pointer = strchr(buffer+4, '#');
+    if(strlen(buffer+4) < 3 || !pointer) {
+        senderror(p->fd, NULL, ERR_NOT_RECOGNIZED);
+        return;
+    }
+    *pointer = 0;
+
+    for(j=0; j<p->game->nb_players; j++)
+        if(strcmp(p->game->players[j]->name, buffer+4) == 0) {
+            char * msg = malloc((strlen(pointer+1)+strlen(p->name)+7)*sizeof(char));
+            sprintf(msg, "%s#%s#%s\n", CMD_SEND_TO_PLAYER, p->name, pointer+1);
+            sendline(p->game->players[j]->fd, msg);
+            free(msg);
+            return;
+        }
+
+    senderror(p->fd, CMD_SEND_TO_PLAYER, ERR_NO_SUCH_PLAYER);
+}
+
 // get request from client socket
 void parseClientRequest(player p, char * buffer) {
 
@@ -622,35 +719,51 @@ void parseClientRequest(player p, char * buffer) {
         printf("\r[DEBUG] : %s\n", buffer);
 #endif
         buffer[3] = 0;
-        game g=p->game;
 
         // broadcast message
-        if(strcmp(buffer, "MSG") == 0 && g)
+        if(strcmp(buffer, CMD_MESSAGE) == 0)
+            broadcastMessage(p, buffer);
+
+        // broadcast action
+        else if(strcmp(buffer, CMD_ACTION) == 0)
             broadcastMessage(p, buffer);
 
         // bind to a game
-        else if(strlen(buffer+4) > 6 && buffer[9] == '#' && strcmp(buffer, "BND") == 0)
+        else if(strlen(buffer+4) > 6 && buffer[9] == '#' && strcmp(buffer, CMD_BIND) == 0)
             bindToGame(p, buffer);
 
         // list existing games
-        else if(strcmp(buffer, "LST") == 0)
+        else if(strcmp(buffer, CMD_LIST) == 0)
             listGames(p);
 
         // Get available id to creage a game
-        else if(strcmp(buffer, "CRT") == 0)
+        else if(strcmp(buffer, CMD_CREATE) == 0)
             getAvailableId(p);
 
         // Create new socket to send a file
-        else if(strlen(buffer+4) > 7 && buffer[10] == '#' && strcmp(buffer, "FLE") == 0 && g)
+        else if(strlen(buffer+4) > 7 && buffer[10] == '#' && strcmp(buffer, CMD_FILE) == 0)
             transfer_file(p, buffer);
+
+        // Register as a Game Master
+        else if(strcmp(buffer, CMD_REGISTER_GM) == 0)
+            register_game_master(p);
+
+        // Send a message to game master
+        else if(strcmp(buffer, CMD_SEND_GM) == 0)
+            send_to_game_master(p, buffer);
+
+        // Send a message to a specific player
+        else if(strcmp(buffer, CMD_SEND_TO_PLAYER) == 0)
+            send_to_player(p, buffer);
+
         else
-            sendline(p->fd, "ERR#Command not recognized...\n");
+            senderror(p->fd, NULL, ERR_NOT_RECOGNIZED);
     }
     else {
 #ifdef DEBUG
         printf("\r[DEBUG] : %s\n", buffer);
 #endif
-        sendline(p->fd, "ERR#This ain't a command bro...\n");
+        senderror(p->fd, NULL, ERR_NOT_RECOGNIZED);
     }
 }
 
@@ -671,56 +784,53 @@ void parseFileProcessesRequest(int i, char * buffer) {
     // if the fd closed
     if(readline(fileprocesses[i]->in, buffer, MAXBUF-1) == 0) {
         printf("\rChild process MIA...\n");
-        sendline(fileprocesses[i]->sender->fd, "ERR#FLE#Socket connection to child process has been cut\n");
+        senderror(fileprocesses[i]->sender->fd, CMD_FILE, ERR_INTERNAL);
         removeChildProcess(i);
         return;
     }
 
     if(buffer[3] != '#') {
         printf("\rChild process is sending strange commands... Better check that, bro.\n");
-        sendline(fileprocesses[i]->sender->fd, "ERR#FLE#Socket connection to child process has been cut\n");
+        senderror(fileprocesses[i]->sender->fd, CMD_FILE, ERR_INTERNAL);
         removeChildProcess(i);
         return;
     }
 
     buffer[3] = 0;
-    if(strcmp(buffer, "ERR") == 0) {
+    if(strcmp(buffer, CMD_ERR) == 0) {
         printf("\rChild process failed with error: %s\n", buffer+4);
-        char * msg = malloc(sizeof(char)*(strlen(buffer+4)+10));
-        sprintf(msg, "ERR#FLE#%s\n", buffer+4);
-        sendline(fileprocesses[i]->sender->fd, msg);
+        senderror(fileprocesses[i]->sender->fd, CMD_FILE, ERR_INTERNAL);
         removeChildProcess(i);
-        free(msg);
         return;
     }
 
-    if(strcmp(buffer, "PRT") == 0 && buffer[9] == '#') {
+    if(strcmp(buffer, CMD_PORT) == 0 && buffer[9] == '#') {
         char * msg = malloc(sizeof(char)*(6+strlen(buffer+4)));
         buffer[9] = 0;
         printf("\rChild process waiting on port %s\n", buffer+4);
-        sprintf(msg, "PRT#%s#%s\n", buffer+4, buffer+10);
+        sprintf(msg, "%s#%s#%s\n", CMD_PORT, buffer+4, buffer+10);
         sendline(fileprocesses[i]->sender->fd, msg);
         free(msg);
         return;
     }
 
-    if(strcmp(buffer, "RDY") == 0) {
+    if(strcmp(buffer, CMD_READY) == 0) {
         printf("\rFile successfully uploadeded !\n");
         int j;
         char * msg = malloc(sizeof(char)*(6+strlen(buffer+4)));
-        sprintf(msg, "FLE#%s\n", buffer+4);
+        sprintf(msg, "%s#%s\n", CMD_FILE, buffer+4);
         for(j=0; j<fileprocesses[i]->sender->game->nb_players; j++)
             if(fileprocesses[i]->sender->game->players[j] != fileprocesses[i]->sender)
                 sendline(fileprocesses[i]->sender->game->players[j]->fd, msg);
-        sprintf(msg, "ACK#%05d\n", fileprocesses[i]->sender->game->nb_players);
-        sendline(fileprocesses[i]->out, msg);
+        sprintf(msg, "%05d", fileprocesses[i]->sender->game->nb_players);
+        sendack(fileprocesses[i]->out, NULL, msg);
         free(msg);
         return;
     }
 
-    if(strcmp(buffer, "ACK") == 0) {
+    if(strcmp(buffer, CMD_ACK) == 0) {
         printf("\rFile successfully broadcasted !\n");
-        sendline(fileprocesses[i]->sender->fd, "ACK#FLE#File successfully broadcasted\n");
+        sendack(fileprocesses[i]->sender->fd, CMD_FILE, buffer+4);
         removeChildProcess(i);
         return;
     }

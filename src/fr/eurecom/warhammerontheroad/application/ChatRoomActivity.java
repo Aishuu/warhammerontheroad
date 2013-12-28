@@ -133,4 +133,23 @@ public class ChatRoomActivity extends WotrActivity implements ChatListener {
 		});
 	}
 
+	@Override
+	public void fileTransferStatusChanged(String name, int file_status) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void privateMessageReceived(String name, String message) {
+		this.newline = this.newline + "[w] " + name + " : " + message + "\n";
+		runOnUiThread(new Runnable() {
+			public void run() {
+
+				ChatRoomActivity.this.chatRoom.append(ChatRoomActivity.this.newline);
+				ChatRoomActivity.this.newline = "";
+
+			}
+		});
+	}
+
 }

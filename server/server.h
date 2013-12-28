@@ -14,6 +14,23 @@
 #define TIMEOUT_FILE        15                          // Timeout (in seconds) to make the child process close when the sender is not sending anything
 #define QUIT_MESSAGE        "quit\n"                    // Command to send to server to stop
 
+// List or recognized commands
+#define CMD_ERR             "ERR"                       // Error
+#define CMD_ACK             "ACK"                       // Ok
+#define CMD_DISCONNECTED    "DSC"                       // A player got disconnected
+#define CMD_CONNECTED       "CNT"                       // A player is now connected
+#define CMD_MESSAGE         "MSG"                       // Broadcast a message
+#define CMD_BIND            "BND"                       // Bind to a game
+#define CMD_LIST            "LST"                       // List existing games
+#define CMD_CREATE          "CRT"                       // Ask for an available id
+#define CMD_FILE            "FLE"                       // Want to send a file
+#define CMD_PORT            "PRT"                       // File ready to be transmitted on this port
+#define CMD_READY           "RDY"                       // Child process is ready to broadcast a file
+#define CMD_REGISTER_GM     "BGM"                       // register as a game master
+#define CMD_SEND_GM         "SGM"                       // Send a message to the game master
+#define CMD_SEND_TO_PLAYER  "STP"                       // Send a message to a player
+#define CMD_ACTION          "ACT"                       // Broadcast an action
+
 #define DEBUG
 
 typedef struct _player * player;
@@ -30,6 +47,7 @@ struct _player {
 // Hold informations about a game
 struct _game {
     player players[MAX_PLAYER_GAME];
+    player game_master;
     int nb_players;
     int id;
 };

@@ -13,6 +13,11 @@ public class Chat {
     	fireMessageReceived(name, message);
     }
     
+    public void receivePrivateMessage(String name, String message) {
+    	// TODO: store messages in history
+    	firePrivateMessageReceived(name, message);
+    }
+    
     public void userDisconnected(String name) {
     	// TODO: store in history
     	fireUserDisconnected(name);
@@ -21,6 +26,11 @@ public class Chat {
     public void userConnected(String name) {
     	// TODO: store in history
     	fireUserConnected(name);
+    }
+    
+    public void fileTransferStatusChanged(String name, int status) {
+    	for(ChatListener l: chatListeners)
+    		l.fileTransferStatusChanged(name, status);
     }
     
     private void fireUserDisconnected(String name) {
@@ -36,6 +46,11 @@ public class Chat {
     private void fireMessageReceived(String name, String message) {
     	for(ChatListener l: chatListeners)
     		l.messageReceived(name, message);
+    }
+    
+    private void firePrivateMessageReceived(String name, String message) {
+    	for(ChatListener l: chatListeners)
+    		l.privateMessageReceived(name, message);
     }
     
     public void addChatListener(ChatListener listener) {

@@ -22,7 +22,7 @@ public class JoinGameActivity extends WotrActivity {
 			return;
 		try {
 			int id = Integer.parseInt(edit.getText().toString());
-			this.mService.setPlayer(new Player(this, "George"));
+			this.mService.getGame().setPlayer(new Player(this, "George"));
 			this.mService.getNetworkParser().bind(id);
 			Intent intent = new Intent(this, PlayerMenuActivity.class);
 		    startActivity(intent);

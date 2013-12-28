@@ -16,6 +16,14 @@ public interface ChatListener {
 	public void messageReceived(String name, String message);
 	
 	/**
+	 * A private message has been received
+	 * 
+	 * @param name name of the sender
+	 * @param message content of the message
+	 */
+	public void privateMessageReceived(String name, String message);
+	
+	/**
 	 * A user has been disconnected
 	 * 
 	 * @param name name of the user
@@ -28,4 +36,15 @@ public interface ChatListener {
 	 * @param name name of the user
 	 */
 	public void userConnected(String name);
+	
+	/**
+	 * The status of the transfer of a file changed
+	 * 
+	 * @param name the name of the file
+	 * @param file_status the status of the transfer
+	 * 
+	 * @see NetworkParser.FILE_SUCCESSFULLY_TRANSMITTED
+	 * @see NetworkParser.FILE_DOES_NOT_EXIST
+	 */
+	public void fileTransferStatusChanged(String name, int file_status);
 }

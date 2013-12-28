@@ -18,6 +18,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import fr.eurecom.warhammerontheroad.application.ConnectionStateListener;
+import fr.eurecom.warhammerontheroad.model.Dice;
 import fr.eurecom.warhammerontheroad.model.Game;
 import fr.eurecom.warhammerontheroad.model.WotrService;
 import android.os.Environment;
@@ -26,9 +27,6 @@ import static fr.eurecom.warhammerontheroad.network.Cmds.*;
 
 /**
  * Class used to communicate with the server. This class is stateless.
- *  The thread will stop when the connection is lost and you can instantiate 
- *  a new NetworkParser and set the autobind so that it will automatically bind 
- *  to the game after connecting.
  * 
  * @author aishuu
  *
@@ -52,14 +50,24 @@ public class NetworkParser implements Runnable {
 	 * Rate at which the client tries to reconnect
 	 */
 	public final static long RECO_RATE =		5000;
+	
+	/**
+	 * The file has been successfully transmitted
+	 */
+	public final static int FILE_SUCCESSFULLY_TRANSMITTED	= 0;
+	
+	/**
+	 * The file does not exist
+	 */
+	public final static int FILE_DOES_NOT_EXIST				= 1;
 
 	private Socket sock;
 	private WotrService mService;
-	private boolean autobind;
 	private ArrayList<String> filesToSend;
 	private Timer timer;
 	private  boolean mainThreadRunning;
 	private boolean connected;
+	private boolean mustReconnect;
 	private ArrayList<String> delayedCommands;
 	private final Collection<ConnectionStateListener> connectionStateListeners = new ArrayList<ConnectionStateListener>();
 
@@ -72,19 +80,10 @@ public class NetworkParser implements Runnable {
 		super();
 		this.sock = null;
 		this.mService = mService;
-		this.autobind = false;
 		this.filesToSend = new ArrayList<String>();
 		this.delayedCommands = new ArrayList<String>();
 		this.timer = null;
-	}
-
-	/**
-	 * Tell the endpoint if it should try to autobind at startup
-	 * 
-	 * @param autobind wether it should autobind
-	 */
-	public void setAutobind(boolean autobind) {
-		this.autobind = autobind;
+		this.mustReconnect = false;
 	}
 
 	@Override
@@ -97,11 +96,13 @@ public class NetworkParser implements Runnable {
 				connect(NetworkParser.SERVER_ADDR, NetworkParser.SERVER_PORT);
 
 			// autobind
-			if(this.autobind)
-				this.bind(this.mService.getGame().getIdGame());
+			this.bind(this.mService.getGame().getIdGame());
 			
 			// BufferedReader from the socket
 			in = new BufferedReader(new InputStreamReader(this.sock.getInputStream()));
+			
+			// Reconnection part ended
+			this.mustReconnect = false;
 
 			// read from socket
 			String line = "";
@@ -125,13 +126,12 @@ public class NetworkParser implements Runnable {
 				Log.d(TAG, "message : "+line);
 
 				// Error from the server
-				// TODO: add error codes
-				if(parts[0].equals(CMD_ERROR))
-					Log.e(TAG, "Error from server : ".concat(parts[1]));
+				if(parts[0].equals(CMD_ERR))
+					Log.e(TAG, "Error from server : "+line.split("#", 2)[1]);
 
 				// Message broadcasted
 				else if(parts[0].equals(CMD_MESSAGE)) {
-					if(parts.length < 3) {
+					if(this.mService.getGame().getState() == Game.STATE_NO_GAME || this.mService.getGame().getState() == Game.STATE_GAME_CREATE_WAIT || parts.length < 3) {
 						line = "";
 						continue;
 					}
@@ -141,19 +141,60 @@ public class NetworkParser implements Runnable {
 
 				// User disconnected
 				else if(parts[0].equals(CMD_DISCONNECTED)) {
+					if(this.mService.getGame().getState() == Game.STATE_NO_GAME || this.mService.getGame().getState() == Game.STATE_GAME_CREATE_WAIT) {
+						line = "";
+						continue;
+					}
 					mService.getChat().userDisconnected(parts[1]);
 					mService.getGame().userDisconnected(parts[1]);
 				}
 
 				// User connected
 				else if(parts[0].equals(CMD_CONNECTED)) {
+					if(this.mService.getGame().getState() == Game.STATE_NO_GAME || this.mService.getGame().getState() == Game.STATE_GAME_CREATE_WAIT) {
+						line = "";
+						continue;
+					}
 					mService.getChat().userConnected(parts[1]);
 					mService.getGame().userConnected(parts[1]);
+				}
+				
+				// A command send only to the GM
+				else if(parts[0].equals(CMD_SEND_GM)) {
+					if(!this.mService.getGame().isGM() || this.mService.getGame().getState() == Game.STATE_NO_GAME || this.mService.getGame().getState() == Game.STATE_GAME_CREATE_WAIT || parts.length < 3) {
+						line = "";
+						continue;
+					}
+					String msg = line.split("#", 3)[2];
+					this.mService.getGame().parseGMCommand(parts[1], msg);
+					
+				}
+				
+				// A command send only to a player
+				else if(parts[0].equals(CMD_SEND_TO_PLAYER)) {
+					if(parts.length < 3 || this.mService.getName().compareTo(parts[1]) != 0 || this.mService.getGame().getState() == Game.STATE_NO_GAME || this.mService.getGame().getState() == Game.STATE_GAME_CREATE_WAIT) {
+						line = "";
+						continue;
+					}
+					String msg = line.split("#", 3)[2];
+					this.mService.getChat().receivePrivateMessage(parts[1], msg);
+					
+				}
+				
+				// A command broadcasted by a player
+				else if(parts[0].equals(CMD_ACTION)) {
+					if(this.mService.getGame().getState() == Game.STATE_NO_GAME || this.mService.getGame().getState() == Game.STATE_GAME_CREATE_WAIT || parts.length < 3) {
+						line = "";
+						continue;
+					}
+					String msg = line.split("#", 3)[2];
+					this.mService.getGame().parseCommand(parts[1], msg);
+					
 				}
 
 				// Ready to broadcast a file on this port
 				else if(parts[0].equals(CMD_PORT)) {
-					if(parts.length < 3) {
+					if(this.mService.getGame().getState() == Game.STATE_NO_GAME || this.mService.getGame().getState() == Game.STATE_GAME_CREATE_WAIT || parts.length < 3) {
 						line = "";
 						continue;
 					}
@@ -172,7 +213,8 @@ public class NetworkParser implements Runnable {
 										File file=new File(Environment.getExternalStorageDirectory(), filename);
 										if(!file.exists()) {
 											Log.e(TAG, "File "+filename+" doesn't exist !");
-											return; // TODO: notify user
+											NetworkParser.this.mService.getChat().fileTransferStatusChanged(filename, NetworkParser.FILE_DOES_NOT_EXIST);
+											return;
 										}
 										InputStream in = new FileInputStream(file);
 										byte[] buffer = new byte[1024];
@@ -204,12 +246,11 @@ public class NetworkParser implements Runnable {
 							}).start();
 							break;
 						}
-					// TODO: no such file was sent
 				}
 
 				// A file is available on this port
 				else if(parts[0].equals(CMD_FILE)) {
-					if(parts.length < 4) {
+					if(this.mService.getGame().getState() == Game.STATE_NO_GAME || this.mService.getGame().getState() == Game.STATE_GAME_CREATE_WAIT || parts.length < 4) {
 						line = "";
 						continue;
 					}
@@ -262,8 +303,12 @@ public class NetworkParser implements Runnable {
 
 					// File successfully broadcasted
 					if(parts[1].equals(CMD_FILE)) {
-						Log.d(TAG, "File successfully broadcasted !");
-						// TODO: notify sender
+						if(parts.length < 3) {
+							line = "";
+							continue;
+						}
+						Log.d(TAG, "File "+parts[2]+" successfully broadcasted !");
+						this.mService.getChat().fileTransferStatusChanged(parts[2], NetworkParser.FILE_SUCCESSFULLY_TRANSMITTED);
 					}
 
 					// Answer to the LIST command
@@ -297,14 +342,13 @@ public class NetworkParser implements Runnable {
 
 					// Id of the game to be created
 					else if(parts[1].equals(CMD_CREATE)) {
-						if(parts.length < 3 || parts[2].length() == 0) {
+						if(this.mService.getGame().getState() != Game.STATE_GAME_CREATE_WAIT || parts.length < 3 || parts[2].length() == 0) {
 							line = "";
 							continue;
 						}
 						try {
 							int id = Integer.parseInt(parts[2]);
 							bind(id);
-							mService.getGame().setIdGame(id);
 						}catch(NumberFormatException e){
 							Log.e(TAG, "This is no fuckin number !");
 						}
@@ -316,6 +360,7 @@ public class NetworkParser implements Runnable {
 			Log.e(TAG, "Socket is disconnected...");
 			this.setConnected(false);
 			tryToReconnect(NetworkParser.RECO_RATE);
+			this.mustReconnect = true;
 		} finally {
 			try {
 				if(this.sock != null)
@@ -446,7 +491,18 @@ public class NetworkParser implements Runnable {
 	 * @param message message to broadcast
 	 */
 	public void sendMessage(String message) {
+		if(this.mService.getGame().getState() == Game.STATE_NO_GAME || this.mService.getGame().getState() == Game.STATE_GAME_CREATE_WAIT)
+			return;
 		this.sendCommand(CMD_MESSAGE, message);
+	}
+	
+	public void sendAction(int action, Dice d, String... args) {
+		if(this.mService.getGame().getState() != Game.STATE_GAME_TURN)
+			return;
+		String ss = "";
+		for(String s: args)
+			ss+= s+"#";
+		this.sendCommand(CMD_ACTION, d.toString(), ss.substring(0, ss.length()-1));
 	}
 
 	/**
@@ -456,9 +512,11 @@ public class NetworkParser implements Runnable {
 	 */
 	public void bind(int id) {
 		Game game = this.mService.getGame();
-		if(id < 100000) {
+		if((!this.mustReconnect || !game.mustBind()) && (this.mustReconnect || game.mustBind()))
+			return;
+		if(id > 0 && id < 100000) {
 			this.sendCommand(CMD_BIND, String.format("%05d", id), this.mService.getName());
-			game.change_state(Game.STATE_GAME_CREATED);
+			game.bound(id);
 		}
 		else
 			Log.e(TAG, "bind : number "+id+" is too damn big !");
@@ -475,8 +533,10 @@ public class NetworkParser implements Runnable {
 	 * Create new game
 	 */
 	public void create() {
+		if(this.mService.getGame().getState() == Game.STATE_NO_GAME)
+			return;
 		this.sendCommand(CMD_CREATE);
-		this.mService.getGame().change_state(Game.STATE_GAME_CREATE_WAIT);
+		this.mService.getGame().waitForId();
 	}
 
 	/**
@@ -485,9 +545,13 @@ public class NetworkParser implements Runnable {
 	 * @param filename name of the file to broadcast
 	 */
 	public void sendFile(String filename) {
+		if(this.mService.getGame().getState() == Game.STATE_NO_GAME || this.mService.getGame().getState() == Game.STATE_GAME_CREATE_WAIT)
+			return;
 		File file=new File(Environment.getExternalStorageDirectory(), filename);
-		if(!file.exists() || file.length() == 0)
-			return;	// TODO: notify the caller
+		if(!file.exists() || file.length() == 0) {
+			this.mService.getChat().fileTransferStatusChanged(filename, NetworkParser.FILE_DOES_NOT_EXIST);
+			return;
+		}
 		this.sendCommand(CMD_FILE, String.format("%05d", file.length()), filename);
 		this.filesToSend.add(filename);
 	}
@@ -505,7 +569,6 @@ public class NetworkParser implements Runnable {
 
 			connect(NetworkParser.SERVER_ADDR, NetworkParser.SERVER_PORT);
 			
-			setAutobind(false);
 			this.bind(this.mService.getGame().getIdGame());
 
 			// Send commands not yet sent
