@@ -2,6 +2,8 @@ package fr.eurecom.warhammerontheroad.model;
 
 import java.util.ArrayList;
 
+import fr.eurecom.warhammerontheroad.network.NetworkParser;
+
 public class Dice {
 	protected ArrayList<Integer> num;
 	
@@ -35,7 +37,7 @@ public class Dice {
 			return "";
 		String s = "";
 		for(Integer i: this.num)
-			s += i+"#";
+			s += i+NetworkParser.SEPARATOR;
 		return s.substring(0, s.length()-1);
 	}
 }

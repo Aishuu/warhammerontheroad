@@ -725,8 +725,10 @@ void parseClientRequest(player p, char * buffer) {
             broadcastMessage(p, buffer);
 
         // broadcast action
-        else if(strcmp(buffer, CMD_ACTION) == 0)
+        else if(strcmp(buffer, CMD_ACTION) == 0) {
+            printf("test\n");
             broadcastMessage(p, buffer);
+        }
 
         // bind to a game
         else if(strlen(buffer+4) > 6 && buffer[9] == '#' && strcmp(buffer, CMD_BIND) == 0)

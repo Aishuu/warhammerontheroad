@@ -4,7 +4,6 @@ import java.util.ArrayList;
 
 import fr.eurecom.warhammerontheroad.R;
 import fr.eurecom.warhammerontheroad.model.Game;
-import fr.eurecom.warhammerontheroad.model.Player;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -16,7 +15,6 @@ public class NewGameIntroActivity extends WotrActivity implements GameServiceLis
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.new_game_intro);
-		this.mService.getGame().setPlayer(new Player(this, "GM"));
 		this.mService.getGame().addGameServiceListener(this);
 		this.mService.getNetworkParser().create();
 	}
@@ -48,5 +46,9 @@ public class NewGameIntroActivity extends WotrActivity implements GameServiceLis
 
 	@Override
 	public void listAvailableGames(ArrayList<String> avail) {
+	}
+
+	@Override
+	public void beginFight() {
 	}
 }

@@ -9,8 +9,10 @@ import java.util.ArrayList;
 import android.content.Context;
 import android.util.Log;
 import fr.eurecom.warhammerontheroad.R;
+import fr.eurecom.warhammerontheroad.network.Describable;
+import fr.eurecom.warhammerontheroad.network.NetworkParser;
 
-public class Hero extends Case {
+public class Hero extends Case implements Describable {
 	public final static int RACE_HUMAN		= 0;
 	public final static int RACE_ELF		= 1;
 	public final static int RACE_DWARF		= 2;
@@ -35,13 +37,32 @@ public class Hero extends Case {
 	private boolean hasVisee;
 	private Weapon armeDraw;
 	private int id;
+	protected int resource;
 
 	public Hero(Context context, int race){
 		this.id = ++cmp_id;
 		this.context = context;
+		init(race);
+	}
+	
+	public Hero(Context context) {
+		this.context = context;
+	}
+	
+	public void setId(int id) {
+		this.id = id;
+		if(id >= cmp_id)
+			cmp_id = id+1;
+	}
+	
+	public void init(int race) {
 		this.race = race;
 		this.hasVisee = false;
 		this.armeDraw = null;
+		
+		// TODO: change this according to sex, race...
+		this.resource = R.drawable.mage;
+		
 		primarystats = new Stats(race);
 		skills = new ArrayList<Skills>();
 		talents = new ArrayList<Talents>();
@@ -279,6 +300,11 @@ public class Hero extends Case {
 			t.show();
 		}
 	}
+	
+	@Override
+	public int getResource() {
+		return this.resource;
+	}
 
 
 	public void parseGMCommand(String msg) {
@@ -288,17 +314,17 @@ public class Hero extends Case {
 	public void parseCommand(Game game, String msg) {
 		if(msg.length() == 0)
 			return;
-		String[] parts = msg.split("#", -1);
+		String[] parts = msg.split(NetworkParser.SEPARATOR, -1);
 		try {
 			int action = Integer.parseInt(parts[0]);
 			switch(action) {
 			case COMBAT_ACTION_STD_ATTACK:
 				if(parts.length < 3)
 					return;
-				Hero h = game.getHero(Integer.parseInt(parts[1]));
+				Hero h = game.getHero(parts[1]);
 				if(h == null)
 					return;
-				Dice d = new SimulatedDice(msg.split("#", 3)[2]);
+				Dice d = new SimulatedDice(msg.split(NetworkParser.SEPARATOR, 3)[2]);
 				this.attaqueStandard(game, h, d);
 				break;
 			case COMBAT_ACTION_ATTAQUE_RAPIDE:
@@ -429,5 +455,28 @@ public class Hero extends Case {
 
 	public void recevoirDamage(int hp) {
 		Log.d(TAG, hp+" degats recus !");
+	}
+
+	@Override
+	public String representInString() {
+		return Integer.toString(this.id);
+	}
+
+	@Override
+	public String describeAsString() {
+		// TODO: dummy implementation here
+		String result = NetworkParser.constructStringFromArgs(Integer.toString(this.race));
+		return result;
+	}
+
+	@Override
+	public void constructFromString(WotrService service, String s) {
+		// TODO: dummy implementation here
+		String[] parts = s.split(NetworkParser.SEPARATOR, -1);
+		try {
+			init(Integer.parseInt(parts[0]));
+		} catch(NumberFormatException e) {
+			Log.e(TAG, "Not a number !");
+		}
 	}
 }

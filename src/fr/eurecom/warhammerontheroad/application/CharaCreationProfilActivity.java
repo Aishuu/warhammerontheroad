@@ -1,6 +1,7 @@
 package fr.eurecom.warhammerontheroad.application;
 
 import fr.eurecom.warhammerontheroad.R;
+import fr.eurecom.warhammerontheroad.model.Player;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.View;
@@ -21,6 +22,8 @@ public class CharaCreationProfilActivity extends WotrActivity {
 	}
 
 	public void terminate(View view) {
+		Player p = this.mService.getGame().getMe();
+		this.mService.getNetworkParser().createPlayer(p);
 		this.finish();
 	}
 }

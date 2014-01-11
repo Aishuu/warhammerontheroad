@@ -25,4 +25,13 @@ public abstract class Case {
 		this.x = x;
 		this.y = y;
 	}
+	
+	public int getResource() {
+		return -1;
+	}
+	
+	@Override
+	public String toString() {
+		return "0";
+	}
 }

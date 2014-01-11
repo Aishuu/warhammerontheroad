@@ -1,7 +1,11 @@
 package fr.eurecom.warhammerontheroad.application;
 
+import java.util.ArrayList;
+
 import fr.eurecom.warhammerontheroad.R;
+import fr.eurecom.warhammerontheroad.model.Game;
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
@@ -17,7 +21,7 @@ import android.widget.TextView;
  * @author aishuu
  *
  */
-public class ChatRoomActivity extends WotrActivity implements ChatListener {
+public class ChatRoomActivity extends WotrActivity implements ChatListener, GameServiceListener {
 	private TextView chatRoom;
 	private String newline;
 
@@ -150,6 +154,20 @@ public class ChatRoomActivity extends WotrActivity implements ChatListener {
 
 			}
 		});
+	}
+
+	@Override
+	public void onStateChanged(Game game) {
+	}
+
+	@Override
+	public void listAvailableGames(ArrayList<String> avail) {
+	}
+
+	@Override
+	public void beginFight() {
+		Intent intent = new Intent(this, CombatActivity.class);
+	    startActivity(intent);
 	}
 
 }

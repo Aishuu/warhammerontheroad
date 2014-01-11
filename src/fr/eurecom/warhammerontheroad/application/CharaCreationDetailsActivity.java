@@ -37,7 +37,7 @@ public class CharaCreationDetailsActivity extends WotrActivity implements OnItem
 	
 	public void onItemSelected(AdapterView<?> parent, View view, 
             int pos, long id) {
-        this.mService.getGame().getPlayer().createHero(pos);
+        this.mService.getGame().getMe().init(pos);
     }
 
     public void onNothingSelected(AdapterView<?> parent) {

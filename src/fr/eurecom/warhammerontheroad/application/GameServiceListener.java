@@ -9,4 +9,5 @@ public interface GameServiceListener {
 	public void userDisconnected(String name);
 	public void userConnected(String name);
 	public void listAvailableGames(ArrayList<String> avail);
+	public void beginFight();
 }

@@ -2,6 +2,7 @@ package fr.eurecom.warhammerontheroad.model;
 
 import fr.eurecom.warhammerontheroad.network.NetworkParser;
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Binder;
 import android.os.IBinder;
@@ -14,6 +15,7 @@ import android.util.Log;
  */
 public class WotrService extends Service {
 	private static final String TAG					= "WotrService";
+	public static final String GM_NAME				= "GM";
 
 	private NetworkParser np;
 	private Chat chat;
@@ -38,7 +40,7 @@ public class WotrService extends Service {
 	public void onCreate() {
 		super.onCreate();
 		this.chat = new Chat();
-		this.game = new Game();
+		this.game = new Game(this);
 		this.np = new NetworkParser(this);
 		Log.d(TAG, "Creating the socket..");
 		new Thread(this.np).start();
@@ -54,9 +56,11 @@ public class WotrService extends Service {
 	}
 
 	public String getName() {
+		if(this.game.isGM())
+			return WotrService.GM_NAME;
 		String name = "anonymous";
-		if(this.game != null && this.game.getPlayer() != null && this.game.getPlayer().getName() != null)
-			name = this.game.getPlayer().getName();
+		if(this.game != null && this.game.getMe() != null && this.game.getMe().getName() != null)
+			name = this.game.getMe().getName();
 		return name;
 	}
 
@@ -66,5 +70,9 @@ public class WotrService extends Service {
 	
 	public NetworkParser getNetworkParser() {
 		return this.np;
+	}
+	
+	public Context getContext() {
+		return getApplicationContext();
 	}
 }
