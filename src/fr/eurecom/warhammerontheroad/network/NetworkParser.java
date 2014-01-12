@@ -42,7 +42,7 @@ public class NetworkParser implements Runnable {
 	 */
 	//public final static String SERVER_ADDR = 	"82.236.41.149";
 	//public final static String SERVER_ADDR = 	"172.24.10.37";
-	public final static String SERVER_ADDR =	"192.168.1.38";
+	public final static String SERVER_ADDR =	"192.168.0.11";
 
 	/**
 	 * Separator for commands

@@ -13,24 +13,20 @@ import fr.eurecom.warhammerontheroad.network.Describable;
 import fr.eurecom.warhammerontheroad.network.NetworkParser;
 
 public class Hero extends Case implements Describable {
-	public final static int RACE_HUMAN		= 0;
-	public final static int RACE_ELF		= 1;
-	public final static int RACE_DWARF		= 2;
-	public final static int RACE_HOBBIT		= 3;
 	private final static String TAG			= "Hero";
 	private static int cmp_id				= 0;
 
-	public final static int COMBAT_ACTION_VISER = 			0;
-	public final static int COMBAT_ACTION_MOVE =			1;
-	public final static int COMBAT_ACTION_STD_ATTACK =		2;
-	public final static int COMBAT_ACTION_CHARGE =			3;
-	public final static int COMBAT_ACTION_DEGAINER =		4;
-	public final static int COMBAT_ACTION_RECHARGER =		5;
-	public final static int COMBAT_ACTION_ATTAQUE_RAPIDE =	6;
+	public final static int VISER = 			0;
+	public final static int MOVE =			1;
+	public final static int STD_ATTACK =		2;
+	public final static int CHARGE =			3;
+	public final static int DEGAINER =		4;
+	public final static int RECHARGER =		5;
+	public final static int ATTAQUE_RAPIDE =	6;
 
 	private Context context;
 	private Stats primarystats, actualstats;
-	private int race; //0 = human, 1 = elf, 2 = dwarf, 3 = hobbit
+	private Race race; //0 = human, 1 = elf, 2 = dwarf, 3 = hobbit
 	private ArrayList<Skills> skills;
 	private ArrayList<Talents> talents;
 	private Job job;
@@ -39,7 +35,7 @@ public class Hero extends Case implements Describable {
 	private int id;
 	protected int resource;
 
-	public Hero(Context context, int race){
+	public Hero(Context context, Race race){
 		this.id = ++cmp_id;
 		this.context = context;
 		init(race);
@@ -55,7 +51,7 @@ public class Hero extends Case implements Describable {
 			cmp_id = id+1;
 	}
 	
-	public void init(int race) {
+	public void init(Race race) {
 		this.race = race;
 		this.hasVisee = false;
 		this.armeDraw = null;
@@ -123,6 +119,7 @@ public class Hero extends Case implements Describable {
 			break;
 		default:
 			Log.e(TAG, "Unknown race !");
+			//TODO add enemies cases
 		}
 	}
 
@@ -272,25 +269,7 @@ public class Hero extends Case implements Describable {
 	}
 
 	public void show(){
-		switch(race){
-		case RACE_HUMAN:
-			Log.d("race","humain");
-			break;
-
-		case RACE_ELF:
-			Log.d("race","elfe");
-			break;
-
-		case RACE_DWARF:
-			Log.d("race","nain");
-			break;
-
-		case RACE_HOBBIT:
-			Log.d("race","hobbit");
-			break;
-		default:
-			Log.d("race", "Unknown");
-		}
+		Log.d("race",race.toString());
 		if(actualstats != null)
 			actualstats.show();
 		for(Skills s : skills){
@@ -318,7 +297,7 @@ public class Hero extends Case implements Describable {
 		try {
 			int action = Integer.parseInt(parts[0]);
 			switch(action) {
-			case COMBAT_ACTION_STD_ATTACK:
+			case STD_ATTACK:
 				if(parts.length < 3)
 					return;
 				Hero h = game.getHero(parts[1]);
@@ -327,17 +306,17 @@ public class Hero extends Case implements Describable {
 				Dice d = new SimulatedDice(msg.split(NetworkParser.SEPARATOR, 3)[2]);
 				this.attaqueStandard(game, h, d);
 				break;
-			case COMBAT_ACTION_ATTAQUE_RAPIDE:
+			case ATTAQUE_RAPIDE:
 				break;
-			case COMBAT_ACTION_CHARGE:
+			case CHARGE:
 				break;
-			case COMBAT_ACTION_DEGAINER:
+			case DEGAINER:
 				break;
-			case COMBAT_ACTION_MOVE:
+			case MOVE:
 				break;
-			case COMBAT_ACTION_RECHARGER:
+			case RECHARGER:
 				break;
-			case COMBAT_ACTION_VISER:
+			case VISER:
 				break;
 			default:
 				Log.e(TAG, "Received : "+msg);
@@ -465,7 +444,7 @@ public class Hero extends Case implements Describable {
 	@Override
 	public String describeAsString() {
 		// TODO: dummy implementation here
-		String result = NetworkParser.constructStringFromArgs(Integer.toString(this.race));
+		String result = NetworkParser.constructStringFromArgs(Integer.toString(this.race.getIndex()));
 		return result;
 	}
 
@@ -474,7 +453,7 @@ public class Hero extends Case implements Describable {
 		// TODO: dummy implementation here
 		String[] parts = s.split(NetworkParser.SEPARATOR, -1);
 		try {
-			init(Integer.parseInt(parts[0]));
+			init(Race.raceFromIndex(Integer.parseInt(parts[0])));
 		} catch(NumberFormatException e) {
 			Log.e(TAG, "Not a number !");
 		}

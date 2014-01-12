@@ -5,8 +5,7 @@ import android.app.Activity;
 import android.os.Bundle;
 
 public abstract class WotrActivity extends Activity {
-	WotrService mService;
-	boolean mBound = false;
+	protected WotrService mService;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {

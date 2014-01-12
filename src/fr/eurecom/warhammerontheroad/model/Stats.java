@@ -7,7 +7,7 @@ public class Stats {
 	private int CC, CT, F, E, Ag, Int, FM, Soc, A, B, BF, BE, M, Mag, PF, PD;
 	private int type; // 0 = base, 1 = secondaire, 2 = total;
 
-	public Stats(int race) {
+	public Stats(Race race) {
 		type = 0;
 		int randB = Tools.tenDice();
 		int randPD = Tools.tenDice();
@@ -15,7 +15,7 @@ public class Stats {
 		FM  = 20;
 		A   =  1;
 
-		switch (race){
+		switch (race.getIndex()){
 		case 0 : 
 			CC  = 20;
 			CT  = 20;

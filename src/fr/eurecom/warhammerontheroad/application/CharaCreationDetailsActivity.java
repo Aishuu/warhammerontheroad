@@ -31,15 +31,19 @@ public class CharaCreationDetailsActivity extends WotrActivity implements OnItem
 	}
 	
 	public void next(View view) {
+		// TODO save info model
 		Intent intent = new Intent(this, CharaCreationProfilActivity.class);
 	    startActivity(intent);
 	}
 	
+	@Override
 	public void onItemSelected(AdapterView<?> parent, View view, 
             int pos, long id) {
         this.mService.getGame().getMe().init(pos);
+        // TODO print stat according to race
     }
 
+	@Override
     public void onNothingSelected(AdapterView<?> parent) {
         // Another interface callback
     }
