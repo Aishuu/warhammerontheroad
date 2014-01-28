@@ -6,7 +6,8 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context=".StartMenuActivity" >
+    tools:context=".StartMenuActivity"
+    android:background="@drawable/parchemin_vierge_vert" >
 
     <ImageView
         android:id="@+id/backgroundImage"
@@ -24,6 +25,12 @@
         android:gravity="center"
         android:orientation="vertical"
         android:weightSum="6" >
+        
+        <ImageView
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:contentDescription="@null" />
 
         <ImageView
             android:id="@+id/titleImage"
@@ -32,10 +39,7 @@
             android:contentDescription="@string/app_name"
             android:src="@drawable/title" />
 
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:layout_weight="1" />
+        
 
         <LinearLayout
             android:layout_width="fill_parent"
@@ -44,11 +48,10 @@
             android:gravity="center"
             android:orientation="vertical" >
 
-            <Button
+            <fr.eurecom.warhammerontheroad.application.WotrButton
                 android:id="@+id/btnCreateGame"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:background="@drawable/button_parchment"
                 android:text="@string/createGame"
                 android:onClick="createGame" />
         </LinearLayout>
@@ -60,11 +63,10 @@
             android:gravity="center"
             android:orientation="vertical" >
 
-            <Button
+            <fr.eurecom.warhammerontheroad.application.WotrButton
                 android:id="@+id/btnJoinGame"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:background="@drawable/button_parchment"
                 android:text="@string/joinGame"
                 android:onClick="joinGame" />
         </LinearLayout>
@@ -76,11 +78,10 @@
             android:gravity="center"
             android:orientation="vertical" >
 
-            <Button
+            <fr.eurecom.warhammerontheroad.application.WotrButton
                 android:id="@+id/btnQuit"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:background="@drawable/button_parchment"
                 android:text="@string/quit"
                 android:onClick="quit" />
         </LinearLayout>

@@ -16,5 +16,4 @@ public abstract class Weapon extends GeneralItem{
 	}
 	
 	public abstract int getDegats();
-
 }

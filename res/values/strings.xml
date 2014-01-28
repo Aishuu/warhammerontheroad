@@ -1,11 +1,93 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <!-- Strings of activity start menu -->
     <string name="app_name">Warhammer on the Road</string>
     <string name="action_settings">Settings</string>
     <string name="createGame">Create Game</string>
     <string name="joinGame">Join Game</string>
     <string name="quit">Quit</string>
     <string name="backgroundImageDesc">Background Image</string>
+    <string name="title_activity_chat_room">Chat Room</string>
+    <string name="sendMessage">Write your message</string>
+    <string name="buttonSendMessage">Send Message</string>
+    <string name="sendFile">Name of a file to send</string>
+    <string name="buttonSendFile">Send File</string>
+    <string name="listAvailGames">List Games</string>
+    <string name="title_activity_create_game">Create Game</string>
 
+    <!-- Strings of new game intro -->
+    <string name="new_gm">All Hail the new Game Master! You will reign upon the crowds of game n°</string>
+    <string name="give_number">Don\'t forget this number to access your game. Give it to your fellow players, so they can join!</string>
+    <string name="access_gm_menu">Begin your Adventure</string>
+    <string name="cancel_game_creation">Renounce to your role</string>
+
+    <!-- Strings of join game -->
+    <string name="enter_game_nb">Please enter your character name and the number of the game you want to join</string>
+    <string name="enter_game">Start playing</string>
+    <string name="number0">00000</string>
+
+    <!-- Strings of player menu -->
+    <string name="create_chara">Create your character</string>
+    <string name="access_chat">Talk</string>
+    <string name="read_story">Read the story</string>
+    <string name="access_play">Play</string>
+
+    <!-- Strings of gm menu -->
+    <string name="open_book">Open Warhammer book</string>
+    <string name="write_story">Write the story</string>
+    <string name="create_support_chara">Add standard character</string>
+    <string name="players_data">See all players stats</string>
+
+    <!-- Strings of chara creation details -->
+    <string name="name">Name</string>
+    <string name="race">Race</string>
+
+    <string-array name="race_array">
+        <item>Human</item>
+        <item>Elf</item>
+        <item>Dwarf</item>
+        <item>Halfling</item>
+    </string-array>
+
+    <string name="age">Age</string>
+    <string name="eye_color">Eye color</string>
+    <string name="hair_color">Hair color</string>
+    <string name="birth_place">Birth place</string>
+    <string name="sexe">Sexe</string>
+
+    <string-array name="sexe_array">
+        <item>Male</item>
+        <item>Female</item>
+    </string-array>
+
+    <string name="size">Size</string>
+    <string name="weight">Weight</string>
+    <string name="siblings_number">Siblings</string>
+    <string name="next">Next</string>
+    <string name="title_activity_chara_creation_profil">Character Creation</string>
+    <string name="hello_world">Hello world!</string>
+
+    <!-- Strings of chara creation profil -->
+    <string name="profil_principal">Profil principal</string>
+    <string name="cc">CC</string>
+    <string name="ct">CT</string>
+    <string name="f">F</string>
+    <string name="e">E</string>
+    <string name="ag">Ag</string>
+    <string name="intelligence">Int</string>
+    <string name="fm">FM</string>
+    <string name="soc">Soc</string>
+    <string name="base">Base</string>
+    <string name="profil_secondaire">Profil secondaire</string>
+    <string name="a">A</string>
+    <string name="b">B</string>
+    <string name="bf">BF</string>
+    <string name="be">BE</string>
+    <string name="mag">Mag</string>
+    <string name="m">M</string>
+    <string name="pf">PF</string>
+    <string name="pd">PD</string>
+    <string name="carrier">Carrier</string>
+    <string name="terminate">Terminate</string>
 </resources>

@@ -1,3 +1,4 @@
+
 package fr.eurecom.warhammerontheroad.model;
 
 import java.io.BufferedReader;

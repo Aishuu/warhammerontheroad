@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 canotage 0 2
 charisme 0 7
 commandement 0 7
@@ -17,4 +18,25 @@ natation 0 2
 perception 0 5
 resistance_a_l'alcool 0 3
 soins_des_animaux 0 5
+=======
+canotage 0 2
+charisme 0 7
+commandement 0 7
+commerage 0 7
+conduite_d'attelage 0 2
+deguisement 0 7
+deplacement_silencieux 0 4
+dissimulation 0 4
+equitation 0 4
+escalade 0 2
+evaluation 0 5
+fouille 0 5
+intimidation 0 2
+jeu 0 5
+marchandage 0 7
+natation 0 2
+perception 0 5
+resistance_a_l'alcool 0 3
+soins_des_animaux 0 5
+>>>>>>> master
 survie 0 5

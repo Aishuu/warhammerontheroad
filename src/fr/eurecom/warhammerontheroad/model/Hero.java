@@ -1,3 +1,4 @@
+
 package fr.eurecom.warhammerontheroad.model;
 
 import java.io.BufferedReader;
@@ -9,25 +10,66 @@ import java.util.ArrayList;
 import android.content.Context;
 import android.util.Log;
 import fr.eurecom.warhammerontheroad.R;
+import fr.eurecom.warhammerontheroad.network.Describable;
+import fr.eurecom.warhammerontheroad.network.NetworkParser;
 
-public class Hero {
+public class Hero extends Case implements Describable {
+	public final static int RACE_HUMAN		= 0;
+	public final static int RACE_ELF		= 1;
+	public final static int RACE_DWARF		= 2;
+	public final static int RACE_HOBBIT		= 3;
+	private final static String TAG			= "Hero";
+	private static int cmp_id				= 0;
+
+	public final static int COMBAT_ACTION_VISER = 			0;
+	public final static int COMBAT_ACTION_MOVE =			1;
+	public final static int COMBAT_ACTION_STD_ATTACK =		2;
+	public final static int COMBAT_ACTION_CHARGE =			3;
+	public final static int COMBAT_ACTION_DEGAINER =		4;
+	public final static int COMBAT_ACTION_RECHARGER =		5;
+	public final static int COMBAT_ACTION_ATTAQUE_RAPIDE =	6;
+
 	private Context context;
 	private Stats primarystats, actualstats;
 	private int race; //0 = human, 1 = elf, 2 = dwarf, 3 = hobbit
 	private ArrayList<Skills> skills;
 	private ArrayList<Talents> talents;
 	private Job job;
-	private Weapon weapon;
-	
+	private boolean hasVisee;
+	private Weapon armeDraw;
+	private int id;
+	protected int resource;
+
 	public Hero(Context context, int race){
+		this.id = ++cmp_id;
 		this.context = context;
+		init(race);
+	}
+	
+	public Hero(Context context) {
+		this.context = context;
+	}
+	
+	public void setId(int id) {
+		this.id = id;
+		if(id >= cmp_id)
+			cmp_id = id+1;
+	}
+	
+	public void init(int race) {
 		this.race = race;
+		this.hasVisee = false;
+		this.armeDraw = null;
+		
+		// TODO: change this according to sex, race...
+		this.resource = R.drawable.mage;
+		
 		primarystats = new Stats(race);
 		skills = new ArrayList<Skills>();
 		talents = new ArrayList<Talents>();
 		CreateBasicsSkills();
 		switch(race){
-		case 0:
+		case RACE_HUMAN:
 			int index1, index2;
 			skills.get(3).upgrade();
 			AddAdvancedSkills(4, "l'empire");
@@ -39,8 +81,8 @@ public class Hero {
 			AddTalents(index1);
 			AddTalents(index2);
 			break;
-			
-		case 1:
+
+		case RACE_ELF:
 			AddAdvancedSkills(4, "elfes");
 			AddAdvancedSkills(16, "eltharin");
 			AddAdvancedSkills(16, "reikspiel");
@@ -51,8 +93,8 @@ public class Hero {
 			AddTalents(64);
 			AddTalents(81);
 			break;
-			
-		case 2:
+
+		case RACE_DWARF:
 			AddAdvancedSkills(4, "nains");
 			AddAdvancedSkills(16, "khazalid");
 			AddAdvancedSkills(16, "reikspiel");
@@ -66,8 +108,8 @@ public class Hero {
 			AddTalents(80);
 			AddTalents(81);
 			break;
-			
-		default:
+
+		case RACE_HOBBIT:
 			skills.get(3).upgrade();
 			AddAdvancedSkills(3, "genealogie/heraldique");
 			AddAdvancedSkills(4, "halflings");
@@ -79,50 +121,60 @@ public class Hero {
 			AddTalents(59);
 			AddTalents(81);
 			AddTalents(Tools.getStartingTalent(3));
+			break;
+		default:
+			Log.e(TAG, "Unknown race !");
 		}
-		weapon = new MeleeWeapon("one handed sword", "0 0 0");
 	}
-	
+
 	public void CreateBasicsSkills(){
 		int i = 0;
 		InputStream is = context.getResources().openRawResource(R.raw.basicskills);
 		if (is != null) {
-            InputStreamReader inputStreamReader = new InputStreamReader(is);
-            BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
-            String receiveString = "";
-            StringBuilder stringBuilder = new StringBuilder();
+			InputStreamReader inputStreamReader = new InputStreamReader(is);
+			BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+			String receiveString = "";
 
-            try {
+			try {
 				while ( (receiveString = bufferedReader.readLine()) != null) {
-				    skills.add(new Skills(i, receiveString));
-				    i++;
+					skills.add(new Skills(i, receiveString));
+					i++;
 				}
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 
-            try {
+			try {
 				is.close();
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-        }
+		}
 	}
 	
+	public int getId() {
+		return this.id;
+	}
+	
+	@Override
+	public boolean equals(Object o) {
+		if(!(o instanceof Hero))
+			return false;
+		Hero h = (Hero) o;
+		return (this.id == h.getId());
+	}
+
 	public void AddAdvancedSkills(int i, String speciality){
 		int j = 0;
 		Skills tmp = null;
 		boolean exist = false;
 		InputStream is = context.getResources().openRawResource(R.raw.advancedskills);
 		if (is != null) {
-            InputStreamReader inputStreamReader = new InputStreamReader(is);
-            BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
-            String receiveString = "";
-            StringBuilder stringBuilder = new StringBuilder();
+			InputStreamReader inputStreamReader = new InputStreamReader(is);
+			BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+			String receiveString = "";
 
-            try {
+			try {
 				while ( (receiveString = bufferedReader.readLine()) != null) {
 					if (j == i)
 					{
@@ -140,34 +192,31 @@ public class Hero {
 							skills.add(tmp);
 						}
 					}
-				    j++;
+					j++;
 				}
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 
-            try {
+			try {
 				is.close();
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-        }
+		}
 	}
-	
+
 	public void AddTalents(int i){
 		int j = 0;
 		Talents tmp = null;
 		boolean exist = false;
 		InputStream is = context.getResources().openRawResource(R.raw.talents);
 		if (is != null) {
-            InputStreamReader inputStreamReader = new InputStreamReader(is);
-            BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
-            String receiveString = "";
-            StringBuilder stringBuilder = new StringBuilder();
+			InputStreamReader inputStreamReader = new InputStreamReader(is);
+			BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+			String receiveString = "";
 
-            try {
+			try {
 				while ( (receiveString = bufferedReader.readLine()) != null) {
 					if (j == i)
 					{
@@ -184,29 +233,26 @@ public class Hero {
 							talents.add(tmp);
 						}
 					}
-						j++;
+					j++;
 				}
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 
-            try {
+			try {
 				is.close();
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-        }
+		}
 	}
-	
+
 	public void AddJob(int index)
 	{
 		int i;
 		job = new Job(index, context);
 		actualstats = new Stats(primarystats, job.getSecondaryStats());
 		int tmps[] = job.getSkills();
-		String yo = "";
 		for(i = 0; i<tmps.length; i++)
 		{
 			if(tmps[i]<100)
@@ -223,28 +269,31 @@ public class Hero {
 		{
 			AddTalents(tmpt[i]);
 		}
-		
+
 	}
-	
+
 	public void show(){
 		switch(race){
-		case 0:
+		case RACE_HUMAN:
 			Log.d("race","humain");
 			break;
-			
-		case 1:
+
+		case RACE_ELF:
 			Log.d("race","elfe");
 			break;
-			
-		case 2:
+
+		case RACE_DWARF:
 			Log.d("race","nain");
 			break;
-			
-		default:
+
+		case RACE_HOBBIT:
 			Log.d("race","hobbit");
 			break;
+		default:
+			Log.d("race", "Unknown");
 		}
-		actualstats.show();
+		if(actualstats != null)
+			actualstats.show();
 		for(Skills s : skills){
 			s.show();
 		}
@@ -284,5 +333,184 @@ public class Hero {
 			return false;
 		return true;
 	}
+	
+	@Override
+	public int getResource() {
+		return this.resource;
+	}
 
+
+	public void parseGMCommand(String msg) {
+		// TODO: parse the commands. For ack, set timer, show notif to gm
+	}
+
+	public void parseCommand(Game game, String msg) {
+		if(msg.length() == 0)
+			return;
+		String[] parts = msg.split(NetworkParser.SEPARATOR, -1);
+		try {
+			int action = Integer.parseInt(parts[0]);
+			switch(action) {
+			case COMBAT_ACTION_STD_ATTACK:
+				if(parts.length < 3)
+					return;
+				Hero h = game.getHero(parts[1]);
+				if(h == null)
+					return;
+				Dice d = new SimulatedDice(msg.split(NetworkParser.SEPARATOR, 3)[2]);
+				this.attaqueStandard(game, h, d);
+				break;
+			case COMBAT_ACTION_ATTAQUE_RAPIDE:
+				break;
+			case COMBAT_ACTION_CHARGE:
+				break;
+			case COMBAT_ACTION_DEGAINER:
+				break;
+			case COMBAT_ACTION_MOVE:
+				break;
+			case COMBAT_ACTION_RECHARGER:
+				break;
+			case COMBAT_ACTION_VISER:
+				break;
+			default:
+				Log.e(TAG, "Received : "+msg);
+				Log.e(TAG, "Illegal action code !");
+			}
+		} catch(NumberFormatException e) {
+			Log.e(TAG, "Received : "+msg);
+			Log.e(TAG, "Not a number !");
+		}
+	}
+
+	public boolean peutViser(Game game) {
+		return !this.hasVisee;
+		// TODO: PA
+	}
+
+	public ArrayList<Case> whereMovement(Game game) {
+		// TODO: Change range according to movement
+		ArrayList<Case> all = game.getMap().getInRangeCases(this, 0, 2);
+		if(all == null)
+			return null;
+		ArrayList<Case> result = new ArrayList<Case>();
+		for(Case c : all)
+			if(c instanceof Vide)
+				result.add(c);
+		if(result.size() == 0)
+			return null;
+		return result;
+	}
+
+	public ArrayList<Case> whereAttaqueStandard(Game game) {
+		// TODO: check degainer...
+		ArrayList<Case> all = game.getMap().getInRangeCases(this, 1, 1);
+		if(all == null)
+			return null;
+		ArrayList<Case> result = new ArrayList<Case>();
+		for(Case c : all)
+			if(c instanceof Hero)
+				result.add(c);
+		if(result.size() == 0)
+			return null;
+		return result;
+	}
+
+	public ArrayList<Case> whereCharge(Game game) {
+		// TODO: implement this
+		return whereAttaqueStandard(game);
+	}
+
+	public boolean peutDegainer(Game game) {
+		return this.armeDraw == null;
+	}
+
+	public ArrayList<Case> whereDesengager(Game game) {
+		// TODO: Change range according to movement
+		ArrayList<Case> all = game.getMap().getInRangeCases(this, 0, 2);
+		if(all == null)
+			return null;
+		ArrayList<Case> result = new ArrayList<Case>();
+		for(Case c : all)
+			if(c instanceof Vide)
+				result.add(c);
+		if(result.size() == 0)
+			return null;
+		return result;
+	}
+
+	public ArrayList<Case> whereAttaqueRapide(Game game) {
+		// TODO: check degainer...
+		ArrayList<Case> all = game.getMap().getInRangeCases(this, 1, 1);
+		if(all == null)
+			return null;
+		ArrayList<Case> result = new ArrayList<Case>();
+		for(Case c : all)
+			if(c instanceof Hero)
+				result.add(c);
+		if(result.size() == 0)
+			return null;
+		return result;
+	}
+
+	public boolean peutRecharger(Game game) {
+		return false;
+	}
+
+	public void viser(Game game) {
+		this.hasVisee = true;
+	}
+
+	public void move(Game game, Case dest) {
+		game.getMap().setCase(this, dest);
+	}
+
+	public void attaqueStandard(Game game, Hero hero, Dice dice) {
+		// TODO
+		Log.d(TAG, "Ten dice : "+dice.tenDice());
+	}
+
+	public void charge(Game game, Hero hero, Case dest) {
+		game.getMap().setCase(this, dest);
+		// TODO
+	}
+
+	public void degainer(Game game, Weapon arme) {
+		this.armeDraw = arme;
+	}
+
+	public void recharger(Game game) {
+		// TODO
+	}
+
+	public void attaqueRapide(Game game, Hero hero) {
+		// TODO
+	}
+
+	public void recevoirDamage(int hp) {
+		Log.d(TAG, hp+" degats recus !");
+	}
+
+	@Override
+	public String representInString() {
+		return Integer.toString(this.id);
+	}
+
+	@Override
+	public String describeAsString() {
+		// TODO: dummy implementation here
+		String result = NetworkParser.constructStringFromArgs(Integer.toString(this.race));
+		return result;
+	}
+
+	@Override
+	public void constructFromString(WotrService service, String s) {
+		// TODO: dummy implementation here
+		String[] parts = s.split(NetworkParser.SEPARATOR, -1);
+		try {
+			init(Integer.parseInt(parts[0]));
+		} catch(NumberFormatException e) {
+			Log.e(TAG, "Not a number !");
+		}
+	}
 }
+
