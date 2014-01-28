@@ -1,5 +1,6 @@
 package fr.eurecom.warhammerontheroad;
 
+import fr.eurecom.warhammerontheroad.model.Hero;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -9,12 +10,15 @@ import android.widget.EditText;
 
 public class StartMenuActivity extends Activity {
 	public final static String EXTRA_MESSAGE = "fr.eurecom.warhammerontheroad.MESSAGE";
-
+	private Hero hero;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_start_menu);
+		hero = new Hero(this, 0);
+		hero.AddJob(0);
+		hero.show();
 	}
 
 	@Override
