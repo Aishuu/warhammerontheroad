@@ -15,7 +15,7 @@ public class Job {
 	
 	private Context context;
 	private String name;
-	private Stats secondarystats;
+	private SecondaryStats secondarystats;
 	private int[] skills;
 	private int[] talents;
 	
@@ -41,7 +41,7 @@ public class Job {
 							break;
 							
 						case 1:
-							secondarystats = new Stats(receiveString);
+							secondarystats = new SecondaryStats(receiveString);
 							break;
 							
 						case 2:
@@ -79,7 +79,7 @@ public class Job {
 		}
 	}
 	
-	public Stats getSecondaryStats()
+	public SecondaryStats getSecondaryStats()
 	{
 		return secondarystats;
 	}

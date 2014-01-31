@@ -30,13 +30,15 @@ public class Hero extends Case implements Describable {
 	public final static int COMBAT_ACTION_ATTAQUE_RAPIDE =	6;
 
 	private Context context;
-	private Stats primarystats, actualstats;
+	private ActualStats actualstats;
+	private int B;
 	private int race; //0 = human, 1 = elf, 2 = dwarf, 3 = hobbit
 	private ArrayList<Skills> skills;
 	private ArrayList<Talents> talents;
 	private Job job;
 	private boolean hasVisee;
 	private Weapon armeDraw;
+	private ArrayList<Armor> armor;
 	private int id;
 	protected int resource;
 
@@ -44,6 +46,12 @@ public class Hero extends Case implements Describable {
 		this.id = ++cmp_id;
 		this.context = context;
 		init(race);
+		armeDraw = new MeleeWeapon("Sword", "0 0 0");
+		armor = new ArrayList<Armor>();
+		armor.add(new Armor("casque", 0, 0));
+		armor.add(new Armor("veste", 1, 0));
+		armor.add(new Armor("veste", 2, 0));
+		armor.add(new Armor("pantalon", 3, 0));
 	}
 	
 	public Hero(Context context) {
@@ -63,8 +71,7 @@ public class Hero extends Case implements Describable {
 		
 		// TODO: change this according to sex, race...
 		this.resource = R.drawable.mage;
-		
-		primarystats = new Stats(race);
+		actualstats = new ActualStats(new PrimaryStats(race));
 		skills = new ArrayList<Skills>();
 		talents = new ArrayList<Talents>();
 		CreateBasicsSkills();
@@ -251,7 +258,8 @@ public class Hero extends Case implements Describable {
 	{
 		int i;
 		job = new Job(index, context);
-		actualstats = new Stats(primarystats, job.getSecondaryStats());
+		actualstats.SetSecondaryStats(job.getSecondaryStats());
+		B = actualstats.getStats(B);
 		int tmps[] = job.getSkills();
 		for(i = 0; i<tmps.length; i++)
 		{
@@ -292,8 +300,8 @@ public class Hero extends Case implements Describable {
 		default:
 			Log.d("race", "Unknown");
 		}
-		if(actualstats != null)
-			actualstats.show();
+//		if(actualstats != null)
+//			actualstats.show();
 		for(Skills s : skills){
 			s.show();
 		}
@@ -302,7 +310,7 @@ public class Hero extends Case implements Describable {
 		}
 	}
 	
-	public boolean skillTest(boolean skill, int index)// if skill is true, the index is the one of the skill in the array. Else it's the index of the stat we want to test.
+	public boolean skillTest(boolean skill, int index, int dice, int diffModificator)// if skill is true, the index is the one of the skill in the array. Else it's the index of the stat we want to test.
 	{
 		int modificator;
 		int statIndex;
@@ -317,7 +325,7 @@ public class Hero extends Case implements Describable {
 			statIndex = index;
 			modificator = 1;
 		}
-		tmpstat = actualstats.getStat(statIndex);
+		tmpstat = actualstats.getStats(statIndex);
 		switch (modificator){
 		case 0 :
 			tmpstat /=2;
@@ -329,7 +337,7 @@ public class Hero extends Case implements Describable {
 			tmpstat += 20;
 			break;
 		}
-		if (Tools.hundredDice()>tmpstat)
+		if ((dice+diffModificator)>tmpstat)
 			return false;
 		return true;
 	}
@@ -462,16 +470,49 @@ public class Hero extends Case implements Describable {
 
 	public void move(Game game, Case dest) {
 		game.getMap().setCase(this, dest);
+		hasVisee = false;
 	}
 
 	public void attaqueStandard(Game game, Hero hero, Dice dice) {
-		// TODO
+		int result = dice.hundredDice();
+		int invresult = result == 100 ? 0 : (result-result/10)*10 + result/10;
+		int localisation;
+		int modif = hasVisee ? 10 : 0;
+		if (invresult < 16)
+			localisation = 0;
+		else if (invresult < 56)
+			localisation = 1;
+		else if (invresult < 81)
+			localisation = 2;
+		else
+			localisation = 3;
+		if (skillTest(false, 0, result, modif))
+		{
+			hero.recevoirDamage(armeDraw.getDegats() + actualstats.getStats(10) + dice.tenDice(), localisation);
+		}
 		Log.d(TAG, "Ten dice : "+dice.tenDice());
+		hasVisee = false;
 	}
 
-	public void charge(Game game, Hero hero, Case dest) {
+	public void charge(Game game, Hero hero, Case dest, Dice dice) {
 		game.getMap().setCase(this, dest);
-		// TODO
+		int result = dice.hundredDice();
+		int invresult = result == 100 ? 0 : (result-result/10)*10 + result/10;
+		int localisation;
+		if (invresult < 16)
+			localisation = 0;
+		else if (invresult < 56)
+			localisation = 1;
+		else if (invresult < 81)
+			localisation = 2;
+		else
+			localisation = 3;
+		if (skillTest(false, 0, result, 20))
+		{
+			hero.recevoirDamage(armeDraw.getDegats() + actualstats.getStats(10) + dice.tenDice(), localisation);
+		}
+		Log.d(TAG, "Ten dice : "+dice.tenDice());
+		hasVisee = false;
 	}
 
 	public void degainer(Game game, Weapon arme) {
@@ -482,11 +523,21 @@ public class Hero extends Case implements Describable {
 		// TODO
 	}
 
-	public void attaqueRapide(Game game, Hero hero) {
-		// TODO
+	public void attaqueRapide(Game game, Hero hero, Dice dice) {
+		for (int i = 0; i<actualstats.getStats(8); i++)
+		{
+			attaqueStandard(game, hero, dice);
+		}
 	}
 
-	public void recevoirDamage(int hp) {
+	public void recevoirDamage(int hp, int localisation) {
+		int tmpDamage = hp - actualstats.getStats(11) - armor.get(localisation).getArmorPoints();
+		if (tmpDamage < 0)
+			tmpDamage = 0;
+		if (hp - tmpDamage < 0)
+			hp = 0;
+		else
+			hp -= tmpDamage;
 		Log.d(TAG, hp+" degats recus !");
 	}
 
