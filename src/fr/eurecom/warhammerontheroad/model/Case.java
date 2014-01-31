@@ -1,6 +1,8 @@
 package fr.eurecom.warhammerontheroad.model;
 
-public abstract class Case {
+import fr.eurecom.warhammerontheroad.network.Describable;
+
+public abstract class Case implements Describable {
 	private int x,y;
 	
 	protected Case() {

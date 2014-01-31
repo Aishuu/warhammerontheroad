@@ -41,8 +41,8 @@ public class NetworkParser implements Runnable {
 	 * IP address of the server
 	 */
 	//public final static String SERVER_ADDR = 	"82.236.41.149";
-	//public final static String SERVER_ADDR = 	"172.24.10.37";
-	public final static String SERVER_ADDR =	"192.168.1.38";
+	public final static String SERVER_ADDR = 	"172.24.10.37";
+	//public final static String SERVER_ADDR =	"192.168.1.38";
 
 	/**
 	 * Separator for commands
@@ -226,7 +226,8 @@ public class NetworkParser implements Runnable {
 									try {
 										Socket file_sock = new Socket(InetAddress.getByName(NetworkParser.SERVER_ADDR), port);
 										DataOutputStream dos = new DataOutputStream(file_sock.getOutputStream());
-										File file=new File(NetworkParser.this.mService.getContext().getFilesDir(), filename);
+										File file=new File(Environment.getExternalStorageDirectory(), filename);
+										//File file=new File(NetworkParser.this.mService.getContext().getFilesDir(), filename);
 										if(!file.exists()) {
 											Log.e(TAG, "File "+filename+" doesn't exist !");
 											NetworkParser.this.mService.getChat().fileTransferStatusChanged(filename, NetworkParser.FILE_DOES_NOT_EXIST);
@@ -280,8 +281,8 @@ public class NetworkParser implements Runnable {
 							try {
 								Socket file_sock = new Socket(InetAddress.getByName(NetworkParser.SERVER_ADDR), port);
 								InputStream in = file_sock.getInputStream();
-								File file=new File(NetworkParser.this.mService.getContext().getFilesDir(), filename);
-								OutputStream out = new FileOutputStream(file);
+								OutputStream out = new FileOutputStream(new File(Environment.getExternalStorageDirectory().getAbsolutePath(), filename));
+								//OutputStream out = NetworkParser.this.mService.getContext().openFileOutput(filename, Context.MODE_PRIVATE);
 								byte[] buffer = new byte[1024];
 								int done = 0;
 								while (done < size) {
@@ -530,7 +531,13 @@ public class NetworkParser implements Runnable {
 	}
 	
 	public void beginFight(Map m) {
-		this.sendCommand(CMD_ACTION, Game.CMD_FIGHT, m.describeAsString());
+		/* "_" is used since this command is issued by GM, other will try to get the hero actually sending */
+		this.sendCommand(CMD_ACTION, "_", Game.CMD_BEGIN_FIGHT, m.describeAsString());
+	}
+	
+	public void startGame() {
+		/* "_" is used since this command is issued by GM, other will try to get the hero actually sending */
+		this.sendCommand(CMD_ACTION, "_", Game.CMD_START_GAME);
 	}
 
 	/**

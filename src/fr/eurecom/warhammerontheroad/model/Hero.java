@@ -40,12 +40,14 @@ public class Hero extends Case implements Describable {
 	protected int resource;
 
 	public Hero(Context context, int race){
+		super();
 		this.id = ++cmp_id;
 		this.context = context;
 		init(race);
 	}
 	
 	public Hero(Context context) {
+		super();
 		this.context = context;
 	}
 	

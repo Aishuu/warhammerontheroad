@@ -39,6 +39,7 @@ public class GMMenuActivity extends WotrActivity {
 	public void seePlayersData(View view) {
 		Map m = new Map(this.mService.getContext(), 10, 5, "grass.png");
 		this.mService.getGame().setMap(m);
+		this.mService.getNetworkParser().startGame();
 		Player p = this.mService.getGame().getPlayer("test");
 		Hero h = this.mService.getGame().getHero(1);
 		m.setCase(p, 1, 1);

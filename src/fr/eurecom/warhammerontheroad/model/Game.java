@@ -21,6 +21,7 @@ public class Game {
 
 	public final static String CMD_FIGHT				= "FGT";
 	public final static String CMD_BEGIN_FIGHT			= "BFT";
+	public final static String CMD_START_GAME			= "SGM";
 	public final static String CMD_CREATE_HERO			= "HER";
 
 	private final static String TAG						= "Game";
@@ -192,6 +193,11 @@ public class Game {
 			msg = msg_split[1];
 			
 		}
+		
+		if(msg.equals(CMD_START_GAME)) {
+			this.gameStarted();
+		}
+		
 		String parts[] = msg.split(NetworkParser.SEPARATOR, 2);
 		if(parts.length < 2)
 			return;
