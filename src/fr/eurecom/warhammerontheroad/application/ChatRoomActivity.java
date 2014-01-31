@@ -38,6 +38,7 @@ public class ChatRoomActivity extends WotrActivity implements ChatListener, Game
 		}
 		this.chatRoom = (TextView) findViewById(R.id.chatRoom);
 		this.mService.getChat().addChatListener(this);
+		this.mService.getGame().addGameServiceListener(this);
 		this.newline = "";
 		if(savedInstanceState != null)
 			this.chatRoom.setText(savedInstanceState.getString("chatContent"));
@@ -47,6 +48,7 @@ public class ChatRoomActivity extends WotrActivity implements ChatListener, Game
 	@Override
 	protected void onDestroy() {
 		this.mService.getChat().removeChatListener(this);
+		this.mService.getGame().removeGameServiceListener(this);
 		super.onDestroy();
 	}
 

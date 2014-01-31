@@ -87,6 +87,12 @@
             android:name="fr.eurecom.warhammerontheroad.application.ChatRoomActivity"
             android:label="@string/title_activity_chat_room" >
         </activity>
+
+        <activity
+            android:screenOrientation="landscape"
+            android:name="fr.eurecom.warhammerontheroad.application.CombatActivity"
+            android:label="@string/title_activity_combat" >
+        </activity>
     </application>
 
 </manifest>

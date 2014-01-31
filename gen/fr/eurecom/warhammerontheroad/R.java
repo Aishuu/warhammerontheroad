@@ -238,6 +238,7 @@ public final class R {
         public static final int terminate=0x7f06003d;
         public static final int title_activity_chara_creation_profil=0x7f060027;
         public static final int title_activity_chat_room=0x7f060006;
+        public static final int title_activity_combat=0x7f06003e;
         public static final int title_activity_create_game=0x7f06000c;
         public static final int weight=0x7f060024;
         public static final int write_story=0x7f060019;

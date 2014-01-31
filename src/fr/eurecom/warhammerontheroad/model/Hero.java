@@ -1,4 +1,3 @@
-
 package fr.eurecom.warhammerontheroad.model;
 
 import java.io.BufferedReader;
@@ -490,7 +489,6 @@ public class Hero extends Case implements Describable {
 		{
 			hero.recevoirDamage(armeDraw.getDegats() + actualstats.getStats(10) + dice.tenDice(), localisation);
 		}
-		Log.d(TAG, "Ten dice : "+dice.tenDice());
 		hasVisee = false;
 	}
 
@@ -564,4 +562,3 @@ public class Hero extends Case implements Describable {
 		}
 	}
 }
-

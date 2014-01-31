@@ -24,6 +24,12 @@ public class CharaCreationProfilActivity extends WotrActivity {
 	public void terminate(View view) {
 		Player p = this.mService.getGame().getMe();
 		this.mService.getNetworkParser().createPlayer(p);
+		this.mService.getGame().validateCharaCreation();
 		this.finish();
 	}
+
+    @Override
+    public void onBackPressed() {
+    	
+    }
 }

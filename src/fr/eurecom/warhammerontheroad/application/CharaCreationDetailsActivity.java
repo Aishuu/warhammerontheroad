@@ -33,6 +33,7 @@ public class CharaCreationDetailsActivity extends WotrActivity implements OnItem
 	public void next(View view) {
 		Intent intent = new Intent(this, CharaCreationProfilActivity.class);
 	    startActivity(intent);
+	    this.finish();
 	}
 	
 	public void onItemSelected(AdapterView<?> parent, View view, 
@@ -43,6 +44,4 @@ public class CharaCreationDetailsActivity extends WotrActivity implements OnItem
     public void onNothingSelected(AdapterView<?> parent) {
         // Another interface callback
     }
-
-
 }

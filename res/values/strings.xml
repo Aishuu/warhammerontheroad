@@ -90,4 +90,6 @@
     <string name="pd">PD</string>
     <string name="carrier">Carrier</string>
     <string name="terminate">Terminate</string>
+    
+    <string name="title_activity_combat">Fight</string>
 </resources>

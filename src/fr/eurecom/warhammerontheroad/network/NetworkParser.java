@@ -42,7 +42,8 @@ public class NetworkParser implements Runnable {
 	 */
 	//public final static String SERVER_ADDR = 	"82.236.41.149";
 	//public final static String SERVER_ADDR = 	"172.24.10.37";
-	public final static String SERVER_ADDR =	"192.168.1.38";
+	//public final static String SERVER_ADDR =	"192.168.1.38";
+	public final static String SERVER_ADDR = "192.168.0.11";
 
 	/**
 	 * Separator for commands
@@ -70,6 +71,8 @@ public class NetworkParser implements Runnable {
 	public final static int FILE_DOES_NOT_EXIST				= 1;
 
 	private Socket sock;
+
+	private DataOutputStream dos;
 	private WotrService mService;
 	private ArrayList<String> filesToSend;
 	private Timer timer;
@@ -86,6 +89,7 @@ public class NetworkParser implements Runnable {
 	public NetworkParser(WotrService mService) {
 		super();
 		this.sock = null;
+		this.dos = null;
 		this.mService = mService;
 		this.filesToSend = new ArrayList<String>();
 		this.delayedCommands = new ArrayList<String>();
@@ -226,7 +230,8 @@ public class NetworkParser implements Runnable {
 									try {
 										Socket file_sock = new Socket(InetAddress.getByName(NetworkParser.SERVER_ADDR), port);
 										DataOutputStream dos = new DataOutputStream(file_sock.getOutputStream());
-										File file=new File(NetworkParser.this.mService.getContext().getFilesDir(), filename);
+										File file=new File(Environment.getExternalStorageDirectory(), filename);
+										//File file=new File(NetworkParser.this.mService.getContext().getFilesDir(), filename);
 										if(!file.exists()) {
 											Log.e(TAG, "File "+filename+" doesn't exist !");
 											NetworkParser.this.mService.getChat().fileTransferStatusChanged(filename, NetworkParser.FILE_DOES_NOT_EXIST);
@@ -280,8 +285,8 @@ public class NetworkParser implements Runnable {
 							try {
 								Socket file_sock = new Socket(InetAddress.getByName(NetworkParser.SERVER_ADDR), port);
 								InputStream in = file_sock.getInputStream();
-								File file=new File(NetworkParser.this.mService.getContext().getFilesDir(), filename);
-								OutputStream out = new FileOutputStream(file);
+								OutputStream out = new FileOutputStream(new File(Environment.getExternalStorageDirectory().getAbsolutePath(), filename));
+								//OutputStream out = NetworkParser.this.mService.getContext().openFileOutput(filename, Context.MODE_PRIVATE);
 								byte[] buffer = new byte[1024];
 								int done = 0;
 								while (done < size) {
@@ -394,15 +399,13 @@ public class NetworkParser implements Runnable {
 	 * @param command The command to send
 	 * @param args List of arguments
 	 */
-	synchronized private void sendCommand(final String command, final String... args) {
+	private void sendCommand(final String command, final String... args) {
 
 		new Thread (new Runnable() {
 			@Override
 			public void run() {
-				DataOutputStream dos;
 				try {
-
-					dos = new DataOutputStream(NetworkParser.this.sock.getOutputStream());
+					synchronized(NetworkParser.this.dos) {
 					dos.write(command.getBytes());
 					dos.writeByte(NetworkParser.SEPARATOR.charAt(0));
 
@@ -413,6 +416,7 @@ public class NetworkParser implements Runnable {
 					}
 					dos.writeByte('\n');
 					dos.flush();
+					}
 				} catch (IOException e) {
 					Log.e(NetworkParser.TAG, "Could not send command...");
 					String l = new String(command);
@@ -448,16 +452,16 @@ public class NetworkParser implements Runnable {
 	 * 
 	 * @param command The command to send
 	 */
-	synchronized private void sendCommandLine(final String command) {
+	private void sendCommandLine(final String command) {
 
 		new Thread (new Runnable() {
 			@Override
 			public void run() {
-				DataOutputStream dos;
 				try {
-					dos = new DataOutputStream(NetworkParser.this.sock.getOutputStream());
+					synchronized(NetworkParser.this.dos) {
 					dos.write(command.getBytes());
 					dos.writeByte('\n');
+					}
 				} catch (IOException e) {
 					Log.e(NetworkParser.TAG, "Could not send command...");
 					//NetworkParser.this.delayedCommands.add(command);
@@ -478,10 +482,13 @@ public class NetworkParser implements Runnable {
 		if(this.sock != null)
 			try {
 				this.sock.close();
+				this.dos = null;
 			} catch(IOException e) {
 				e.printStackTrace();
 			}
 		this.sock = new Socket(InetAddress.getByName(addr), port);
+		if(this.sock != null)
+			this.dos = new DataOutputStream(NetworkParser.this.sock.getOutputStream());
 	}
 
 	/**
@@ -494,6 +501,7 @@ public class NetworkParser implements Runnable {
 					try {
 						NetworkParser.this.sock.close();
 						NetworkParser.this.sock = null;
+						NetworkParser.this.dos = null;
 					} catch (IOException e) {
 						Log.e(TAG, "Couldn't close the socket...");
 					}
@@ -530,7 +538,13 @@ public class NetworkParser implements Runnable {
 	}
 	
 	public void beginFight(Map m) {
-		this.sendCommand(CMD_ACTION, Game.CMD_FIGHT, m.describeAsString());
+		/* "_" is used since this command is issued by GM, other will try to get the hero actually sending */
+		this.sendCommand(CMD_ACTION, "_", Game.CMD_BEGIN_FIGHT, m.describeAsString());
+	}
+	
+	public void startGame() {
+		/* "_" is used since this command is issued by GM, other will try to get the hero actually sending */
+		this.sendCommand(CMD_ACTION, "_", Game.CMD_START_GAME);
 	}
 
 	/**
