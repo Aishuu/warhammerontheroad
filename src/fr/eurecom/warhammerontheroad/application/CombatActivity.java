@@ -4,6 +4,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 import fr.eurecom.warhammerontheroad.R;
+import fr.eurecom.warhammerontheroad.model.Game;
 import android.os.Bundle;
 import android.annotation.SuppressLint;
 import android.graphics.Point;
@@ -21,6 +22,8 @@ public class CombatActivity extends WotrActivity {
 	@SuppressLint("NewApi")
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
+		if(this.mService.getGame().getState() != Game.STATE_GAME_WAIT_TURN && this.mService.getGame().getState() != Game.STATE_GAME_TURN)
+			this.finish();
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_combat);
 		this.table = (LinearLayout) findViewById(R.id.tableLayout);

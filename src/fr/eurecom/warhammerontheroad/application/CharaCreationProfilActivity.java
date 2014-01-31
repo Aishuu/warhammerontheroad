@@ -27,4 +27,9 @@ public class CharaCreationProfilActivity extends WotrActivity {
 		this.mService.getGame().validateCharaCreation();
 		this.finish();
 	}
+
+    @Override
+    public void onBackPressed() {
+    	
+    }
 }
