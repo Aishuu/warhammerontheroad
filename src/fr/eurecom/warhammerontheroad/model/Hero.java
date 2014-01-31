@@ -45,7 +45,6 @@ public class Hero extends Case implements Describable {
 		this.id = ++cmp_id;
 		this.context = context;
 		init(race);
-		armeDraw = new MeleeWeapon("Sword", "0 0 0");
 		armor = new ArrayList<Armor>();
 		armor.add(new Armor("casque", 0, 0));
 		armor.add(new Armor("veste", 1, 0));
@@ -256,9 +255,13 @@ public class Hero extends Case implements Describable {
 	public void AddJob(int index)
 	{
 		int i;
+		if (index == 0)
+			armeDraw = new RangedWeapon("arc long","0 3 0");
+		else
+			armeDraw = new MeleeWeapon("Sword","0 0 0");
 		job = new Job(index, context);
 		actualstats.SetSecondaryStats(job.getSecondaryStats());
-		B = actualstats.getStats(B);
+		resetB();
 		int tmps[] = job.getSkills();
 		for(i = 0; i<tmps.length; i++)
 		{
@@ -477,6 +480,7 @@ public class Hero extends Case implements Describable {
 		int invresult = result == 100 ? 0 : (result-result/10)*10 + result/10;
 		int localisation;
 		int modif = hasVisee ? 10 : 0;
+		int damages, tmpDamage;
 		if (invresult < 16)
 			localisation = 0;
 		else if (invresult < 56)
@@ -487,7 +491,23 @@ public class Hero extends Case implements Describable {
 			localisation = 3;
 		if (skillTest(false, 0, result, modif))
 		{
-			hero.recevoirDamage(armeDraw.getDegats() + actualstats.getStats(10) + dice.tenDice(), localisation);
+			damages = dice.tenDice();
+			if (damages == 10)
+			{
+				if (skillTest(false, 0, result, modif))
+				{
+					do{
+						tmpDamage = dice.tenDice();
+						if (tmpDamage == 10)
+							damages += 10;
+					}while (tmpDamage == 10);
+					damages += tmpDamage;
+				}
+			}
+			if (armeDraw instanceof RangedWeapon)
+				hero.recevoirDamage(armeDraw.getDegats() + damages, localisation);
+			else
+				hero.recevoirDamage(armeDraw.getDegats() + actualstats.getStats(10) + damages, localisation);
 		}
 		hasVisee = false;
 	}
@@ -497,6 +517,7 @@ public class Hero extends Case implements Describable {
 		int result = dice.hundredDice();
 		int invresult = result == 100 ? 0 : (result-result/10)*10 + result/10;
 		int localisation;
+		int damages, tmpDamage;
 		if (invresult < 16)
 			localisation = 0;
 		else if (invresult < 56)
@@ -507,9 +528,21 @@ public class Hero extends Case implements Describable {
 			localisation = 3;
 		if (skillTest(false, 0, result, 20))
 		{
-			hero.recevoirDamage(armeDraw.getDegats() + actualstats.getStats(10) + dice.tenDice(), localisation);
+			damages = dice.tenDice();
+			if (damages == 10)
+			{
+				if (skillTest(false, 0, result, 20))
+				{
+					do{
+						tmpDamage = dice.tenDice();
+						if (tmpDamage == 10)
+							damages += 10;
+					}while (tmpDamage == 10);
+					damages += tmpDamage;
+				}
+			}
+			hero.recevoirDamage(armeDraw.getDegats() + actualstats.getStats(10) + damages, localisation);
 		}
-		Log.d(TAG, "Ten dice : "+dice.tenDice());
 		hasVisee = false;
 	}
 
@@ -528,15 +561,17 @@ public class Hero extends Case implements Describable {
 		}
 	}
 
-	public void recevoirDamage(int hp, int localisation) {
-		int tmpDamage = hp - actualstats.getStats(11) - armor.get(localisation).getArmorPoints();
+	public void recevoirDamage(int damages, int localisation) {
+		int tmpDamage = damages - actualstats.getStats(11) - armor.get(localisation).getArmorPoints();
 		if (tmpDamage < 0)
 			tmpDamage = 0;
-		if (hp - tmpDamage < 0)
-			hp = 0;
+		if (damages - tmpDamage < 0)
+			B = 0;
 		else
-			hp -= tmpDamage;
-		Log.d(TAG, hp+" degats recus !");
+			B -= tmpDamage;
+		if (B == 0)
+			death();
+		Log.d(TAG, damages+" degats recus !");
 	}
 
 	@Override
@@ -560,5 +595,18 @@ public class Hero extends Case implements Describable {
 		} catch(NumberFormatException e) {
 			Log.e(TAG, "Not a number !");
 		}
+	}
+	public int beginBattle()
+	{
+		resetB();
+		return actualstats.getStats(4) + new Dice().tenDice();
+	}
+	public void death()
+	{
+	}
+	
+	public void resetB()
+	{
+		B = actualstats.getStats(9);
 	}
 }
