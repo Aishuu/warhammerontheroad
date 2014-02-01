@@ -45,8 +45,7 @@ public class GMMenuActivity extends WotrActivity {
 		Hero h = this.mService.getGame().getHero(1);
 		m.setCase(p, 1, 1);
 		m.setCase(h, 1, 2);
-		this.mService.getGame().waitForAction();
-		this.mService.getNetworkParser().beginFight(m);
+		this.mService.getGame().sendNotifStartFight(m);
 	}
 	
 	public void accessPlay(View view) {

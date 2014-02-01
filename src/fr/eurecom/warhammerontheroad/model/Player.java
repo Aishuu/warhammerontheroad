@@ -24,7 +24,46 @@ public class Player extends Hero {
 		super(context);
 		this.setId(0);
 		this.name = name;
+		
+		//TODO: for testing purpose
+		this.AddJob(1);
 		init(race);
+	}
+	
+	@Override
+	protected void init_stats(int race) {
+		stats = new ActualStats(new PrimaryStats(race));
+	}
+
+
+	public void AddJob(int index)
+	{
+		int i;
+		if (index == 0)
+			armeDraw = new RangedWeapon("arc long","0 3 0");
+		else
+			armeDraw = new MeleeWeapon("Sword","0 0 0");
+		job = new Job(index, context);
+		((ActualStats) stats).SetSecondaryStats(job.getSecondaryStats());
+		resetB();
+		int tmps[] = job.getSkills();
+		for(i = 0; i<tmps.length; i++)
+		{
+			if(tmps[i]<100)
+			{
+				skills.get(tmps[i]).upgrade();
+			}
+			else
+			{
+				AddAdvancedSkills(tmps[i]-100, "");
+			}
+		}
+		int tmpt[] = job.getTalents();
+		for(i = 0; i<tmpt.length; i++)
+		{
+			AddTalents(tmpt[i]);
+		}
+
 	}
 	
 	public void setColor(int color) {
@@ -65,6 +104,10 @@ public class Player extends Hero {
 			return;
 		}
 		super.constructFromString(service, parts[1]);
+		
+		//TODO: for testing purpose
+		this.AddJob(1);
+		
 		try {
 			this.setColor(Integer.parseInt(parts[0]));
 		} catch(NumberFormatException e) {

@@ -38,7 +38,7 @@ public final class Cmds {
 	 */
 	public static final String CMD_LIST = 			"LST";
 	/**
-	 * Sent to get a available id for a game (doesn't actually create it)
+	 * Sent to get an available id for a game (doesn't actually create it)
 	 */
 	public static final String CMD_CREATE =			"CRT";
 	/**

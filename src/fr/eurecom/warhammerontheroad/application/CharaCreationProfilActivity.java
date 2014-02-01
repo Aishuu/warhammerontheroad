@@ -23,6 +23,11 @@ public class CharaCreationProfilActivity extends WotrActivity {
 
 	public void terminate(View view) {
 		Player p = this.mService.getGame().getMe();
+
+		
+		//TODO: for testing purpose
+		p.AddJob(1);
+		
 		this.mService.getNetworkParser().createPlayer(p);
 		this.mService.getGame().validateCharaCreation();
 		this.finish();

@@ -35,7 +35,7 @@ public class Job {
 				while ( (receiveString = bufferedReader.readLine()) != null) {
 					if((k/4) == index)
 					{
-						switch(k-(k/4)){
+						switch(k-(k/4)*4){
 						case 0:
 							name = receiveString;
 							break;

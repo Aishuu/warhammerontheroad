@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.locks.ReentrantLock;
 
 import fr.eurecom.warhammerontheroad.application.ConnectionStateListener;
 import fr.eurecom.warhammerontheroad.model.Dice;
@@ -70,6 +71,8 @@ public class NetworkParser implements Runnable {
 	 */
 	public final static int FILE_DOES_NOT_EXIST				= 1;
 
+	public final static ReentrantLock lock = new ReentrantLock();
+
 	private Socket sock;
 
 	private DataOutputStream dos;
@@ -95,7 +98,7 @@ public class NetworkParser implements Runnable {
 		this.delayedCommands = new ArrayList<String>();
 		this.timer = null;
 	}
-	
+
 	public static String constructStringFromArgs(String... args) {
 		if(args.length == 0)
 			return "";
@@ -143,6 +146,7 @@ public class NetworkParser implements Runnable {
 					continue;
 				}
 
+				NetworkParser.lock.lock();
 				Log.d(TAG, "message : "+line);
 
 				// Error from the server
@@ -377,12 +381,16 @@ public class NetworkParser implements Runnable {
 					}
 				}
 				line = "";
+				NetworkParser.lock.unlock();
 			}
 		} catch (IOException e) {
 			Log.e(TAG, "Socket is disconnected...");
 			this.setConnected(false);
 			tryToReconnect(NetworkParser.RECO_RATE);
 		} finally {
+			if (NetworkParser.lock.isHeldByCurrentThread()) {
+			    NetworkParser.lock.unlock();
+			}
 			try {
 				if(this.sock != null)
 					this.sock.close();
@@ -400,12 +408,11 @@ public class NetworkParser implements Runnable {
 	 * @param args List of arguments
 	 */
 	private void sendCommand(final String command, final String... args) {
-
 		new Thread (new Runnable() {
 			@Override
 			public void run() {
 				try {
-					synchronized(NetworkParser.this.dos) {
+					NetworkParser.lock.lock();
 					dos.write(command.getBytes());
 					dos.writeByte(NetworkParser.SEPARATOR.charAt(0));
 
@@ -416,7 +423,6 @@ public class NetworkParser implements Runnable {
 					}
 					dos.writeByte('\n');
 					dos.flush();
-					}
 				} catch (IOException e) {
 					Log.e(NetworkParser.TAG, "Could not send command...");
 					String l = new String(command);
@@ -443,6 +449,11 @@ public class NetworkParser implements Runnable {
 					NetworkParser.this.setConnected(false);
 					tryToReconnect(NetworkParser.RECO_RATE);
 				}
+				finally {
+					if (NetworkParser.lock.isHeldByCurrentThread()) {
+					    NetworkParser.lock.unlock();
+					}
+				}
 			}}).start();
 
 	}
@@ -453,18 +464,21 @@ public class NetworkParser implements Runnable {
 	 * @param command The command to send
 	 */
 	private void sendCommandLine(final String command) {
-
 		new Thread (new Runnable() {
 			@Override
 			public void run() {
 				try {
-					synchronized(NetworkParser.this.dos) {
+					NetworkParser.lock.lock();
 					dos.write(command.getBytes());
 					dos.writeByte('\n');
-					}
 				} catch (IOException e) {
 					Log.e(NetworkParser.TAG, "Could not send command...");
 					//NetworkParser.this.delayedCommands.add(command);
+				}
+				finally {
+					if (NetworkParser.lock.isHeldByCurrentThread()) {
+					    NetworkParser.lock.unlock();
+					}
 				}
 			}}).start();
 
@@ -528,23 +542,38 @@ public class NetworkParser implements Runnable {
 			ss+= s+NetworkParser.SEPARATOR;
 		this.sendCommand(CMD_ACTION, Game.CMD_FIGHT, Integer.toString(action), ss.substring(0, ss.length()-1), d.toString());
 	}
-	
+
 	public void createHero(Hero h) {
 		this.sendCommand(CMD_ACTION, Integer.toString(h.getId()), Game.CMD_CREATE_HERO, h.describeAsString());
 	}
-	
+
 	public void createPlayer(Player p) {
 		this.sendCommand(CMD_ACTION, Game.CMD_CREATE_HERO, p.describeAsString());
 	}
-	
+
 	public void beginFight(Map m) {
 		/* "_" is used since this command is issued by GM, other will try to get the hero actually sending */
 		this.sendCommand(CMD_ACTION, "_", Game.CMD_BEGIN_FIGHT, m.describeAsString());
 	}
-	
+
 	public void startGame() {
 		/* "_" is used since this command is issued by GM, other will try to get the hero actually sending */
 		this.sendCommand(CMD_ACTION, "_", Game.CMD_START_GAME);
+	}
+
+	public void sendInitiative(int init) {
+		this.sendCommand(CMD_ACTION, Game.CMD_INITIATIVE, Integer.toString(init));
+	}
+
+	public void sendInitiative(int init, Hero h) {
+		this.sendCommand(CMD_ACTION, h.representInString(), Game.CMD_INITIATIVE, Integer.toString(init));
+	}
+
+	public void nextTurn(int turnOf, boolean isGM) {
+		if(isGM)
+			this.sendCommand(CMD_ACTION, "_", Game.CMD_TURN, Integer.toString(turnOf));
+		else
+			this.sendCommand(CMD_ACTION, Game.CMD_TURN, Integer.toString(turnOf));
 	}
 
 	/**

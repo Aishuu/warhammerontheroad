@@ -23,6 +23,8 @@ public class Game {
 	public final static String CMD_BEGIN_FIGHT			= "BFT";
 	public final static String CMD_START_GAME			= "SGM";
 	public final static String CMD_CREATE_HERO			= "HER";
+	public final static String CMD_INITIATIVE			= "INI";
+	public final static String CMD_TURN					= "TRN";
 
 	private final static String TAG						= "Game";
 
@@ -33,6 +35,8 @@ public class Game {
 	private Player me;
 	private boolean isGM;
 	private boolean isInFight;
+	private int turnOf;
+	private int cmp_init;
 	private Map map;
 	private WotrService mService;
 
@@ -64,21 +68,21 @@ public class Game {
 		this.me = player;
 		this.heros.add(player);
 	}
-	
+
 	public void addHero(Hero hero) {
 		this.heros.add(hero);
 	}
-	
+
 	public void removeHero(Hero hero) {
 		this.heros.remove(hero);
 	}
-	
+
 	public void removePlayer(String name) {
 		Player p = this.getPlayer(name);
 		if(p != null)
 			removeHero(p);
 	}
-	
+
 	public Hero getHero(int id) {
 		if(id <= 0)
 			return null;
@@ -87,7 +91,7 @@ public class Game {
 				return h;
 		return null;
 	}
-	
+
 	public Hero getHero(String s) {
 		Player p = getPlayer(s);
 		if(p != null)
@@ -174,7 +178,7 @@ public class Game {
 		else
 			Log.w(TAG, "Unexpected call to endFight...");
 	}
-	
+
 	private void startFight() {
 		this.isInFight = true;
 		fireBeginFight();
@@ -191,13 +195,13 @@ public class Game {
 				return;
 			name = msg_split[0];
 			msg = msg_split[1];
-			
+
 		}
-		
+
 		if(msg.equals(CMD_START_GAME)) {
 			this.gameStarted();
 		}
-		
+
 		String parts[] = msg.split(NetworkParser.SEPARATOR, 2);
 		if(parts.length < 2)
 			return;
@@ -207,18 +211,75 @@ public class Game {
 			if(h != null)
 				h.parseCommand(this, parts[1]);
 		}
-		
+
+		else if(parts[0].equals(CMD_TURN) && this.isInFight) {
+			try {
+				int turn = Integer.parseInt(parts[1]);
+				this.turnOf = turn;
+				if(this.isGM) {
+					for(Hero h_tmp: this.heros)
+						if(!(h_tmp instanceof Player) && h_tmp.getTurnInFight() == turn) {
+							this.turnInFight(h_tmp);
+							break;
+						}
+				}
+				else
+					if(this.me.getTurnInFight() == turn)
+						turnInFight(this.me);
+			}
+			catch(NumberFormatException e) {
+				Log.e(TAG, "Turn should be a number... "+msg);
+			}
+		}
+
+		else if(parts[0].equals(CMD_INITIATIVE) && this.isInFight) {
+			Hero h = this.getHero(name);
+			try{
+				Log.d(TAG, "debug : received init : "+msg);
+				int init = Integer.parseInt(parts[1]);
+				if(h != null) {
+					if(this.isGM) {
+						for(Hero h_tmp: this.heros)
+							if(!(h_tmp instanceof Player))
+								h_tmp.computeTurnInFight(h, init);
+					}
+					else
+						this.me.computeTurnInFight(h, init);
+					this.cmp_init ++;
+					if(this.cmp_init >= this.heros.size()-1) {
+						if(this.isGM) {
+							for(Hero h_tmp: this.heros)
+								if(!(h_tmp instanceof Player) && h_tmp.getTurnInFight() == 0) {
+									this.turnInFight(h_tmp);
+									break;
+								}
+						}
+						else
+							if(this.me.getTurnInFight() == 0)
+								turnInFight(this.me);
+					}
+				}
+			}
+			catch(NumberFormatException e) {
+				Log.e(TAG, "Initiative must be a number... "+msg);
+			}
+		}
+
 		else if(parts[0].equals(CMD_BEGIN_FIGHT) && !this.isInFight) {
 			if(parts[1].split(NetworkParser.SEPARATOR, -1).length < 3)
 				return;
 			try {
 				this.map = new Map(this.mService, parts[1]);
 				waitForTurn();
+				this.cmp_init = 0;
+				this.turnOf = 0;
+				int init = this.me.beginBattle();
+				this.mService.getNetworkParser().sendInitiative(init);
 			} catch(NumberFormatException e) {
 				Log.e(TAG, "Not a number !");
 			}
 		}
-		
+
 		else if(parts[0].equals(CMD_CREATE_HERO)) {
 			try {
 				int id = Integer.parseInt(name);
@@ -237,15 +298,46 @@ public class Game {
 		}
 	}
 
+	public void sendNotifStartFight(Map m) {
+		if(!this.isGM)
+			return;
+		waitForAction();
+		this.mService.getNetworkParser().beginFight(m);
+		for(Hero h: this.heros)
+			if(!(h instanceof Player))
+				this.mService.getNetworkParser().sendInitiative(h.beginBattle(), h);
+	}
+
+	private void turnInFight(Hero h) {
+		if(!this.isGM)
+			this.myTurnNow();
+		Log.d(TAG, "Yeah ! my turn ("+h.representInString()+") !");
+		// TODO: do stuff here
+		try {
+			Thread.sleep(3000);
+		} catch (InterruptedException e) {
+			Log.e(TAG, "Can't wait...");
+		}
+		this.turnNext();
+	}
+
+	private void turnNext() {
+		this.turnOf = (this.turnOf+1)%this.heros.size();
+		this.mService.getNetworkParser().nextTurn(this.turnOf, this.isGM);
+		
+		if(!this.isGM)
+			this.waitForTurn();
+	}
+
 	private void change_state(int state) {
 		this.state = state;
 		fireStateChanged();
 	}
-	
+
 	public Map getMap() {
 		return this.map;
 	}
-	
+
 	public void setMap(Map m) {
 		this.map = m;
 	}

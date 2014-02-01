@@ -28,17 +28,19 @@ public class Hero extends Case implements Describable {
 	public final static int COMBAT_ACTION_RECHARGER =		5;
 	public final static int COMBAT_ACTION_ATTAQUE_RAPIDE =	6;
 
-	private Context context;
-	private ActualStats actualstats;
+	protected Context context;
+	protected Stats stats;
 	private int B;
 	private int race; //0 = human, 1 = elf, 2 = dwarf, 3 = hobbit
-	private ArrayList<Skills> skills;
+	protected ArrayList<Skills> skills;
 	private ArrayList<Talents> talents;
-	private Job job;
+	protected Job job;
 	private boolean hasVisee;
-	private Weapon armeDraw;
+	protected Weapon armeDraw;
 	private ArrayList<Armor> armor;
 	private int id;
+	private int turn_in_fight;
+	private int initiative_for_fight;
 	protected int resource;
 
 	public Hero(Context context, int race){
@@ -62,6 +64,10 @@ public class Hero extends Case implements Describable {
 			cmp_id = id+1;
 	}
 	
+	protected void init_stats(int race) {
+		stats = new PrimaryStats(race);
+	}
+	
 	public void init(int race) {
 		this.race = race;
 		this.hasVisee = false;
@@ -69,7 +75,7 @@ public class Hero extends Case implements Describable {
 		
 		// TODO: change this according to sex, race...
 		this.resource = R.drawable.mage;
-		actualstats = new ActualStats(new PrimaryStats(race));
+		this.init_stats(race);
 		skills = new ArrayList<Skills>();
 		talents = new ArrayList<Talents>();
 		CreateBasicsSkills();
@@ -252,36 +258,6 @@ public class Hero extends Case implements Describable {
 		}
 	}
 
-	public void AddJob(int index)
-	{
-		int i;
-		if (index == 0)
-			armeDraw = new RangedWeapon("arc long","0 3 0");
-		else
-			armeDraw = new MeleeWeapon("Sword","0 0 0");
-		job = new Job(index, context);
-		actualstats.SetSecondaryStats(job.getSecondaryStats());
-		resetB();
-		int tmps[] = job.getSkills();
-		for(i = 0; i<tmps.length; i++)
-		{
-			if(tmps[i]<100)
-			{
-				skills.get(tmps[i]).upgrade();
-			}
-			else
-			{
-				AddAdvancedSkills(tmps[i]-100, "");
-			}
-		}
-		int tmpt[] = job.getTalents();
-		for(i = 0; i<tmpt.length; i++)
-		{
-			AddTalents(tmpt[i]);
-		}
-
-	}
-
 	public void show(){
 		switch(race){
 		case RACE_HUMAN:
@@ -327,7 +303,7 @@ public class Hero extends Case implements Describable {
 			statIndex = index;
 			modificator = 1;
 		}
-		tmpstat = actualstats.getStats(statIndex);
+		tmpstat = stats.getStats(statIndex);
 		switch (modificator){
 		case 0 :
 			tmpstat /=2;
@@ -507,7 +483,7 @@ public class Hero extends Case implements Describable {
 			if (armeDraw instanceof RangedWeapon)
 				hero.recevoirDamage(armeDraw.getDegats() + damages, localisation);
 			else
-				hero.recevoirDamage(armeDraw.getDegats() + actualstats.getStats(10) + damages, localisation);
+				hero.recevoirDamage(armeDraw.getDegats() + stats.getStats(10) + damages, localisation);
 		}
 		hasVisee = false;
 	}
@@ -541,7 +517,7 @@ public class Hero extends Case implements Describable {
 					damages += tmpDamage;
 				}
 			}
-			hero.recevoirDamage(armeDraw.getDegats() + actualstats.getStats(10) + damages, localisation);
+			hero.recevoirDamage(armeDraw.getDegats() + stats.getStats(10) + damages, localisation);
 		}
 		hasVisee = false;
 	}
@@ -555,14 +531,14 @@ public class Hero extends Case implements Describable {
 	}
 
 	public void attaqueRapide(Game game, Hero hero, Dice dice) {
-		for (int i = 0; i<actualstats.getStats(8); i++)
+		for (int i = 0; i<stats.getStats(8); i++)
 		{
 			attaqueStandard(game, hero, dice);
 		}
 	}
 
 	public void recevoirDamage(int damages, int localisation) {
-		int tmpDamage = damages - actualstats.getStats(11) - armor.get(localisation).getArmorPoints();
+		int tmpDamage = damages - stats.getStats(11) - armor.get(localisation).getArmorPoints();
 		if (tmpDamage < 0)
 			tmpDamage = 0;
 		if (damages - tmpDamage < 0)
@@ -599,14 +575,27 @@ public class Hero extends Case implements Describable {
 	public int beginBattle()
 	{
 		resetB();
-		return actualstats.getStats(4) + new Dice().tenDice();
+		this.initiative_for_fight = stats.getStats(4) + new Dice().tenDice();
+		this.turn_in_fight = 0;
+		return this.initiative_for_fight;
 	}
+	
+	public void computeTurnInFight(Hero hero, int init) {
+		if(init > this.initiative_for_fight || (init == this.initiative_for_fight && hero.representInString().compareTo(this.representInString())<0))
+			this.turn_in_fight++;
+		Log.d(TAG, "Hero "+hero.representInString()+" did "+init+" as initiative...");
+	}
+	
+	public int getTurnInFight() {
+		return this.turn_in_fight;
+	}
+	
 	public void death()
 	{
 	}
 	
 	public void resetB()
 	{
-		B = actualstats.getStats(9);
+		B = stats.getStats(9);
 	}
 }
