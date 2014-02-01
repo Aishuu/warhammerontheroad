@@ -29,7 +29,7 @@ public enum CombatAction {
 		else return false;
 	}
 	
-	public static CombatAction combatActionFromIndex(int index){
+	public static CombatAction fromIndex(int index){
 		switch(index){
 		case 0:
 			return VISER;

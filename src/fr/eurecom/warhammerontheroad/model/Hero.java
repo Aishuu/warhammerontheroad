@@ -16,20 +16,14 @@ public class Hero extends Case implements Describable {
 	private final static String TAG			= "Hero";
 	private static int cmp_id				= 0;
 
-	public final static int VISER = 			0;
-	public final static int MOVE =			1;
-	public final static int STD_ATTACK =		2;
-	public final static int CHARGE =			3;
-	public final static int DEGAINER =		4;
-	public final static int RECHARGER =		5;
-	public final static int ATTAQUE_RAPIDE =	6;
-
 	private Context context;
 	private Stats primarystats, actualstats;
-	private Race race; //0 = human, 1 = elf, 2 = dwarf, 3 = hobbit
+	protected Race race; //0 = human, 1 = elf, 2 = dwarf, 3 = hobbit
 	private ArrayList<Skills> skills;
 	private ArrayList<Talents> talents;
 	private Job job;
+	
+
 	private boolean hasVisee;
 	private Weapon armeDraw;
 	private int id;
@@ -38,7 +32,7 @@ public class Hero extends Case implements Describable {
 	public Hero(Context context, Race race){
 		this.id = ++cmp_id;
 		this.context = context;
-		init(race);
+		setRace(race);
 	}
 	
 	public Hero(Context context) {
@@ -51,20 +45,33 @@ public class Hero extends Case implements Describable {
 			cmp_id = id+1;
 	}
 	
-	public void init(Race race) {
+	public Race getRace() {
+		return race;
+	}
+
+	public void setRace(Race race) {
+		if(race==this.race)
+			return;
 		this.race = race;
+		init(race);
+	}
+	
+	public void init(Race race) {
+		if(race==this.race)
+			return;
+		//this.race = race;
 		this.hasVisee = false;
 		this.armeDraw = null;
 		
 		// TODO: change this according to sex, race...
-		this.resource = R.drawable.mage;
-		
+		//this.resource = R.drawable.mage;
+		this.chooseImage();
 		primarystats = new Stats(race);
 		skills = new ArrayList<Skills>();
 		talents = new ArrayList<Talents>();
 		CreateBasicsSkills();
 		switch(race){
-		case RACE_HUMAN:
+		case HUMAN:
 			int index1, index2;
 			skills.get(3).upgrade();
 			AddAdvancedSkills(4, "l'empire");
@@ -77,7 +84,7 @@ public class Hero extends Case implements Describable {
 			AddTalents(index2);
 			break;
 
-		case RACE_ELF:
+		case ELF:
 			AddAdvancedSkills(4, "elfes");
 			AddAdvancedSkills(16, "eltharin");
 			AddAdvancedSkills(16, "reikspiel");
@@ -89,7 +96,7 @@ public class Hero extends Case implements Describable {
 			AddTalents(81);
 			break;
 
-		case RACE_DWARF:
+		case DWARF:
 			AddAdvancedSkills(4, "nains");
 			AddAdvancedSkills(16, "khazalid");
 			AddAdvancedSkills(16, "reikspiel");
@@ -104,7 +111,7 @@ public class Hero extends Case implements Describable {
 			AddTalents(81);
 			break;
 
-		case RACE_HOBBIT:
+		case HOBBIT:
 			skills.get(3).upgrade();
 			AddAdvancedSkills(3, "genealogie/heraldique");
 			AddAdvancedSkills(4, "halflings");
@@ -295,7 +302,7 @@ public class Hero extends Case implements Describable {
 			return;
 		String[] parts = msg.split(NetworkParser.SEPARATOR, -1);
 		try {
-			int action = Integer.parseInt(parts[0]);
+			CombatAction action = CombatAction.fromIndex(Integer.parseInt(parts[0]));
 			switch(action) {
 			case STD_ATTACK:
 				if(parts.length < 3)
@@ -453,9 +460,29 @@ public class Hero extends Case implements Describable {
 		// TODO: dummy implementation here
 		String[] parts = s.split(NetworkParser.SEPARATOR, -1);
 		try {
-			init(Race.raceFromIndex(Integer.parseInt(parts[0])));
+			init(Race.fromIndex(Integer.parseInt(parts[0])));
 		} catch(NumberFormatException e) {
 			Log.e(TAG, "Not a number !");
 		}
+	}
+
+	public void chooseImage() {
+		switch(race){
+		case GOBLIN:
+			this.resource = R.drawable.goblin;
+			break;
+		case GUARD:
+			this.resource = R.drawable.guard;
+			break;
+		case BANDIT:
+			this.resource = R.drawable.bandit;
+			break;
+		case ORC:
+			this.resource = R.drawable.orc;
+			break;
+		case SKELETON:
+			this.resource = R.drawable.skeleton;
+		}
+		
 	}
 }

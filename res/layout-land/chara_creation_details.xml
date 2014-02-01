@@ -13,6 +13,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:gravity="center"
         android:orientation="horizontal" >
 
         <fr.eurecom.warhammerontheroad.application.WotrTextView
@@ -24,6 +25,12 @@
             android:id="@+id/chosedName"
             style="@style/TextViewLandSize"
             android:layout_weight="2" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" >
 
         <fr.eurecom.warhammerontheroad.application.WotrTextView
             style="@style/TextViewLandSize"
@@ -37,15 +44,28 @@
             android:layout_height="match_parent"
             android:layout_weight="2"
             android:prompt="@string/race" />
+        
+        <fr.eurecom.warhammerontheroad.application.WotrTextView
+            style="@style/TextViewLandSize"
+            android:layout_weight="1"
+            android:text="@string/carrier" />
+
+        <Spinner
+            android:id="@+id/spinChooseCarrier"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="2" 
+            android:prompt="@string/carrier"/>
+        
     </LinearLayout>
 
     <ImageView
         android:layout_width="wrap_content"
         android:layout_height="50dp"
         android:layout_margin="5dp"
+        android:contentDescription="@null"
         android:gravity="center_horizontal"
-        android:src="@drawable/frise_dark"
-        android:contentDescription="@null" />
+        android:src="@drawable/frise_dark" />
 
     <ScrollView
         android:layout_width="match_parent"
@@ -170,10 +190,10 @@
                 android:id="@+id/btnCharaDetailsNext"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_margin="30dp"
                 android:layout_gravity="center_horizontal"
+                android:layout_margin="30dp"
                 android:onClick="next"
-                android:text="@string/next" />
+                android:text="@string/terminate" />
         </LinearLayout>
     </ScrollView>
 

@@ -1,15 +1,15 @@
 package fr.eurecom.warhammerontheroad.model;
 
 public enum Race {
-	RACE_HUMAN(0,"Human"),
-	RACE_ELF(1,"Elf"),
-	RACE_DWARF(2,"Dwarf"),	
-	RACE_HOBBIT(3,"Hobbit"),
-	RACE_BANDIT(4,"Bandit"),
-	RACE_GOBLIN(5,"Goblin"),
-	RACE_GUARD(6,"Guard"),
-	RACE_SKELETON(7,"Skeleton"),
-	RACE_ORC(8,"Orc");
+	HUMAN(0,"Human"),
+	ELF(1,"Elf"),
+	DWARF(2,"Dwarf"),	
+	HOBBIT(3,"Hobbit"),
+	BANDIT(4,"Bandit"),
+	GOBLIN(5,"Goblin"),
+	GUARD(6,"Guard"),
+	SKELETON(7,"Skeleton"),
+	ORC(8,"Orc");
 
 	private int index;
 	private String name;
@@ -32,26 +32,26 @@ public enum Race {
 		else return false;
 	}
 
-	public static Race raceFromIndex(int index){
+	public static Race fromIndex(int index){
 		switch(index){
 		case 0:
-			return RACE_HUMAN;
+			return HUMAN;
 		case 1:
-			return RACE_ELF;
+			return ELF;
 		case 2:
-			return RACE_DWARF;
+			return DWARF;
 		case 3:
-			return RACE_HOBBIT;
+			return HOBBIT;
 		case 4:
-			return RACE_BANDIT;
+			return BANDIT;
 		case 5:
-			return RACE_GOBLIN;
+			return GOBLIN;
 		case 6:
-			return RACE_GUARD;
+			return GUARD;
 		case 7:
-			return RACE_SKELETON;
+			return SKELETON;
 		case 8:
-			return RACE_ORC;
+			return ORC;
 		default:
 			return null;
 		}

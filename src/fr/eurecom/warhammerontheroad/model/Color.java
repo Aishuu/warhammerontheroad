@@ -4,7 +4,7 @@ public enum Color {
 	BLUE(0),
 	GREEN(1),
 	VIOLET(2),
-	MARRON(3);
+	ORANGE(3);
 
 	private int index;
 
@@ -16,7 +16,6 @@ public enum Color {
 		return index;
 	}
 
-	@Override
 	public String toString(){
 		return Integer.toString(index);
 	}
@@ -26,7 +25,7 @@ public enum Color {
 		else return false;
 	}
 
-	public static Color colorFromIndex(int index){
+	public static Color fromIndex(int index){
 		switch(index){
 		case 0:
 			return BLUE;
@@ -35,7 +34,7 @@ public enum Color {
 		case 2:
 			return VIOLET;
 		case 3:
-			return MARRON;
+			return ORANGE;
 		default:
 			return null;
 		}
