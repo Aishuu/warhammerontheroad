@@ -4,6 +4,7 @@ import fr.eurecom.warhammerontheroad.R;
 import fr.eurecom.warhammerontheroad.model.Hero;
 import fr.eurecom.warhammerontheroad.model.Map;
 import fr.eurecom.warhammerontheroad.model.Player;
+import fr.eurecom.warhammerontheroad.model.Race;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -31,7 +32,7 @@ public class GMMenuActivity extends WotrActivity {
 	}
 	
 	public void createSupportChara(View view) {
-		Hero h = new Hero(this.mService.getContext(), Hero.RACE_ELF);
+		Hero h = new Hero(this.mService.getContext(), Race.GOBLIN);
 		this.mService.getGame().addHero(h);
 		this.mService.getNetworkParser().createHero(h);
 	}

@@ -3,10 +3,10 @@ package fr.eurecom.warhammerontheroad.model;
 import java.util.ArrayList;
 
 public class PrimaryStats implements Stats{
-	
+
 	private int CC, CT, F, E, Ag, Int, FM, Soc, A, B, BF, BE, M, Mag, PF, PD;
-	
-	public PrimaryStats(int race) {
+
+	public PrimaryStats(Race race) {
 		int randB = Tools.tenDice();
 		int randPD = Tools.tenDice();
 		Int = 20;
@@ -14,7 +14,7 @@ public class PrimaryStats implements Stats{
 		A   =  1;
 
 		switch (race){
-		case 0 : 
+		case HUMAN : 
 			CC  = 20;
 			CT  = 20;
 			F   = 20;
@@ -34,7 +34,7 @@ public class PrimaryStats implements Stats{
 			M = 4;
 			break;
 
-		case 1 :
+		case ELF :
 			CC  = 20;
 			CT  = 30;
 			F   = 20;
@@ -54,7 +54,7 @@ public class PrimaryStats implements Stats{
 			M = 5;
 			break;
 
-		case 2 :
+		case DWARF :
 			CC  = 30;
 			CT  = 20;
 			F   = 20;
@@ -76,7 +76,7 @@ public class PrimaryStats implements Stats{
 			M = 3;
 			break;
 
-		default :
+		case HOBBIT :
 			CC  = 10;
 			CT  = 30;
 			F   = 10;
@@ -94,6 +94,8 @@ public class PrimaryStats implements Stats{
 				PD = 3;
 			else PD = 2;
 			M = 4;
+			break;
+		default:
 			break;
 		}
 		CC  += Tools.twentyDice();

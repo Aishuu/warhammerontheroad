@@ -29,7 +29,8 @@ public class Map implements Describable{
 		new Thread() {
 			public void run() {
 				//Map.this.imageFond = Drawable.createFromPath(context.getFilesDir().getAbsolutePath()+"/"+Map.this.imageFondFileName);
-				Map.this.imageFond = Drawable.createFromPath(Environment.getExternalStorageDirectory().getAbsolutePath()+"/"+Map.this.imageFondFileName);
+				//Map.this.imageFond = Drawable.createFromPath(Environment.getExternalStorageDirectory().getAbsolutePath()+"/"+Map.this.imageFondFileName);
+				Map.this.imageFond = Drawable.createFromPath("/sdcard/"+Map.this.imageFondFileName); 	
 			}
 		}.start();
 		this.cases = new Case[maxX][maxY];
@@ -184,7 +185,8 @@ public class Map implements Describable{
 		new Thread() {
 			public void run() {
 				//Map.this.imageFond = Drawable.createFromPath(service.getContext().getFilesDir().getAbsolutePath()+"/"+Map.this.imageFondFileName);
-				Map.this.imageFond = Drawable.createFromPath(Environment.getExternalStorageDirectory().getAbsolutePath()+"/"+Map.this.imageFondFileName);
+				//Map.this.imageFond = Drawable.createFromPath(Environment.getExternalStorageDirectory().getAbsolutePath()+"/"+Map.this.imageFondFileName);
+				Map.this.imageFond = Drawable.createFromPath("/sdcard/"+Map.this.imageFondFileName);
 			}
 		}.start();
 		try {

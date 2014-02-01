@@ -13,25 +13,13 @@ import fr.eurecom.warhammerontheroad.network.Describable;
 import fr.eurecom.warhammerontheroad.network.NetworkParser;
 
 public class Hero extends Case implements Describable {
-	public final static int RACE_HUMAN		= 0;
-	public final static int RACE_ELF		= 1;
-	public final static int RACE_DWARF		= 2;
-	public final static int RACE_HOBBIT		= 3;
 	private final static String TAG			= "Hero";
 	private static int cmp_id				= 0;
-
-	public final static int COMBAT_ACTION_VISER = 			0;
-	public final static int COMBAT_ACTION_MOVE =			1;
-	public final static int COMBAT_ACTION_STD_ATTACK =		2;
-	public final static int COMBAT_ACTION_CHARGE =			3;
-	public final static int COMBAT_ACTION_DEGAINER =		4;
-	public final static int COMBAT_ACTION_RECHARGER =		5;
-	public final static int COMBAT_ACTION_ATTAQUE_RAPIDE =	6;
 
 	protected Context context;
 	protected Stats stats;
 	private int B;
-	private int race; //0 = human, 1 = elf, 2 = dwarf, 3 = hobbit
+	protected Race race;
 	protected ArrayList<Skills> skills;
 	private ArrayList<Talents> talents;
 	protected Job job;
@@ -43,44 +31,54 @@ public class Hero extends Case implements Describable {
 	private int initiative_for_fight;
 	protected int resource;
 
-	public Hero(Context context, int race){
+	public Hero(Context context, Race race){
 		this.id = ++cmp_id;
 		this.context = context;
-		init(race);
+		setRace(race);
 		armor = new ArrayList<Armor>();
 		armor.add(new Armor("casque", 0, 0));
 		armor.add(new Armor("veste", 1, 0));
 		armor.add(new Armor("veste", 2, 0));
 		armor.add(new Armor("pantalon", 3, 0));
 	}
-	
+
 	public Hero(Context context) {
 		this.context = context;
 	}
-	
+
+	public void setRace(Race race) {
+		if(race==this.race)
+			return;
+		this.race = race;
+		init();
+	}
+
+	public Race getRace() {
+		return race;
+	}
+
 	public void setId(int id) {
 		this.id = id;
 		if(id >= cmp_id)
 			cmp_id = id+1;
 	}
-	
-	protected void init_stats(int race) {
+
+	protected void init_stats() {
 		stats = new PrimaryStats(race);
 	}
-	
-	public void init(int race) {
-		this.race = race;
+
+	public void init() {
 		this.hasVisee = false;
 		this.armeDraw = null;
-		
-		// TODO: change this according to sex, race...
-		this.resource = R.drawable.mage;
-		this.init_stats(race);
+
+		this.chooseImage();
+
+		this.init_stats();
 		skills = new ArrayList<Skills>();
 		talents = new ArrayList<Talents>();
 		CreateBasicsSkills();
 		switch(race){
-		case RACE_HUMAN:
+		case HUMAN:
 			int index1, index2;
 			skills.get(3).upgrade();
 			AddAdvancedSkills(4, "l'empire");
@@ -93,7 +91,7 @@ public class Hero extends Case implements Describable {
 			AddTalents(index2);
 			break;
 
-		case RACE_ELF:
+		case ELF:
 			AddAdvancedSkills(4, "elfes");
 			AddAdvancedSkills(16, "eltharin");
 			AddAdvancedSkills(16, "reikspiel");
@@ -105,7 +103,7 @@ public class Hero extends Case implements Describable {
 			AddTalents(81);
 			break;
 
-		case RACE_DWARF:
+		case DWARF:
 			AddAdvancedSkills(4, "nains");
 			AddAdvancedSkills(16, "khazalid");
 			AddAdvancedSkills(16, "reikspiel");
@@ -120,7 +118,7 @@ public class Hero extends Case implements Describable {
 			AddTalents(81);
 			break;
 
-		case RACE_HOBBIT:
+		case HOBBIT:
 			skills.get(3).upgrade();
 			AddAdvancedSkills(3, "genealogie/heraldique");
 			AddAdvancedSkills(4, "halflings");
@@ -134,7 +132,8 @@ public class Hero extends Case implements Describable {
 			AddTalents(Tools.getStartingTalent(3));
 			break;
 		default:
-			Log.e(TAG, "Unknown race !");
+			//TODO: create skills for other races
+			break;
 		}
 	}
 
@@ -162,11 +161,11 @@ public class Hero extends Case implements Describable {
 			}
 		}
 	}
-	
+
 	public int getId() {
 		return this.id;
 	}
-	
+
 	@Override
 	public boolean equals(Object o) {
 		if(!(o instanceof Hero))
@@ -259,27 +258,11 @@ public class Hero extends Case implements Describable {
 	}
 
 	public void show(){
-		switch(race){
-		case RACE_HUMAN:
-			Log.d("race","humain");
-			break;
-
-		case RACE_ELF:
-			Log.d("race","elfe");
-			break;
-
-		case RACE_DWARF:
-			Log.d("race","nain");
-			break;
-
-		case RACE_HOBBIT:
-			Log.d("race","hobbit");
-			break;
-		default:
-			Log.d("race", "Unknown");
-		}
-//		if(actualstats != null)
-//			actualstats.show();
+		Log.d("race",race.toString());
+		/*
+		if(stats != null)
+			stats.show();
+		 */
 		for(Skills s : skills){
 			s.show();
 		}
@@ -287,7 +270,7 @@ public class Hero extends Case implements Describable {
 			t.show();
 		}
 	}
-	
+
 	public boolean skillTest(boolean skill, int index, int dice, int diffModificator)// if skill is true, the index is the one of the skill in the array. Else it's the index of the stat we want to test.
 	{
 		int modificator;
@@ -319,7 +302,7 @@ public class Hero extends Case implements Describable {
 			return false;
 		return true;
 	}
-	
+
 	@Override
 	public int getResource() {
 		return this.resource;
@@ -335,9 +318,9 @@ public class Hero extends Case implements Describable {
 			return;
 		String[] parts = msg.split(NetworkParser.SEPARATOR, -1);
 		try {
-			int action = Integer.parseInt(parts[0]);
+			CombatAction action = CombatAction.fromIndex(Integer.parseInt(parts[0]));
 			switch(action) {
-			case COMBAT_ACTION_STD_ATTACK:
+			case STD_ATTACK:
 				if(parts.length < 3)
 					return;
 				Hero h = game.getHero(parts[1]);
@@ -346,17 +329,17 @@ public class Hero extends Case implements Describable {
 				Dice d = new SimulatedDice(msg.split(NetworkParser.SEPARATOR, 3)[2]);
 				this.attaqueStandard(game, h, d);
 				break;
-			case COMBAT_ACTION_ATTAQUE_RAPIDE:
+			case ATTAQUE_RAPIDE:
 				break;
-			case COMBAT_ACTION_CHARGE:
+			case CHARGE:
 				break;
-			case COMBAT_ACTION_DEGAINER:
+			case DEGAINER:
 				break;
-			case COMBAT_ACTION_MOVE:
+			case MOVE:
 				break;
-			case COMBAT_ACTION_RECHARGER:
+			case RECHARGER:
 				break;
-			case COMBAT_ACTION_VISER:
+			case VISER:
 				break;
 			default:
 				Log.e(TAG, "Received : "+msg);
@@ -558,7 +541,7 @@ public class Hero extends Case implements Describable {
 	@Override
 	public String describeAsString() {
 		// TODO: dummy implementation here
-		String result = NetworkParser.constructStringFromArgs(Integer.toString(this.race));
+		String result = NetworkParser.constructStringFromArgs(Integer.toString(this.race.getIndex()));
 		return result;
 	}
 
@@ -567,7 +550,8 @@ public class Hero extends Case implements Describable {
 		// TODO: dummy implementation here
 		String[] parts = s.split(NetworkParser.SEPARATOR, -1);
 		try {
-			init(Integer.parseInt(parts[0]));
+			this.setRace(Race.fromIndex(Integer.parseInt(parts[0])));
+			this.init();
 		} catch(NumberFormatException e) {
 			Log.e(TAG, "Not a number !");
 		}
@@ -579,23 +563,45 @@ public class Hero extends Case implements Describable {
 		this.turn_in_fight = 0;
 		return this.initiative_for_fight;
 	}
-	
+
 	public void computeTurnInFight(Hero hero, int init) {
 		if(init > this.initiative_for_fight || (init == this.initiative_for_fight && hero.representInString().compareTo(this.representInString())<0))
 			this.turn_in_fight++;
 		Log.d(TAG, "Hero "+hero.representInString()+" did "+init+" as initiative...");
 	}
-	
+
 	public int getTurnInFight() {
 		return this.turn_in_fight;
 	}
-	
+
 	public void death()
 	{
 	}
-	
+
 	public void resetB()
 	{
 		B = stats.getStats(9);
+	}
+
+	protected void chooseImage() {
+		switch(race){
+		case GOBLIN:
+			this.resource = R.drawable.goblin;
+			break;
+		case GUARD:
+			this.resource = R.drawable.guard;
+			break;
+		case BANDIT:
+			this.resource = R.drawable.bandit;
+			break;
+		case ORC:
+			this.resource = R.drawable.orc;
+			break;
+		case SKELETON:
+			this.resource = R.drawable.skeleton;
+		default:
+			//TODO: default image
+			break;
+		}
 	}
 }
