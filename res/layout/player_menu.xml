@@ -10,41 +10,35 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     android:background="@drawable/parchemin_vierge_vert"  >
     
-    <fr.eurecom.warhammerontheroad.application.WotrButton
-            android:id="@+id/btnAccessChatP"
-            style="@style/ButtonSize"
-            android:onClick="accessChat"
-            android:text="@string/access_chat"
-            android:layout_weight="1" />
+    
     <fr.eurecom.warhammerontheroad.application.WotrButton
             android:id="@+id/btnReadStory"
             style="@style/ButtonSize"
+            android:layout_height="wrap_content"
             android:onClick="accessStory"
-            android:text="@string/read_story"
-            android:layout_weight="1" />
+            android:text="@string/read_story" />
     
     <fr.eurecom.warhammerontheroad.application.WotrButton
             android:id="@+id/btnCreateChara"
             style="@style/ButtonSize"
+            android:layout_height="wrap_content"
             android:onClick="createCharaDetails"
-            android:text="@string/create_chara"
-            android:layout_weight="1" />
+            android:text="@string/create_chara"/>
     
     <ImageView
         android:layout_width="wrap_content"
-        android:layout_height="0dp"
+        android:layout_height="50dp"
         android:layout_margin="5dp"
-        android:layout_weight="0.5"
         android:gravity="center"
         android:src="@drawable/frise_dark"
         android:contentDescription="@null" />
     
     <fr.eurecom.warhammerontheroad.application.WotrButton
-            android:id="@+id/btnPAccessPlay"
+            android:id="@+id/btnAccessChatP"
             style="@style/ButtonSize"
-            android:onClick="accessPlay"
-            android:text="@string/access_play"
-            android:layout_weight="1" />
+            android:layout_height="wrap_content"
+            android:onClick="accessChat"
+            android:text="@string/access_chat"/>
     
 
 </LinearLayout>

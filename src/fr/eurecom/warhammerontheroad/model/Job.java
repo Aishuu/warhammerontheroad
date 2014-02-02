@@ -18,12 +18,14 @@ public class Job {
 	private SecondaryStats secondarystats;
 	private int[] skills;
 	private int[] talents;
+	private int index;
 	
 	public Job(int index, Context context)
 	{
 		int j;
 		int k = 0;
 		this.context = context;
+		this.index=index;
 		InputStream is = context.getResources().openRawResource(R.raw.job);
 		if (is != null) {
             InputStreamReader inputStreamReader = new InputStreamReader(is);
@@ -91,6 +93,12 @@ public class Job {
 	public int[] getTalents(){
 		return talents;
 	}
+
+	public int getIndex() {
+		return index;
+	}
+	
+	
 }
 		
 		

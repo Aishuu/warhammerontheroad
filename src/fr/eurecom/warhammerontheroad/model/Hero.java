@@ -23,6 +23,8 @@ public class Hero extends Case implements Describable {
 	protected ArrayList<Skills> skills;
 	private ArrayList<Talents> talents;
 	protected Job job;
+	
+
 	private boolean hasVisee;
 	protected Weapon armeDraw;
 	private ArrayList<Armor> armor;
@@ -603,5 +605,9 @@ public class Hero extends Case implements Describable {
 			//TODO: default image
 			break;
 		}
+	}
+	
+	public Job getJob() {
+		return job;
 	}
 }

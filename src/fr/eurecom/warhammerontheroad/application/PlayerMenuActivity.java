@@ -22,9 +22,6 @@ public class PlayerMenuActivity extends WotrActivity implements GameServiceListe
 	    startActivity(intent);
 	}
 	
-	public void accessPlay(View view) {
-		
-	}
 	
 	public void accessStory(View view) {
 		

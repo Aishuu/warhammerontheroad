@@ -29,6 +29,7 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
+            android:inputType="textPersonName"
             android:hint="@string/name" />
 
         <fr.eurecom.warhammerontheroad.application.WotrEditText
@@ -37,7 +38,7 @@
             android:layout_height="wrap_content"
             android:gravity="center"
             android:inputType="number"
-            android:hint="00000" />
+            android:hint="@string/number0" />
     </LinearLayout>
 
     <LinearLayout
