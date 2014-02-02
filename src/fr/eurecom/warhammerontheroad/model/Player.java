@@ -294,19 +294,32 @@ public class Player extends Hero {
 		//age, size, weight function of race
 		switch(race){
 		case HUMAN:
+			setAge(rand.nextInt(20)+16);
+			setSize(rand.nextInt(34)+52);
+			setWeight(rand.nextInt(53)+47);
 			break;
 		case ELF:
+			setAge(rand.nextInt(96)+30);
+			setSize(rand.nextInt(31)+60);
+			setWeight(rand.nextInt(44)+36);
 			break;
 		case DWARF:
+			setAge(rand.nextInt(96)+20);
+			setSize(rand.nextInt(31)+25);
+			setWeight(rand.nextInt(44)+40);
 			break;
 		case HOBBIT:
+			setAge(rand.nextInt(41)+20);
+			setSize(rand.nextInt(31));
+			setWeight(rand.nextInt(32)+34);
 			break;
 		default:
+			setAge(rand.nextInt(101)+20);
+			setSize(rand.nextInt(91));
+			setWeight(rand.nextInt(60)+40);
 			break;
 		}
-		setAge(rand.nextInt(101)+20);
-		setSize(rand.nextInt(101));
-		setWeight(rand.nextInt(101)+40);
+		
 	}
 
 	public void setOrigin(){

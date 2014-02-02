@@ -96,7 +96,7 @@ public class CharaCreationDetailsActivity extends WotrActivity implements OnItem
 		}else
 			player.setEyeColor(eye.getText().toString());
 		if(hair.getText().length()==0){
-			player.setEyeColor("Black");
+			player.setHairColor("Black");
 			Toast.makeText(getApplicationContext(), "Hair color set to black", Toast.LENGTH_SHORT).show();
 		}else
 			player.setHairColor(hair.getText().toString());
