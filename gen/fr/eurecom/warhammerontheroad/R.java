@@ -160,8 +160,9 @@ public final class R {
     public static final class raw {
         public static final int advancedskills=0x7f040000;
         public static final int basicskills=0x7f040001;
-        public static final int job=0x7f040002;
-        public static final int talents=0x7f040003;
+        public static final int items=0x7f040002;
+        public static final int job=0x7f040003;
+        public static final int talents=0x7f040004;
     }
     public static final class string {
         public static final int a=0x7f060034;

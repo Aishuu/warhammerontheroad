@@ -46,10 +46,6 @@ public class Player extends Hero {
 	public void AddJob(int index)
 	{
 		int i;
-		if (index == 0)
-			armeDraw = new RangedWeapon("arc long","0 3 0");
-		else
-			armeDraw = new MeleeWeapon("Sword","0 0 0");
 		job = new Job(index, context);
 		((ActualStats) stats).SetSecondaryStats(job.getSecondaryStats());
 		resetB();
@@ -70,7 +66,13 @@ public class Player extends Hero {
 		{
 			AddTalents(tmpt[i]);
 		}
-
+		int tmpi[] = job.getItems();
+		for(i = 0; i<tmpi.length; i++)
+		{
+			AddItem(tmpi[i]);
+		}
+		
+		
 	}
 
 	public void setColor(Color color) {

@@ -39,6 +39,7 @@ public class Game {
 	private int cmp_init;
 	private Map map;
 	private WotrService mService;
+	private int PA;
 
 	public Game(WotrService mService) {
 		this.mService = mService;
@@ -311,6 +312,7 @@ public class Game {
 	private void turnInFight(Hero h) {
 		if(!this.isGM)
 			this.myTurnNow();
+		h.nextTurn();
 		Log.d(TAG, "Yeah ! my turn ("+h.representInString()+") !");
 		// TODO: do stuff here
 		try {
@@ -401,6 +403,16 @@ public class Game {
 
 	public void removeGameServiceListener(GameServiceListener listener) {
 		gameServiceListeners.remove(listener);
+	}
+	
+	public int getPA()
+	{
+		return PA;
+	}
+	
+	public void usePA(int value)
+	{
+		PA -= value;
 	}
 
 }

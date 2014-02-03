@@ -6,13 +6,12 @@ public abstract class Weapon extends GeneralItem{
 	protected int degats;
 	private int attribut;
 	
-	public Weapon (String name, String description)
+	public Weapon (String name, int groupe, int degats, int attribut)
 	{
 		super(name);
-		String[] parameters = description.split(" ");
-		groupe = Integer.parseInt(parameters[0]);
-		degats = Integer.parseInt(parameters[1]);
-		attribut = Integer.parseInt(parameters[2]);
+		this.groupe = groupe;
+		this.degats = degats;
+		this.attribut = attribut;
 	}
 	
 	public abstract int getDegats();

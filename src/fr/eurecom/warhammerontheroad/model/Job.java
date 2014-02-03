@@ -18,6 +18,7 @@ public class Job {
 	private SecondaryStats secondarystats;
 	private int[] skills;
 	private int[] talents;
+	private int[] items;
 	
 	public Job(int index, Context context)
 	{
@@ -33,9 +34,9 @@ public class Job {
 
             try {
 				while ( (receiveString = bufferedReader.readLine()) != null) {
-					if((k/4) == index)
+					if((k/5) == index)
 					{
-						switch(k-(k/4)*4){
+						switch(k-(k/5)*5){
 						case 0:
 							name = receiveString;
 							break;
@@ -59,6 +60,14 @@ public class Job {
 							for (j = 0; j < talentsList.length; j++)
 							{
 								talents[j] = Integer.parseInt(talentsList[j]);
+							}
+							break;
+						case 4:
+							String itemList[] = receiveString.split(" ");
+							items = new int[itemList.length];
+							for (j = 0; j < itemList.length; j++)
+							{
+								items[j] = Integer.parseInt(itemList[j]);
 							}
 							break;
 						}
@@ -90,6 +99,10 @@ public class Job {
 	
 	public int[] getTalents(){
 		return talents;
+	}
+	
+	public int[] getItems(){
+		return items;
 	}
 }
 		
