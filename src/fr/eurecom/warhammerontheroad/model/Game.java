@@ -35,6 +35,7 @@ public class Game {
 	private boolean isInFight;
 	private Map map;
 	private WotrService mService;
+	private int PA;
 
 	public Game(WotrService mService) {
 		this.mService = mService;
@@ -309,6 +310,16 @@ public class Game {
 
 	public void removeGameServiceListener(GameServiceListener listener) {
 		gameServiceListeners.remove(listener);
+	}
+	
+	public int getPA()
+	{
+		return PA;
+	}
+	
+	public void usePA(int value)
+	{
+		PA -= value;
 	}
 
 }
