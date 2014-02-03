@@ -23,6 +23,8 @@ public class Hero extends Case implements Describable {
 	protected ArrayList<Skills> skills;
 	private ArrayList<Talents> talents;
 	protected Job job;
+	
+
 	private boolean hasVisee;
 	private WeaponSet weapons;
 	private ArmorSet armor;
@@ -738,5 +740,9 @@ public class Hero extends Case implements Describable {
 	public void nextTurn()
 	{
 		hasBlocked = false;
+	}
+	
+	public Job getJob() {
+		return job;
 	}
 }

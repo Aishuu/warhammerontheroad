@@ -37,7 +37,7 @@
     <string name="open_book">Open Warhammer book</string>
     <string name="write_story">Write the story</string>
     <string name="create_support_chara">Add standard character</string>
-    <string name="players_data">See all players stats</string>
+    <string name="players_data">See characters stats</string>
 
     <!-- Strings of chara creation details -->
     <string name="name">Name</string>
@@ -54,11 +54,11 @@
     <string name="eye_color">Eye color</string>
     <string name="hair_color">Hair color</string>
     <string name="birth_place">Birth place</string>
-    <string name="sexe">Sexe</string>
+    <string name="sexe">Gender</string>
 
     <string-array name="sexe_array">
-        <item>Male</item>
         <item>Female</item>
+        <item>Male</item>
     </string-array>
 
     <string name="size">Size</string>
@@ -67,6 +67,15 @@
     <string name="next">Next</string>
     <string name="title_activity_chara_creation_profil">Character Creation</string>
     <string name="hello_world">Hello world!</string>
+    <string name="carrier">Carrier</string>
+    <string-array name="carrier_array">
+        <item>Hunter</item>
+        <item>Student</item>
+        <item>Outlaw</item>
+        <item>Mercenary</item>
+        <item>Thief</item>
+    </string-array>
+    <string name="terminate">Terminate</string>
 
     <!-- Strings of chara creation profil -->
     <string name="profil_principal">Profil principal</string>
@@ -88,8 +97,7 @@
     <string name="m">M</string>
     <string name="pf">PF</string>
     <string name="pd">PD</string>
-    <string name="carrier">Carrier</string>
-    <string name="terminate">Terminate</string>
+    
     
     <string name="title_activity_combat">Fight</string>
 </resources>
