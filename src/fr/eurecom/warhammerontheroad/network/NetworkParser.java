@@ -4,7 +4,6 @@ import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -19,12 +18,14 @@ import java.util.TimerTask;
 import java.util.concurrent.locks.ReentrantLock;
 
 import fr.eurecom.warhammerontheroad.application.ConnectionStateListener;
+import fr.eurecom.warhammerontheroad.model.CombatAction;
 import fr.eurecom.warhammerontheroad.model.Dice;
 import fr.eurecom.warhammerontheroad.model.Game;
 import fr.eurecom.warhammerontheroad.model.Hero;
 import fr.eurecom.warhammerontheroad.model.Map;
 import fr.eurecom.warhammerontheroad.model.Player;
 import fr.eurecom.warhammerontheroad.model.WotrService;
+import android.content.Context;
 import android.os.Environment;
 import android.util.Log;
 import static fr.eurecom.warhammerontheroad.network.Cmds.*;
@@ -82,6 +83,7 @@ public class NetworkParser implements Runnable {
 	private  boolean mainThreadRunning;
 	private boolean connected;
 	private ArrayList<String> delayedCommands;
+	private boolean stop;
 	private final Collection<ConnectionStateListener> connectionStateListeners = new ArrayList<ConnectionStateListener>();
 
 	/**
@@ -97,6 +99,7 @@ public class NetworkParser implements Runnable {
 		this.filesToSend = new ArrayList<String>();
 		this.delayedCommands = new ArrayList<String>();
 		this.timer = null;
+		this.stop = false;
 	}
 
 	public static String constructStringFromArgs(String... args) {
@@ -110,6 +113,10 @@ public class NetworkParser implements Runnable {
 				result += NetworkParser.SEPARATOR;
 		}
 		return result;
+	}
+	
+	public void stop() {
+		this.stop = true;
 	}
 
 	@Override
@@ -130,7 +137,7 @@ public class NetworkParser implements Runnable {
 			// read from socket
 			String line = "";
 			int r;
-			for(;;) {
+			while(!stop) {
 				if((r = in.read()) == -1)
 					throw(new IOException("No more connected !"));
 				char ch = (char) r;
@@ -146,7 +153,6 @@ public class NetworkParser implements Runnable {
 					continue;
 				}
 
-				NetworkParser.lock.lock();
 				Log.d(TAG, "message : "+line);
 
 				// Error from the server
@@ -169,8 +175,8 @@ public class NetworkParser implements Runnable {
 						line = "";
 						continue;
 					}
-					mService.getChat().userDisconnected(parts[1]);
 					mService.getGame().userDisconnected(parts[1]);
+					mService.getChat().userDisconnected(parts[1]);
 				}
 
 				// User connected
@@ -179,8 +185,8 @@ public class NetworkParser implements Runnable {
 						line = "";
 						continue;
 					}
-					mService.getChat().userConnected(parts[1]);
 					mService.getGame().userConnected(parts[1]);
+					mService.getChat().userConnected(parts[1]);
 				}
 
 				// A command send only to the GM
@@ -196,12 +202,18 @@ public class NetworkParser implements Runnable {
 
 				// A command send only to a player
 				else if(parts[0].equals(CMD_SEND_TO_PLAYER)) {
-					if(parts.length < 3 || this.mService.getName().compareTo(parts[1]) != 0 || this.mService.getGame().getState() == Game.STATE_NO_GAME || this.mService.getGame().getState() == Game.STATE_GAME_CREATE_WAIT) {
+					if(parts.length < 3 || this.mService.getGame().getState() == Game.STATE_NO_GAME || this.mService.getGame().getState() == Game.STATE_GAME_CREATE_WAIT) {
 						line = "";
 						continue;
 					}
-					String msg = line.split(NetworkParser.SEPARATOR, 3)[2];
-					this.mService.getChat().receivePrivateMessage(parts[1], msg);
+					if(parts[2].equals(CMD_MESSAGE)) {
+						String msg = line.split(NetworkParser.SEPARATOR, 4)[3];
+						this.mService.getChat().receivePrivateMessage(parts[1], msg);
+					}
+					else if(parts[2].equals(CMD_ACTION)) {
+						String msg = line.split(NetworkParser.SEPARATOR, 4)[3];
+						this.mService.getGame().parseCommand(parts[1], msg);
+					}
 
 				}
 
@@ -262,7 +274,6 @@ public class NetworkParser implements Runnable {
 											Log.d(TAG, "Socket already closed by server.");
 										}
 									} catch (IOException e) {
-										e.printStackTrace();
 										Log.e(TAG, "Socket is disconnected...");
 									}
 
@@ -289,8 +300,8 @@ public class NetworkParser implements Runnable {
 							try {
 								Socket file_sock = new Socket(InetAddress.getByName(NetworkParser.SERVER_ADDR), port);
 								InputStream in = file_sock.getInputStream();
-								OutputStream out = new FileOutputStream(new File(Environment.getExternalStorageDirectory().getAbsolutePath(), filename));
-								//OutputStream out = NetworkParser.this.mService.getContext().openFileOutput(filename, Context.MODE_PRIVATE);
+								//OutputStream out = new FileOutputStream(new File(Environment.getExternalStorageDirectory().getAbsolutePath(), filename));
+								OutputStream out = NetworkParser.this.mService.getContext().openFileOutput(filename, Context.MODE_PRIVATE);
 								byte[] buffer = new byte[1024];
 								int done = 0;
 								while (done < size) {
@@ -310,9 +321,11 @@ public class NetworkParser implements Runnable {
 									Log.d(TAG, "Socket already closed by server.");
 								} finally {
 									Log.i(TAG, "File successfully downloaded !");
+									Map m = NetworkParser.this.mService.getGame().getMap();
+									if(m != null)
+										m.newFileReceived(NetworkParser.this.mService);
 								}
 							} catch(IOException e) {
-								e.printStackTrace();
 								Log.e(TAG, "Socket is disconnected...");
 							}
 						}
@@ -339,7 +352,7 @@ public class NetworkParser implements Runnable {
 					// Answer to the LIST command
 					else if(parts[1].equals(CMD_LIST)) {
 						if(parts.length < 3) {
-							mService.getGame().listAvailableGames(null);
+							//mService.getGame().listAvailableGames(null);
 							line = "";
 							continue;
 						}
@@ -362,7 +375,7 @@ public class NetworkParser implements Runnable {
 								Log.e(TAG, "This is no fuckin number !");
 							}
 						}
-						mService.getGame().listAvailableGames(avail);
+						//mService.getGame().listAvailableGames(avail);
 					}
 
 					// Id of the game to be created
@@ -381,16 +394,12 @@ public class NetworkParser implements Runnable {
 					}
 				}
 				line = "";
-				NetworkParser.lock.unlock();
 			}
 		} catch (IOException e) {
 			Log.e(TAG, "Socket is disconnected...");
 			this.setConnected(false);
 			tryToReconnect(NetworkParser.RECO_RATE);
 		} finally {
-			if (NetworkParser.lock.isHeldByCurrentThread()) {
-			    NetworkParser.lock.unlock();
-			}
 			try {
 				if(this.sock != null)
 					this.sock.close();
@@ -398,6 +407,12 @@ public class NetworkParser implements Runnable {
 				e.printStackTrace();
 			}
 			this.mainThreadRunning = false;
+		}
+		try {
+			if(this.sock != null)
+				this.sock.close();
+		} catch (IOException e) {
+			Log.e(TAG, "Couldn't close the socket...");
 		}
 	}
 
@@ -534,26 +549,48 @@ public class NetworkParser implements Runnable {
 		this.sendCommand(CMD_MESSAGE, message);
 	}
 
-	public void sendDicedAction(int action, Dice d, String... args) {
+	public void sendDicedAction(CombatAction action, Dice d, String... args) {
 		if(this.mService.getGame().getState() != Game.STATE_GAME_TURN)
 			return;
 		String ss = "";
 		for(String s: args)
 			ss+= s+NetworkParser.SEPARATOR;
-		this.sendCommand(CMD_ACTION, Game.CMD_FIGHT, Integer.toString(action), ss.substring(0, ss.length()-1), d.toString());
+		this.sendCommand(CMD_ACTION, Game.CMD_FIGHT, Integer.toString(action.getIndex()), ss.substring(0, ss.length()-1), d.toString());
+	}
+	
+	public void sendDicedAction(CombatAction action, Dice d, Hero h, String... args) {
+		if(this.mService.getGame().getState() != Game.STATE_GAME_WAIT_ACTION && this.mService.getGame().getState() != Game.STATE_GAME_CONFIRM_ACTION)
+			return;
+		String ss = "";
+		for(String s: args)
+			ss+= s+NetworkParser.SEPARATOR;
+		this.sendCommand(CMD_ACTION, h.representInString(), Game.CMD_FIGHT, Integer.toString(action.getIndex()), ss.substring(0, ss.length()-1), d.toString());
 	}
 
 	public void createHero(Hero h) {
 		this.sendCommand(CMD_ACTION, Integer.toString(h.getId()), Game.CMD_CREATE_HERO, h.describeAsString());
 	}
+	
+	public void createHero(Hero h, String name) {
+		this.sendCommand(CMD_SEND_TO_PLAYER, name, CMD_ACTION, Integer.toString(h.getId()), Game.CMD_CREATE_HERO, h.describeAsString());
+	}
 
 	public void createPlayer(Player p) {
 		this.sendCommand(CMD_ACTION, Game.CMD_CREATE_HERO, p.describeAsString());
+	}
+	
+	public void createPlayer(Player p, String name) {
+		this.sendCommand(CMD_SEND_TO_PLAYER, name, CMD_ACTION, Game.CMD_CREATE_HERO, p.describeAsString());
 	}
 
 	public void beginFight(Map m) {
 		/* "_" is used since this command is issued by GM, other will try to get the hero actually sending */
 		this.sendCommand(CMD_ACTION, "_", Game.CMD_BEGIN_FIGHT, m.describeAsString());
+	}
+	
+	public void prepareFight() {
+		/* "_" is used since this command is issued by GM, other will try to get the hero actually sending */
+		this.sendCommand(CMD_ACTION, "_", Game.CMD_PREPARE_FIGHT);
 	}
 
 	public void startGame() {
@@ -586,10 +623,8 @@ public class NetworkParser implements Runnable {
 		if(!game.mustBind())
 			return;
 		Log.d(TAG, "State : "+game.getState());
-		if(id > 0 && id < 100000) {
+		if(id > 0 && id < 100000)
 			this.sendCommand(CMD_BIND, String.format("%05d", id), this.mService.getName());
-			game.bound(id);
-		}
 		else
 			Log.e(TAG, "bind : number "+id+" is too damn big !");
 	}
@@ -631,12 +666,13 @@ public class NetworkParser implements Runnable {
 	synchronized public void tryToReconnect(final long timeout) {
 		if(this.timer != null)
 			return;		// already trying to reconnect
+		if(this.stop)
+			return;		// NetworkParser should stop
 		this.timer =  new Timer();
 		this.timer.scheduleAtFixedRate(new TimerTask(){ public void run() {onTimerTick();}}, 0, timeout);				
 	}
 
 	private void onTimerTick() {
-		Log.i(TAG, "Trying to reconnect...");
 		try {
 
 			connect(NetworkParser.SERVER_ADDR, NetworkParser.SERVER_PORT);
@@ -660,8 +696,6 @@ public class NetworkParser implements Runnable {
 
 			this.setConnected(true);
 		} catch (IOException e) {
-			Log.w(TAG, "Reconnection failed !");
-			e.printStackTrace();
 		}
 	}
 

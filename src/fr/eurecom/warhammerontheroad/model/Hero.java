@@ -42,7 +42,7 @@ public class Hero extends Case implements Describable {
 		armor.add(new Armor("pantalon", 3, 0));
 	}
 
-	public Hero(Context context) {
+	protected Hero(Context context) {
 		this.context = context;
 	}
 
@@ -59,8 +59,8 @@ public class Hero extends Case implements Describable {
 
 	public void setId(int id) {
 		this.id = id;
-		if(id >= cmp_id)
-			cmp_id = id+1;
+		if(id > cmp_id)
+			cmp_id = id;
 	}
 
 	protected void init_stats() {
@@ -69,7 +69,7 @@ public class Hero extends Case implements Describable {
 
 	public void init() {
 		this.hasVisee = false;
-		this.armeDraw = null;
+		armeDraw = new MeleeWeapon("Sword","0 0 0");
 
 		this.chooseImage();
 
@@ -298,7 +298,7 @@ public class Hero extends Case implements Describable {
 			tmpstat += 20;
 			break;
 		}
-		if ((dice+diffModificator)>tmpstat)
+		if ((dice)>tmpstat+diffModificator)
 			return false;
 		return true;
 	}
@@ -435,6 +435,17 @@ public class Hero extends Case implements Describable {
 	}
 
 	public void attaqueStandard(Game game, Hero hero, Dice dice) {
+		String nameAttacker, nameDefender;
+		if(this instanceof Player)
+			nameAttacker = ((Player) this).getName();
+		else
+			nameAttacker = this.getRace().toString();
+		if(hero instanceof Player)
+			nameDefender = ((Player) hero).getName();
+		else
+			nameDefender = hero.getRace().toString();
+		Log.d(TAG, nameAttacker+" performs a standard attack on "+nameDefender+" !");
+		
 		int result = dice.hundredDice();
 		int invresult = result == 100 ? 0 : (result-result/10)*10 + result/10;
 		int localisation;
@@ -468,6 +479,8 @@ public class Hero extends Case implements Describable {
 			else
 				hero.recevoirDamage(armeDraw.getDegats() + stats.getStats(10) + damages, localisation);
 		}
+		else
+			Log.d(TAG, nameAttacker+" failed to hit "+nameDefender);
 		hasVisee = false;
 	}
 
@@ -521,16 +534,20 @@ public class Hero extends Case implements Describable {
 	}
 
 	public void recevoirDamage(int damages, int localisation) {
+		String nameDefender;
+		if(this instanceof Player)
+			nameDefender = ((Player) this).getName();
+		else
+			nameDefender = this.getRace().toString();
+		
 		int tmpDamage = damages - stats.getStats(11) - armor.get(localisation).getArmorPoints();
 		if (tmpDamage < 0)
 			tmpDamage = 0;
-		if (damages - tmpDamage < 0)
-			B = 0;
-		else
-			B -= tmpDamage;
+		tmpDamage = B - tmpDamage < 0 ? B : tmpDamage;
+		Log.d(TAG, nameDefender+" suffers "+damages+" damages !");
+		B -= tmpDamage;
 		if (B == 0)
 			death();
-		Log.d(TAG, damages+" degats recus !");
 	}
 
 	@Override
@@ -556,18 +573,21 @@ public class Hero extends Case implements Describable {
 			Log.e(TAG, "Not a number !");
 		}
 	}
-	public int beginBattle()
+	
+	public int prepareBattle()
 	{
-		resetB();
 		this.initiative_for_fight = stats.getStats(4) + new Dice().tenDice();
 		this.turn_in_fight = 0;
+		return this.initiative_for_fight;
+	}
+	
+	public int getInitiativeForFight() {
 		return this.initiative_for_fight;
 	}
 
 	public void computeTurnInFight(Hero hero, int init) {
 		if(init > this.initiative_for_fight || (init == this.initiative_for_fight && hero.representInString().compareTo(this.representInString())<0))
 			this.turn_in_fight++;
-		Log.d(TAG, "Hero "+hero.representInString()+" did "+init+" as initiative...");
 	}
 
 	public int getTurnInFight() {
@@ -576,11 +596,22 @@ public class Hero extends Case implements Describable {
 
 	public void death()
 	{
+		String nameDefender;
+		if(this instanceof Player)
+			nameDefender = ((Player) this).getName();
+		else
+			nameDefender = this.getRace().toString();
+		Log.d(TAG, nameDefender+" is dead !");
+	}
+	
+	public boolean isAlive() {
+		return this.B != 0;
 	}
 
 	public void resetB()
 	{
 		B = stats.getStats(9);
+		Log.d(TAG, "B of "+this.representInString()+" set to "+this.B);
 	}
 
 	protected void chooseImage() {

@@ -76,6 +76,11 @@ public class PrimaryStats implements Stats{
 			M = 3;
 			break;
 
+		/* TODO: debug
+		 * 
+		 */
+		case GOBLIN :
+		case ORC:
 		case HOBBIT :
 			CC  = 10;
 			CT  = 30;

@@ -1,7 +1,5 @@
 package fr.eurecom.warhammerontheroad.application;
 
-import java.util.ArrayList;
-
 import fr.eurecom.warhammerontheroad.R;
 import fr.eurecom.warhammerontheroad.model.Game;
 import android.annotation.SuppressLint;
@@ -14,6 +12,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 /**
  * Activity used for testing purpose as a chat room
@@ -29,11 +28,10 @@ public class ChatRoomActivity extends WotrActivity implements ChatListener, Game
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		
 		setContentView(R.layout.activity_chat_room);
 
-		// Make sure we're running on Honeycomb or higher to use ActionBar APIs
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-			// Show the Up button in the action bar.
 			getActionBar().setDisplayHomeAsUpEnabled(true);
 		}
 		this.chatRoom = (TextView) findViewById(R.id.chatRoom);
@@ -115,34 +113,7 @@ public class ChatRoomActivity extends WotrActivity implements ChatListener, Game
 	}
 
 	@Override
-	public void userDisconnected(String name) {
-		this.newline = this.newline + name + " disconnected...\n";
-		runOnUiThread(new Runnable() {
-			public void run() {
-
-				ChatRoomActivity.this.chatRoom.append(ChatRoomActivity.this.newline);
-				ChatRoomActivity.this.newline = "";
-
-			}
-		});
-	}
-
-	@Override
-	public void userConnected(String name) {
-		this.newline = this.newline + name + " is now connected...\n";
-		runOnUiThread(new Runnable() {
-			public void run() {
-				ChatRoomActivity.this.chatRoom.append(ChatRoomActivity.this.newline);
-				ChatRoomActivity.this.newline = "";
-
-			}
-		});
-	}
-
-	@Override
 	public void fileTransferStatusChanged(String name, int file_status) {
-		// TODO Auto-generated method stub
-		
 	}
 
 	@Override
@@ -159,17 +130,48 @@ public class ChatRoomActivity extends WotrActivity implements ChatListener, Game
 	}
 
 	@Override
-	public void onStateChanged(Game game) {
+	public void onStateChanged(Game game, int exState) {
+		int newState = game.getState();
+		if(exState == Game.STATE_GAME_LAUNCHED && (newState == Game.STATE_GAME_TURN || newState == Game.STATE_GAME_WAIT_TURN)) {
+			Intent intent = new Intent(this, CombatActivity.class);
+		    startActivity(intent);
+		    this.finish();
+		}
 	}
 
 	@Override
-	public void listAvailableGames(ArrayList<String> avail) {
+	public void prepareFight() {
+		runOnUiThread(new Runnable() {
+			public void run() {
+				Toast toast = Toast.makeText(ChatRoomActivity.this.mService.getContext(), R.string.prepare_fight, Toast.LENGTH_SHORT);
+				toast.show();
+			}});
 	}
 
 	@Override
-	public void beginFight() {
-		Intent intent = new Intent(this, CombatActivity.class);
-	    startActivity(intent);
+	public void userConnectionChanged(String name, boolean isNowConnected) {
+		if(isNowConnected) {
+			this.newline = this.newline + name + " is now connected...\n";
+			runOnUiThread(new Runnable() {
+				public void run() {
+					ChatRoomActivity.this.chatRoom.append(ChatRoomActivity.this.newline);
+					ChatRoomActivity.this.newline = "";
+
+				}
+			});
+		}
+		else {
+
+			this.newline = this.newline + name + " disconnected...\n";
+			runOnUiThread(new Runnable() {
+				public void run() {
+
+					ChatRoomActivity.this.chatRoom.append(ChatRoomActivity.this.newline);
+					ChatRoomActivity.this.newline = "";
+
+				}
+			});
+		}
 	}
 
 }

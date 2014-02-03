@@ -9,7 +9,7 @@
         android:targetSdkVersion="19" />
 
     <uses-feature android:name="android.hardware.wifi" />
-    
+
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
@@ -62,23 +62,24 @@
                 android:value="fr.eurecom.warhammerontheroad.application.JoinGameActivity" />
         </activity>
         <activity
-            android:screenOrientation="landscape"
             android:name="fr.eurecom.warhammerontheroad.application.CharaCreationDetailsActivity"
             android:label="@string/title_activity_chara_creation_profil"
-            android:parentActivityName="fr.eurecom.warhammerontheroad.application.PlayerMenuActivity" >
+            android:parentActivityName="fr.eurecom.warhammerontheroad.application.PlayerMenuActivity"
+            android:screenOrientation="landscape" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="fr.eurecom.warhammerontheroad.application.PlayerMenuActivity" />
         </activity>
         <activity
-            android:screenOrientation="landscape"
             android:name="fr.eurecom.warhammerontheroad.application.CharaCreationProfilActivity"
             android:label="@string/title_activity_chara_creation_profil"
-            android:parentActivityName="fr.eurecom.warhammerontheroad.application.PlayerMenuActivity" >
+            android:parentActivityName="fr.eurecom.warhammerontheroad.application.PlayerMenuActivity"
+            android:screenOrientation="landscape" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="fr.eurecom.warhammerontheroad.application.PlayerMenuActivity" />
         </activity>
+
         <service
             android:name="fr.eurecom.warhammerontheroad.model.WotrService"
             android:exported="false" />
@@ -87,11 +88,30 @@
             android:name="fr.eurecom.warhammerontheroad.application.ChatRoomActivity"
             android:label="@string/title_activity_chat_room" >
         </activity>
-
         <activity
-            android:screenOrientation="landscape"
             android:name="fr.eurecom.warhammerontheroad.application.CombatActivity"
-            android:label="@string/title_activity_combat" >
+            android:label="@string/title_activity_combat"
+            android:screenOrientation="landscape" >
+        </activity>
+        <activity
+            android:name="fr.eurecom.warhammerontheroad.application.WriteAndReadStoryActivity"
+            android:label="@string/read_story" >
+        </activity>
+        <activity
+            android:name="fr.eurecom.warhammerontheroad.application.CreateSupportCharaActivity"
+            android:label="@string/title_activity_create_support_chara" >
+        </activity>
+        <activity
+            android:name="fr.eurecom.warhammerontheroad.application.SeeCharaDataActivity"
+            android:label="@string/title_activity_see_chara_data" >
+        </activity>
+        <activity
+            android:name="fr.eurecom.warhammerontheroad.application.SeeStatsActivity"
+            android:label="@string/title_activity_see_stats" >
+        </activity>
+        <activity
+            android:name="fr.eurecom.warhammerontheroad.application.CreateMapActivity"
+            android:label="@string/title_activity_create_map" >
         </activity>
     </application>
 

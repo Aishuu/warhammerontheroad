@@ -18,11 +18,11 @@
         android:text="@string/access_chat" />
 
     <fr.eurecom.warhammerontheroad.application.WotrButton
-        android:id="@+id/btnMenuOpenBook"
+        android:id="@+id/btnCrtMap"
         style="@style/ButtonSize"
         android:layout_weight="1"
-        android:onClick="openBook"
-        android:text="@string/open_book" />
+        android:onClick="createMap"
+        android:text="@string/create_map" />
 
     <fr.eurecom.warhammerontheroad.application.WotrButton
         android:id="@+id/btnWriteStory"
@@ -58,7 +58,7 @@
         android:id="@+id/btnGMAccessPlay"
         style="@style/ButtonSize"
         android:layout_weight="1"
-        android:onClick="accessPlay"
+        android:onClick="accessPlayOrFight"
         android:text="@string/access_play" />
 
 </LinearLayout>

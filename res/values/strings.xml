@@ -15,6 +15,10 @@
     <string name="buttonSendFile">Send File</string>
     <string name="listAvailGames">List Games</string>
     <string name="title_activity_create_game">Create Game</string>
+    <string name="disconnected">You\'ll be disconnected from the game&#8230;</string>
+    <string name="yes">yes</string>
+    <string name="no">no</string>
+    <string name="prepare_fight">Prepare to fight !</string>
 
     <!-- Strings of new game intro -->
     <string name="new_gm">All Hail the new Game Master! You will reign upon the crowds of game n°</string>
@@ -29,15 +33,18 @@
 
     <!-- Strings of player menu -->
     <string name="create_chara">Create your character</string>
+    <string name="modify_chara">Modify your character</string>
+    <string name="see_chara_stats">See your character\'s stats</string>
     <string name="access_chat">Talk</string>
     <string name="read_story">Read the story</string>
-    <string name="access_play">Play</string>
 
     <!-- Strings of gm menu -->
-    <string name="open_book">Open Warhammer book</string>
+    <string name="create_map">Create a map</string>
     <string name="write_story">Write the story</string>
     <string name="create_support_chara">Add standard character</string>
     <string name="players_data">See all players stats</string>
+    <string name="access_play">Play</string>
+    <string name="access_fight">Begin fight</string>
 
     <!-- Strings of chara creation details -->
     <string name="name">Name</string>
@@ -90,6 +97,10 @@
     <string name="pd">PD</string>
     <string name="carrier">Carrier</string>
     <string name="terminate">Terminate</string>
-    
     <string name="title_activity_combat">Fight</string>
+    <string name="title_activity_create_support_chara">Create a character</string>
+    <string name="title_activity_see_chara_data">All characters\' data</string>
+    <string name="title_activity_see_stats">See your stats</string>
+    <string name="title_activity_create_map">Create a map</string>
+
 </resources>

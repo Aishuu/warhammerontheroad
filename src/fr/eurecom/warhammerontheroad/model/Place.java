@@ -26,10 +26,6 @@ public enum Place {
 		return numberOfPlaces;
 	}
 
-	private static void setNumberOfPlaces(int numberOfPlaces) {
-		Place.numberOfPlaces = numberOfPlaces;
-	}
-
 	public String toString(){
 		return Integer.toString(index);
 	}

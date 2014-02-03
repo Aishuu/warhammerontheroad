@@ -11,6 +11,8 @@ public abstract class WotrActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		this.mService = ((WotrApplication) getApplication()).getService();
+		if(this.mService != null && this.mService.getGame() != null && !this.mService.getGame().validateActivity(this))
+			this.finish();
 	}
 	
 	@Override
@@ -22,5 +24,4 @@ public abstract class WotrActivity extends Activity {
 	protected void onStop() {
 		super.onStop();
 	}
-
 }

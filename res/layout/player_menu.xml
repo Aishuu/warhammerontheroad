@@ -42,7 +42,6 @@
     <fr.eurecom.warhammerontheroad.application.WotrButton
             android:id="@+id/btnPAccessPlay"
             style="@style/ButtonSize"
-            android:onClick="accessPlay"
             android:text="@string/access_play"
             android:layout_weight="1" />
     

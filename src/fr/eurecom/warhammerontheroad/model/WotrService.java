@@ -45,6 +45,15 @@ public class WotrService extends Service {
 		Log.d(TAG, "Creating the socket..");
 		new Thread(this.np).start();
 	}
+	
+	public void reinit() {
+		this.np.stop();
+		this.np = new NetworkParser(this);
+		this.game = new Game(this);
+		this.chat = new Chat();
+		Log.d(TAG, "Creating the socket..");
+		new Thread(this.np).start();
+	}
 
 	@Override
 	public void onDestroy() {
