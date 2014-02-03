@@ -23,7 +23,7 @@ public class Hero extends Case implements Describable {
 	protected ArrayList<Skills> skills;
 	private ArrayList<Talents> talents;
 	protected Job job;
-	
+
 
 	private boolean hasVisee;
 	private WeaponSet weapons;
@@ -44,7 +44,7 @@ public class Hero extends Case implements Describable {
 		armor = new ArmorSet();
 	}
 
-	public Hero(Context context) {
+	protected Hero(Context context) {
 		this.context = context;
 	}
 
@@ -61,8 +61,8 @@ public class Hero extends Case implements Describable {
 
 	public void setId(int id) {
 		this.id = id;
-		if(id >= cmp_id)
-			cmp_id = id+1;
+		if(id > cmp_id)
+			cmp_id = id;
 	}
 
 	protected void init_stats() {
@@ -72,10 +72,13 @@ public class Hero extends Case implements Describable {
 	public void init() {
 		this.hasVisee = false;
 
+		this.weapons = new WeaponSet();
+		this.weapons.addMelee(new MeleeWeapon("cuillere", 0, 0, 0));
+
 		this.chooseImage();
 
 		this.init_stats();
-		
+
 		skills = new ArrayList<Skills>();
 		talents = new ArrayList<Talents>();
 		CreateBasicsSkills();
@@ -277,24 +280,27 @@ public class Hero extends Case implements Describable {
 						switch(parameters.length){
 						case 3 :
 							armor.addArmor(new Armor(parameters[0], 
-									                Integer.parseInt(parameters[1]), 
-									                Integer.parseInt(parameters[2])));
+									Integer.parseInt(parameters[1]), 
+									Integer.parseInt(parameters[2])));
 							return;
-							
+
 						case 4 :
 							weapons.addMelee(new MeleeWeapon(parameters[0],
-									                      Integer.parseInt(parameters[1]),
-									                      Integer.parseInt(parameters[2]),
-									                      Integer.parseInt(parameters[3])));
+									Integer.parseInt(parameters[1]),
+									Integer.parseInt(parameters[2]),
+									Integer.parseInt(parameters[3])));
 							return;
-							
-						default :
+
+						case 6 :
 							weapons.addRange(new RangedWeapon(parameters[0],
-									                       Integer.parseInt(parameters[1]),
-									                       Integer.parseInt(parameters[2]),
-									                       Integer.parseInt(parameters[3]),
-									                       Integer.parseInt(parameters[4]),
-									                       Integer.parseInt(parameters[5])));
+									Integer.parseInt(parameters[1]),
+									Integer.parseInt(parameters[2]),
+									Integer.parseInt(parameters[3]),
+									Integer.parseInt(parameters[4]),
+									Integer.parseInt(parameters[5])));
+							return;
+						default:
+							Log.e(TAG, "AddItem : "+parameters.length+" parameters (line "+index+")");
 							return;
 						}
 					}else{
@@ -312,7 +318,7 @@ public class Hero extends Case implements Describable {
 			}
 		}
 	}
-	
+
 	public void show(){
 		Log.d("race",race.toString());
 		/*
@@ -354,7 +360,7 @@ public class Hero extends Case implements Describable {
 			tmpstat += 20;
 			break;
 		}
-		if ((dice+diffModificator)>tmpstat)
+		if ((dice)>tmpstat+diffModificator)
 			return false;
 		return true;
 	}
@@ -449,32 +455,32 @@ public class Hero extends Case implements Describable {
 
 	public ArrayList<Case> whereCharge(Game game) {
 		if (game.getPA() > 1){
-		if (weapons.getWeapon() instanceof MeleeWeapon)
-		{
-			ArrayList<Case> all = game.getMap().getInRangeCases(this, 1, 2*stats.getStats(12)+1);
-			if(all == null)
-				return null;
-			ArrayList<Case> interResult = new ArrayList<Case>();
-			ArrayList<Case> result = new ArrayList<Case>();
-			for(Case c : all)
+			if (weapons.getWeapon() instanceof MeleeWeapon)
 			{
-				if(c instanceof Hero)
+				ArrayList<Case> all = game.getMap().getInRangeCases(this, 1, 2*stats.getStats(12)+1);
+				if(all == null)
+					return null;
+				ArrayList<Case> interResult = new ArrayList<Case>();
+				ArrayList<Case> result = new ArrayList<Case>();
+				for(Case c : all)
 				{
-					interResult.add(c);
-					result.add(c);
+					if(c instanceof Hero)
+					{
+						interResult.add(c);
+						result.add(c);
+					}
 				}
-			}
-			if(interResult.size() == 0)
+				if(interResult.size() == 0)
+					return null;
+				for(Case c:all)
+					if(c instanceof Vide)
+						for(Case c1 : result)
+							if(game.getMap().getInRangeCases(c1, 1, 1).contains(c))
+								result.add(c);
+				return result;
+			}else{
 				return null;
-			for(Case c:all)
-				if(c instanceof Vide)
-					for(Case c1 : result)
-						if(game.getMap().getInRangeCases(c1, 1, 1).contains(c))
-							result.add(c);
-			return result;
-		}else{
-			return null;
-		}}
+			}}
 		return null;
 	}
 
@@ -484,40 +490,40 @@ public class Hero extends Case implements Describable {
 
 	public ArrayList<Case> whereDesengager(Game game) {
 		if (game.getPA() > 1){
-		if (isengaged){
-		ArrayList<Case> all = game.getMap().getInRangeCases(this, 1, stats.getStats(12));
-		if(all == null)
-			return null;
-		ArrayList<Case> result = new ArrayList<Case>();
-		for(Case c : all)
-			if(c instanceof Vide)
-				result.add(c);
-		if(result.size() == 0)
-			return null;
-		return result;
-		}else{
-			return null;
-		}}
+			if (isengaged){
+				ArrayList<Case> all = game.getMap().getInRangeCases(this, 1, stats.getStats(12));
+				if(all == null)
+					return null;
+				ArrayList<Case> result = new ArrayList<Case>();
+				for(Case c : all)
+					if(c instanceof Vide)
+						result.add(c);
+				if(result.size() == 0)
+					return null;
+				return result;
+			}else{
+				return null;
+			}}
 		return null;
 	}
 
 	public ArrayList<Case> whereAttaqueRapide(Game game) {
 		if (game.getPA() > 1){
-		if(weapons.getWeapon() instanceof MeleeWeapon)
-		{
-		ArrayList<Case> all = game.getMap().getInRangeCases(this, 1, 1);
-		if(all == null)
-			return null;
-		ArrayList<Case> result = new ArrayList<Case>();
-		for(Case c : all)
-			if(c instanceof Hero)
-				result.add(c);
-		if(result.size() == 0)
-			return null;
-		return result;
-		}else{
-			return null;
-		}}
+			if(weapons.getWeapon() instanceof MeleeWeapon)
+			{
+				ArrayList<Case> all = game.getMap().getInRangeCases(this, 1, 1);
+				if(all == null)
+					return null;
+				ArrayList<Case> result = new ArrayList<Case>();
+				for(Case c : all)
+					if(c instanceof Hero)
+						result.add(c);
+				if(result.size() == 0)
+					return null;
+				return result;
+			}else{
+				return null;
+			}}
 		return null;
 	}
 
@@ -545,6 +551,17 @@ public class Hero extends Case implements Describable {
 	}
 
 	public void attaqueStandard(Game game, Hero hero, Dice dice) {
+		String nameAttacker, nameDefender;
+		if(this instanceof Player)
+			nameAttacker = ((Player) this).getName();
+		else
+			nameAttacker = this.getRace().toString();
+		if(hero instanceof Player)
+			nameDefender = ((Player) hero).getName();
+		else
+			nameDefender = hero.getRace().toString();
+		Log.d(TAG, nameAttacker+" performs a standard attack on "+nameDefender+" !");
+
 		int result = dice.hundredDice();
 		int invresult = result == 100 ? 0 : (result-result/10)*10 + result/10;
 		int localisation;
@@ -581,6 +598,8 @@ public class Hero extends Case implements Describable {
 			else
 				hero.recevoirDamage(weapons.getWeapon().getDegats() + stats.getStats(10) + damages, localisation, dice);
 		}
+		else
+			Log.d(TAG, nameAttacker+" failed to hit "+nameDefender);
 		hasVisee = false;
 	}
 
@@ -644,6 +663,13 @@ public class Hero extends Case implements Describable {
 	}
 
 	public void recevoirDamage(int damages, int localisation, Dice dice) {
+		String nameDefender;
+		if(this instanceof Player)
+			nameDefender = ((Player) this).getName();
+		else
+			nameDefender = this.getRace().toString();
+
+
 		if (weapons.getLeftHand() != null && !hasBlocked)
 		{
 			hasBlocked = true;
@@ -653,13 +679,11 @@ public class Hero extends Case implements Describable {
 		int tmpDamage = damages - stats.getStats(11) - armor.getProtection(localisation);
 		if (tmpDamage < 0)
 			tmpDamage = 0;
-		if (damages - tmpDamage < 0)
-			B = 0;
-		else
-			B -= tmpDamage;
+		tmpDamage = B - tmpDamage < 0 ? B : tmpDamage;
+		Log.d(TAG, nameDefender+" suffers "+damages+" damages !");
+		B -= tmpDamage;
 		if (B == 0)
 			death();
-		Log.d(TAG, damages+" degats recus !");
 	}
 
 	@Override
@@ -680,14 +704,13 @@ public class Hero extends Case implements Describable {
 		String[] parts = s.split(NetworkParser.SEPARATOR, -1);
 		try {
 			this.setRace(Race.fromIndex(Integer.parseInt(parts[0])));
-			this.init();
 		} catch(NumberFormatException e) {
 			Log.e(TAG, "Not a number !");
 		}
 	}
-	public int beginBattle()
+
+	public int prepareBattle()
 	{
-		resetB();
 		isengaged = false;
 		loaded = true;
 		hasBlocked = false;
@@ -696,10 +719,13 @@ public class Hero extends Case implements Describable {
 		return this.initiative_for_fight;
 	}
 
+	public int getInitiativeForFight() {
+		return this.initiative_for_fight;
+	}
+
 	public void computeTurnInFight(Hero hero, int init) {
 		if(init > this.initiative_for_fight || (init == this.initiative_for_fight && hero.representInString().compareTo(this.representInString())<0))
 			this.turn_in_fight++;
-		Log.d(TAG, "Hero "+hero.representInString()+" did "+init+" as initiative...");
 	}
 
 	public int getTurnInFight() {
@@ -708,11 +734,22 @@ public class Hero extends Case implements Describable {
 
 	public void death()
 	{
+		String nameDefender;
+		if(this instanceof Player)
+			nameDefender = ((Player) this).getName();
+		else
+			nameDefender = this.getRace().toString();
+		Log.d(TAG, nameDefender+" is dead !");
+	}
+
+	public boolean isAlive() {
+		return this.B != 0;
 	}
 
 	public void resetB()
 	{
 		B = stats.getStats(9);
+		Log.d(TAG, "B of "+this.representInString()+" set to "+this.B);
 	}
 
 	protected void chooseImage() {
@@ -736,12 +773,12 @@ public class Hero extends Case implements Describable {
 			break;
 		}
 	}
-	
+
 	public void nextTurn()
 	{
 		hasBlocked = false;
 	}
-	
+
 	public Job getJob() {
 		return job;
 	}

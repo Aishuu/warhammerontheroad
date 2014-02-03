@@ -46,4 +46,9 @@ public class StartMenuActivity extends WotrActivity {
 		super.onPause();
 	}
 
+	@Override
+	public void onBackPressed() {
+		this.finish();
+	}
+
 }

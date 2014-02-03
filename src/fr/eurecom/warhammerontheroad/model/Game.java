@@ -5,7 +5,21 @@ import java.util.Collection;
 
 import android.content.Context;
 import android.util.Log;
+import fr.eurecom.warhammerontheroad.application.CharaCreationDetailsActivity;
+import fr.eurecom.warhammerontheroad.application.ChatRoomActivity;
+import fr.eurecom.warhammerontheroad.application.CombatActivity;
+import fr.eurecom.warhammerontheroad.application.CreateMapActivity;
+import fr.eurecom.warhammerontheroad.application.CreateSupportCharaActivity;
+import fr.eurecom.warhammerontheroad.application.GMMenuActivity;
 import fr.eurecom.warhammerontheroad.application.GameServiceListener;
+import fr.eurecom.warhammerontheroad.application.JoinGameActivity;
+import fr.eurecom.warhammerontheroad.application.NewGameIntroActivity;
+import fr.eurecom.warhammerontheroad.application.PlayerMenuActivity;
+import fr.eurecom.warhammerontheroad.application.SeeCharaDataActivity;
+import fr.eurecom.warhammerontheroad.application.SeeStatsActivity;
+import fr.eurecom.warhammerontheroad.application.StartMenuActivity;
+import fr.eurecom.warhammerontheroad.application.WotrActivity;
+import fr.eurecom.warhammerontheroad.application.WriteAndReadStoryActivity;
 import fr.eurecom.warhammerontheroad.network.NetworkParser;
 
 public class Game {
@@ -21,6 +35,7 @@ public class Game {
 
 	public final static String CMD_FIGHT				= "FGT";
 	public final static String CMD_BEGIN_FIGHT			= "BFT";
+	public final static String CMD_PREPARE_FIGHT		= "PFT";
 	public final static String CMD_START_GAME			= "SGM";
 	public final static String CMD_CREATE_HERO			= "HER";
 	public final static String CMD_INITIATIVE			= "INI";
@@ -32,6 +47,7 @@ public class Game {
 	private int id_game;
 	private final Collection<GameServiceListener> gameServiceListeners = new ArrayList<GameServiceListener>();
 	private ArrayList<Hero> heros;
+	private ArrayList<Player> disconnectedPlayers;
 	private Player me;
 	private boolean isGM;
 	private boolean isInFight;
@@ -48,6 +64,7 @@ public class Game {
 		this.isGM = false;
 		this.me = null;
 		this.heros = new ArrayList<Hero>();
+		this.disconnectedPlayers = new ArrayList<Player>();
 		this.map = null;
 	}
 
@@ -82,6 +99,10 @@ public class Game {
 		Player p = this.getPlayer(name);
 		if(p != null)
 			removeHero(p);
+	}
+	
+	public ArrayList<Hero> getHeros() {
+		return this.heros;
 	}
 
 	public Hero getHero(int id) {
@@ -140,7 +161,7 @@ public class Game {
 	public void waitForTurn() {
 		if(!this.isGM && (this.state == STATE_GAME_TURN || this.state == STATE_GAME_LAUNCHED)) {
 			if(this.state == STATE_GAME_LAUNCHED)
-				startFight();
+				this.isInFight = true;
 			change_state(STATE_GAME_WAIT_TURN);
 		}
 		else
@@ -157,7 +178,7 @@ public class Game {
 	public void waitForAction() {
 		if(this.isGM && (this.state == STATE_GAME_LAUNCHED || this.state == STATE_GAME_CONFIRM_ACTION)) {
 			if(this.state == STATE_GAME_LAUNCHED)
-				this.startFight();
+				this.isInFight = true;
 			change_state(STATE_GAME_WAIT_ACTION);
 		}
 		else
@@ -180,11 +201,6 @@ public class Game {
 			Log.w(TAG, "Unexpected call to endFight...");
 	}
 
-	private void startFight() {
-		this.isInFight = true;
-		fireBeginFight();
-	}
-
 	public void parseGMCommand(String name, String msg) {
 		// TODO: parse the commands. For ack, set timer, show notif to gm
 	}
@@ -201,6 +217,15 @@ public class Game {
 
 		if(msg.equals(CMD_START_GAME)) {
 			this.gameStarted();
+		}
+
+		else if(msg.equals(CMD_PREPARE_FIGHT) && !this.isInFight) {
+			this.cmp_init = 0;
+			this.turnOf = 0;
+			this.me.prepareBattle();
+			for(Hero h: this.heros)
+				h.resetB();
+			this.firePrepareFight();
 		}
 
 		String parts[] = msg.split(NetworkParser.SEPARATOR, 2);
@@ -236,7 +261,6 @@ public class Game {
 		else if(parts[0].equals(CMD_INITIATIVE) && this.isInFight) {
 			Hero h = this.getHero(name);
 			try{
-				Log.d(TAG, "debug : received init : "+msg);
 				int init = Integer.parseInt(parts[1]);
 				if(h != null) {
 					if(this.isGM) {
@@ -246,19 +270,7 @@ public class Game {
 					}
 					else
 						this.me.computeTurnInFight(h, init);
-					this.cmp_init ++;
-					if(this.cmp_init >= this.heros.size()-1) {
-						if(this.isGM) {
-							for(Hero h_tmp: this.heros)
-								if(!(h_tmp instanceof Player) && h_tmp.getTurnInFight() == 0) {
-									this.turnInFight(h_tmp);
-									break;
-								}
-						}
-						else
-							if(this.me.getTurnInFight() == 0)
-								turnInFight(this.me);
-					}
+					this.incrInitCounter();
 				}
 			}
 			catch(NumberFormatException e) {
@@ -272,10 +284,9 @@ public class Game {
 			try {
 				this.map = new Map(this.mService, parts[1]);
 				waitForTurn();
-				this.cmp_init = 0;
-				this.turnOf = 0;
-				int init = this.me.beginBattle();
+				int init = this.me.getInitiativeForFight();
 				this.mService.getNetworkParser().sendInitiative(init);
+				this.incrInitCounter();
 			} catch(NumberFormatException e) {
 				Log.e(TAG, "Not a number !");
 			}
@@ -285,55 +296,127 @@ public class Game {
 			try {
 				int id = Integer.parseInt(name);
 				Hero h = this.getHero(id);
-				if(h == null)
-					h = this.createHeroWithId(this.mService.getContext(), id);
+				if(h != null)
+					removeHero(h);
+				h = this.createHeroWithId(this.mService.getContext(), id);
 				h.constructFromString(this.mService, parts[1]);
 				h.show();
 			} catch(NumberFormatException e) {
 				Player p = this.getPlayer(name);
-				if(p == null)
-					p = new Player(this.mService.getContext(), name);
+				if(p != null)
+					this.removeHero(p);
+				p = new Player(this.mService.getContext(), name);
 				p.constructFromString(this.mService, parts[1]);
 				this.addHero(p);
 			}
 		}
 	}
 
-	public void sendNotifStartFight(Map m) {
+	public void sendNotifPrepareFight() {
+		if(!this.isGM)
+			return;
+		this.mService.getNetworkParser().prepareFight();
+		for(Hero h: this.heros) {
+			if(!(h instanceof Player))
+				h.prepareBattle();
+			h.resetB();
+		}
+	}
+
+	public void sendNotifStartFight() {
 		if(!this.isGM)
 			return;
 		waitForAction();
-		this.mService.getNetworkParser().beginFight(m);
+		this.mService.getNetworkParser().beginFight(this.map);
 		for(Hero h: this.heros)
-			if(!(h instanceof Player))
-				this.mService.getNetworkParser().sendInitiative(h.beginBattle(), h);
+			if(!(h instanceof Player)) {
+				for(Hero htmp: this.heros)
+					if(!(htmp instanceof Player))
+						htmp.computeTurnInFight(h, h.getInitiativeForFight());
+				this.mService.getNetworkParser().sendInitiative(h.getInitiativeForFight(), h);
+				this.incrInitCounter();
+			}
+	}
+	
+	private synchronized void incrInitCounter() {
+		this.cmp_init ++;
+		Log.d(TAG, "New init received ("+this.cmp_init+" out of "+this.heros.size()+")");
+		if(this.cmp_init >= this.heros.size()) {
+			if(this.isGM) {
+				for(Hero h_tmp: this.heros)
+					if(!(h_tmp instanceof Player) && h_tmp.getTurnInFight() == 0) {
+						this.turnInFight(h_tmp);
+						break;
+					}
+			}
+			else
+				if(this.me.getTurnInFight() == 0)
+					turnInFight(this.me);
+			
+			for(Hero h: this.heros)
+				Log.d(TAG, "Turn of "+h.representInString()+" is "+h.getTurnInFight());
+		}
 	}
 
 	private void turnInFight(Hero h) {
 		if(!this.isGM)
 			this.myTurnNow();
+
 		h.nextTurn();
-		Log.d(TAG, "Yeah ! my turn ("+h.representInString()+") !");
-		// TODO: do stuff here
+		Hero cible;
+		if(this.isGM) {
+			int i = (int) Math.random()*this.heros.size();
+			do {
+				cible = this.heros.get(i);
+				i = (i+1)%this.heros.size();
+			} while (!(cible instanceof Player) || !cible.isAlive());
+		} else {
+			int i = (int) Math.random()*this.heros.size();
+			do {
+				cible = this.heros.get(i);
+				i = (i+1)%this.heros.size();
+			} while (cible instanceof Player || !cible.isAlive());
+		}
+		
+		Dice d = new Dice();
+		h.attaqueStandard(this, cible, d);
+		if(this.isGM)
+			this.mService.getNetworkParser().sendDicedAction(CombatAction.STD_ATTACK, d, h, cible.representInString());
+		else
+			this.mService.getNetworkParser().sendDicedAction(CombatAction.STD_ATTACK, d, cible.representInString());
+		
 		try {
 			Thread.sleep(3000);
 		} catch (InterruptedException e) {
 			Log.e(TAG, "Can't wait...");
 		}
-		this.turnNext();
+		
+		boolean isPlayerAlive = false, isEnemyAlive = false;
+		for(Hero htmp : this.heros)
+			if(htmp instanceof Player) {
+				if(htmp.isAlive())
+					isPlayerAlive = true;
+			} else
+				if(htmp.isAlive())
+					isEnemyAlive = true;
+		if(isPlayerAlive && isEnemyAlive)
+			this.turnNext();
 	}
 
 	private void turnNext() {
 		this.turnOf = (this.turnOf+1)%this.heros.size();
 		this.mService.getNetworkParser().nextTurn(this.turnOf, this.isGM);
-		
+
 		if(!this.isGM)
 			this.waitForTurn();
 	}
 
 	private void change_state(int state) {
+		if(this.state == state)
+			return;
+		int exState = this.state;
 		this.state = state;
-		fireStateChanged();
+		fireStateChanged(exState);
 	}
 
 	public Map getMap() {
@@ -364,6 +447,29 @@ public class Game {
 		return h;
 	}
 
+	public boolean validateActivity(WotrActivity act) {
+		switch(this.state) {
+		case STATE_NO_GAME:
+			return (act instanceof StartMenuActivity || act instanceof JoinGameActivity || act instanceof NewGameIntroActivity);
+		case STATE_GAME_CREATE_WAIT:
+			return act instanceof NewGameIntroActivity;
+		case STATE_GAME_CREATED:
+			return (act instanceof NewGameIntroActivity || act instanceof GMMenuActivity || act instanceof PlayerMenuActivity || act instanceof ChatRoomActivity || (act instanceof WriteAndReadStoryActivity && this.isGM) || act instanceof CreateMapActivity || act instanceof CreateSupportCharaActivity || act instanceof SeeCharaDataActivity || act instanceof CharaCreationDetailsActivity);
+		case STATE_GAME_PERSO_CREATED:
+			return (act instanceof PlayerMenuActivity || act instanceof ChatRoomActivity || act instanceof CharaCreationDetailsActivity);
+		case STATE_GAME_LAUNCHED:
+			return (act instanceof GMMenuActivity || act instanceof PlayerMenuActivity || act instanceof ChatRoomActivity || act instanceof WriteAndReadStoryActivity || act instanceof CreateMapActivity || act instanceof CreateSupportCharaActivity || act instanceof SeeCharaDataActivity || act instanceof CharaCreationDetailsActivity);
+		case STATE_GAME_WAIT_TURN:
+		case STATE_GAME_TURN:
+			return (act instanceof CombatActivity || act instanceof SeeStatsActivity || act instanceof ChatRoomActivity);
+		case STATE_GAME_WAIT_ACTION:
+		case STATE_GAME_CONFIRM_ACTION:
+			return (act instanceof GMMenuActivity || act instanceof ChatRoomActivity || act instanceof WriteAndReadStoryActivity || act instanceof CreateSupportCharaActivity || act instanceof SeeCharaDataActivity || act instanceof CombatActivity);
+		default:
+			return false;
+		}
+	}
+
 	public boolean isGM() {
 		return this.isGM;
 	}
@@ -372,29 +478,65 @@ public class Game {
 		return this.isInFight;
 	}
 
+	/*
 	public void listAvailableGames(ArrayList<String> avail) {
 		for(GameServiceListener l: gameServiceListeners)
 			l.listAvailableGames(avail);
-	}
+	} */
 
 	public void userDisconnected(String name) {
-		for(GameServiceListener l: gameServiceListeners)
-			l.userDisconnected(name);
+		if(this.state == Game.STATE_NO_GAME || this.state == Game.STATE_GAME_CREATE_WAIT)
+			return;
+		if(this.state == Game.STATE_GAME_CREATED || this.state == Game.STATE_GAME_PERSO_CREATED)
+			return;
+		Player p = this.getPlayer(name);
+		if(p == null)
+			return;
+		this.removeHero(p);
+		this.disconnectedPlayers.add(p);
 	}
 
 	public void userConnected(String name) {
-		for(GameServiceListener l: gameServiceListeners)
-			l.userConnected(name);
+		if(this.state == Game.STATE_NO_GAME || this.state == Game.STATE_GAME_CREATE_WAIT)
+			return;
+		if(this.state == Game.STATE_GAME_CREATED || this.state == Game.STATE_GAME_PERSO_CREATED) {
+			if(this.isGM) {
+				for(Hero h: this.heros)
+					if(!(h instanceof Player))
+						this.mService.getNetworkParser().createHero(h, name);
+				// TODO: send chat
+				// TODO: when GM is disconnected ???
+			}
+			else {
+				if(this.state == Game.STATE_GAME_PERSO_CREATED)
+					this.mService.getNetworkParser().createPlayer(this.me, name);
+			}
+		}
+		else {
+			for(Player p: this.disconnectedPlayers)
+				if(p.getName().equals(name)) {
+					this.addHero(p);
+					this.disconnectedPlayers.remove(p);
+					if(this.isGM) {
+						for(Hero h: this.heros)
+							if(!(h instanceof Player))
+								this.mService.getNetworkParser().createHero(h, name);
+					}
+					else
+						this.mService.getNetworkParser().createPlayer(this.me, name);
+					break;
+				}
+		}
 	}
 
-	private void fireStateChanged() {
+	private void fireStateChanged(int exState) {
 		for(GameServiceListener l: gameServiceListeners)
-			l.onStateChanged(this);
+			l.onStateChanged(this, exState);
 	}
 
-	private void fireBeginFight() {
+	private void firePrepareFight() {
 		for(GameServiceListener l: gameServiceListeners)
-			l.beginFight();
+			l.prepareFight();
 	}
 
 	public void addGameServiceListener(GameServiceListener listener) {

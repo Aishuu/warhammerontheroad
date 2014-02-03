@@ -92,11 +92,11 @@ public final class R {
         public static final int btnCharaDetailsNext=0x7f0a0015;
         public static final int btnCreateChara=0x7f0a0036;
         public static final int btnCreateGame=0x7f0a0007;
+        public static final int btnCrtMap=0x7f0a002a;
         public static final int btnEnterGame=0x7f0a0031;
         public static final int btnGMAccessPlay=0x7f0a002e;
         public static final int btnJoinGame=0x7f0a0008;
         public static final int btnMenuCreateSupportChara=0x7f0a002c;
-        public static final int btnMenuOpenBook=0x7f0a002a;
         public static final int btnMenuPlayersData=0x7f0a002d;
         public static final int btnQuit=0x7f0a0009;
         public static final int btnReadStory=0x7f0a0035;
@@ -144,20 +144,30 @@ public final class R {
     public static final class layout {
         public static final int activity_chat_room=0x7f030000;
         public static final int activity_combat=0x7f030001;
-        public static final int activity_start_menu=0x7f030002;
-        public static final int chara_creation_details=0x7f030003;
-        public static final int chara_creation_profil=0x7f030004;
-        public static final int gm_menu=0x7f030005;
-        public static final int join_game=0x7f030006;
-        public static final int new_game_intro=0x7f030007;
-        public static final int player_menu=0x7f030008;
-        public static final int start_menu=0x7f030009;
+        public static final int activity_create_map=0x7f030002;
+        public static final int activity_create_support_chara=0x7f030003;
+        public static final int activity_see_chara_data=0x7f030004;
+        public static final int activity_see_stats=0x7f030005;
+        public static final int activity_start_menu=0x7f030006;
+        public static final int activity_write_and_read_story=0x7f030007;
+        public static final int chara_creation_details=0x7f030008;
+        public static final int chara_creation_profil=0x7f030009;
+        public static final int gm_menu=0x7f03000a;
+        public static final int join_game=0x7f03000b;
+        public static final int new_game_intro=0x7f03000c;
+        public static final int player_menu=0x7f03000d;
+        public static final int start_menu=0x7f03000e;
     }
     public static final class menu {
         public static final int chat_room=0x7f090000;
         public static final int create_game=0x7f090001;
-        public static final int main=0x7f090002;
-        public static final int start_menu=0x7f090003;
+        public static final int create_map=0x7f090002;
+        public static final int create_support_chara=0x7f090003;
+        public static final int main=0x7f090004;
+        public static final int see_chara_data=0x7f090005;
+        public static final int see_stats=0x7f090006;
+        public static final int start_menu=0x7f090007;
+        public static final int write_and_read_story=0x7f090008;
     }
     public static final class raw {
         public static final int advancedskills=0x7f040000;
@@ -167,83 +177,94 @@ public final class R {
         public static final int talents=0x7f040004;
     }
     public static final class string {
-        public static final int a=0x7f060036;
-        public static final int access_chat=0x7f060015;
-        public static final int access_gm_menu=0x7f06000f;
-        public static final int access_play=0x7f060017;
+        public static final int a=0x7f06003d;
+        public static final int access_chat=0x7f06001b;
+        public static final int access_fight=0x7f060022;
+        public static final int access_gm_menu=0x7f060013;
+        public static final int access_play=0x7f060021;
         public static final int action_settings=0x7f060001;
-        public static final int ag=0x7f060030;
-        public static final int age=0x7f06001e;
+        public static final int ag=0x7f060037;
+        public static final int age=0x7f060025;
         /**  Strings of activity start menu 
          */
         public static final int app_name=0x7f060000;
-        public static final int b=0x7f060037;
+        public static final int b=0x7f06003e;
         public static final int backgroundImageDesc=0x7f060005;
-        public static final int base=0x7f060034;
-        public static final int be=0x7f060039;
-        public static final int bf=0x7f060038;
-        public static final int birth_place=0x7f060021;
+        public static final int base=0x7f06003b;
+        public static final int be=0x7f060040;
+        public static final int bf=0x7f06003f;
+        public static final int birth_place=0x7f060028;
         public static final int buttonSendFile=0x7f06000a;
         public static final int buttonSendMessage=0x7f060008;
-        public static final int cancel_game_creation=0x7f060010;
-        public static final int carrier=0x7f060029;
-        public static final int cc=0x7f06002c;
+        public static final int cancel_game_creation=0x7f060014;
+        public static final int carrier=0x7f060030;
+        public static final int cc=0x7f060033;
         public static final int createGame=0x7f060002;
         /**  Strings of player menu 
          */
-        public static final int create_chara=0x7f060014;
-        public static final int create_support_chara=0x7f06001a;
-        public static final int ct=0x7f06002d;
-        public static final int e=0x7f06002f;
-        public static final int enter_game=0x7f060012;
-        /**  Strings of join game 
-         */
-        public static final int enter_game_nb=0x7f060011;
-        public static final int eye_color=0x7f06001f;
-        public static final int f=0x7f06002e;
-        public static final int fm=0x7f060032;
-        public static final int give_number=0x7f06000e;
-        public static final int hair_color=0x7f060020;
-        public static final int hello_world=0x7f060028;
-        public static final int intelligence=0x7f060031;
-        public static final int joinGame=0x7f060003;
-        public static final int listAvailGames=0x7f06000b;
-        public static final int m=0x7f06003b;
-        public static final int mag=0x7f06003a;
-        /**  Strings of chara creation details 
-         */
-        public static final int name=0x7f06001c;
-        /**  Strings of new game intro 
-         */
-        public static final int new_gm=0x7f06000d;
-        public static final int next=0x7f060026;
-        public static final int number0=0x7f060013;
+        public static final int create_chara=0x7f060018;
         /**  Strings of gm menu 
          */
-        public static final int open_book=0x7f060018;
-        public static final int pd=0x7f06003d;
-        public static final int pf=0x7f06003c;
-        public static final int players_data=0x7f06001b;
+        public static final int create_map=0x7f06001d;
+        public static final int create_support_chara=0x7f06001f;
+        public static final int ct=0x7f060034;
+        public static final int disconnected=0x7f06000d;
+        public static final int e=0x7f060036;
+        public static final int enter_game=0x7f060016;
+        /**  Strings of join game 
+         */
+        public static final int enter_game_nb=0x7f060015;
+        public static final int eye_color=0x7f060026;
+        public static final int f=0x7f060035;
+        public static final int fm=0x7f060039;
+        public static final int give_number=0x7f060012;
+        public static final int hair_color=0x7f060027;
+        public static final int hello_world=0x7f06002f;
+        public static final int intelligence=0x7f060038;
+        public static final int joinGame=0x7f060003;
+        public static final int listAvailGames=0x7f06000b;
+        public static final int m=0x7f060042;
+        public static final int mag=0x7f060041;
+        public static final int modify_chara=0x7f060019;
+        /**  Strings of chara creation details 
+         */
+        public static final int name=0x7f060023;
+        /**  Strings of new game intro 
+         */
+        public static final int new_gm=0x7f060011;
+        public static final int next=0x7f06002d;
+        public static final int no=0x7f06000f;
+        public static final int number0=0x7f060017;
+        public static final int pd=0x7f060044;
+        public static final int pf=0x7f060043;
+        public static final int players_data=0x7f060020;
+        public static final int prepare_fight=0x7f060010;
         /**  Strings of chara creation profil 
          */
-        public static final int profil_principal=0x7f06002b;
-        public static final int profil_secondaire=0x7f060035;
+        public static final int profil_principal=0x7f060032;
+        public static final int profil_secondaire=0x7f06003c;
         public static final int quit=0x7f060004;
-        public static final int race=0x7f06001d;
-        public static final int read_story=0x7f060016;
+        public static final int race=0x7f060024;
+        public static final int read_story=0x7f06001c;
+        public static final int see_chara_stats=0x7f06001a;
         public static final int sendFile=0x7f060009;
         public static final int sendMessage=0x7f060007;
-        public static final int sexe=0x7f060022;
-        public static final int siblings_number=0x7f060025;
-        public static final int size=0x7f060023;
-        public static final int soc=0x7f060033;
-        public static final int terminate=0x7f06002a;
-        public static final int title_activity_chara_creation_profil=0x7f060027;
+        public static final int sexe=0x7f060029;
+        public static final int siblings_number=0x7f06002c;
+        public static final int size=0x7f06002a;
+        public static final int soc=0x7f06003a;
+        public static final int terminate=0x7f060031;
+        public static final int title_activity_chara_creation_profil=0x7f06002e;
         public static final int title_activity_chat_room=0x7f060006;
-        public static final int title_activity_combat=0x7f06003e;
+        public static final int title_activity_combat=0x7f060045;
         public static final int title_activity_create_game=0x7f06000c;
-        public static final int weight=0x7f060024;
-        public static final int write_story=0x7f060019;
+        public static final int title_activity_create_map=0x7f060049;
+        public static final int title_activity_create_support_chara=0x7f060046;
+        public static final int title_activity_see_chara_data=0x7f060047;
+        public static final int title_activity_see_stats=0x7f060048;
+        public static final int weight=0x7f06002b;
+        public static final int write_story=0x7f06001e;
+        public static final int yes=0x7f06000e;
     }
     public static final class style {
         /** 

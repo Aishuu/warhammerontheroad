@@ -613,6 +613,8 @@ void transfer_file(player p, char * buffer) {
                             byte_written[k] = byte_written[k+1];
                         }
                         served_clients++;
+                        connected_clients--;
+                        j--;
                     }
 
                 }
@@ -725,10 +727,8 @@ void parseClientRequest(player p, char * buffer) {
             broadcastMessage(p, buffer);
 
         // broadcast action
-        else if(strcmp(buffer, CMD_ACTION) == 0) {
-            printf("test\n");
+        else if(strcmp(buffer, CMD_ACTION) == 0)
             broadcastMessage(p, buffer);
-        }
 
         // bind to a game
         else if(strlen(buffer+4) > 6 && buffer[9] == '#' && strcmp(buffer, CMD_BIND) == 0)
@@ -817,7 +817,7 @@ void parseFileProcessesRequest(int i, char * buffer) {
     }
 
     if(strcmp(buffer, CMD_READY) == 0) {
-        printf("\rFile successfully uploadeded !\n");
+        printf("\rFile successfully uploaded !\n");
         int j;
         char * msg = malloc(sizeof(char)*(6+strlen(buffer+4)));
         sprintf(msg, "%s#%s\n", CMD_FILE, buffer+4);

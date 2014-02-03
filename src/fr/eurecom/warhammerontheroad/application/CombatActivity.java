@@ -4,7 +4,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 import fr.eurecom.warhammerontheroad.R;
-import fr.eurecom.warhammerontheroad.model.Game;
 import android.os.Bundle;
 import android.annotation.SuppressLint;
 import android.graphics.Point;
@@ -18,16 +17,23 @@ public class CombatActivity extends WotrActivity {
 	private RelativeLayout contextualMenu;
 
 
-	@SuppressWarnings({"deprecation", "rawtypes"})
-	@SuppressLint("NewApi")
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		if(this.mService.getGame().getState() != Game.STATE_GAME_WAIT_TURN && this.mService.getGame().getState() != Game.STATE_GAME_TURN)
-			this.finish();
+		
 		setContentView(R.layout.activity_combat);
 		this.table = (LinearLayout) findViewById(R.id.tableLayout);
 		this.contextualMenu = (RelativeLayout) findViewById(R.id.contextualMenu);
+		this.reDraw();
+	}
+
+	public void drawMenu(float x, float y) {
+		this.contextualMenu.setVisibility(View.VISIBLE);
+	}
+
+	@SuppressWarnings({"deprecation", "rawtypes"})
+	@SuppressLint("NewApi")
+	public void reDraw() {
 		Display display = getWindowManager().getDefaultDisplay();
 		int total_width, total_height;
 		try {
@@ -54,8 +60,9 @@ public class CombatActivity extends WotrActivity {
 		this.mService.getGame().getMap().draw(this.table, total_width, total_height, this);
 	}
 
-	public void drawMenu(float x, float y) {
-		this.contextualMenu.setVisibility(View.VISIBLE);
+	@Override
+	public void onDestroy() {
+		this.mService.getGame().getMap().unRegisterActivity();
+		super.onDestroy();
 	}
-
 }

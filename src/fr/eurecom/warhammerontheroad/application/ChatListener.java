@@ -24,20 +24,6 @@ public interface ChatListener {
 	public void privateMessageReceived(String name, String message);
 	
 	/**
-	 * A user has been disconnected
-	 * 
-	 * @param name name of the user
-	 */
-	public void userDisconnected(String name);
-	
-	/**
-	 * A new user has connected
-	 * 
-	 * @param name name of the user
-	 */
-	public void userConnected(String name);
-	
-	/**
 	 * The status of the transfer of a file changed
 	 * 
 	 * @param name the name of the file
@@ -47,4 +33,12 @@ public interface ChatListener {
 	 * @see NetworkParser.FILE_DOES_NOT_EXIST
 	 */
 	public void fileTransferStatusChanged(String name, int file_status);
+	
+	/**
+	 * A user connection changed.
+	 * 
+	 * @param name the name of the user
+	 * @param isNowConnected wether the user connected or disconnected
+	 */
+	public void userConnectionChanged(String name, boolean isNowConnected);
 }

@@ -35,12 +35,12 @@ public class Chat {
     
     private void fireUserDisconnected(String name) {
     	for(ChatListener l: chatListeners)
-    		l.userDisconnected(name);
+    		l.userConnectionChanged(name, false);
     }
     
     private void fireUserConnected(String name) {
     	for(ChatListener l: chatListeners)
-    		l.userConnected(name);
+    		l.userConnectionChanged(name, true);
     }
     
     private void fireMessageReceived(String name, String message) {

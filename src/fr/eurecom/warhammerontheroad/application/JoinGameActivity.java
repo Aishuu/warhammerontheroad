@@ -15,6 +15,12 @@ public class JoinGameActivity extends WotrActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.join_game);
 	}
+
+	@Override
+	public void onBackPressed() {
+		this.mService.reinit();
+		this.finish();
+	}
 	
 	public void enterGame(View view) {
 		EditText edit = (EditText) findViewById(R.id.join_game_number);
@@ -28,6 +34,7 @@ public class JoinGameActivity extends WotrActivity {
 			this.mService.getNetworkParser().bind(id);
 			Intent intent = new Intent(this, PlayerMenuActivity.class);
 		    startActivity(intent);
+		    this.finish();
 		} catch (NumberFormatException e) {
 			Log.e("JoinGameActivity", "This is not a number !");
 			edit.setText("");

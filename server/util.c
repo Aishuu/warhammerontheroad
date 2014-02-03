@@ -98,7 +98,7 @@ void sendack(int fd, const char * subtype, const char * description) {
     else {
         if(description) {
             msg = malloc(sizeof(char)*(6+strlen(description)));
-            sprintf(msg, "%s#%s#%s\n", CMD_ACK, subtype, description);
+            sprintf(msg, "%s#%s\n", CMD_ACK, description);
         }
         else {
             msg = malloc(sizeof(char)*6);
