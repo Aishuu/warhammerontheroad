@@ -1,5 +1,7 @@
 package fr.eurecom.warhammerontheroad.model;
 
+import java.util.ArrayList;
+
 import android.util.Log;
 
 public class WeaponSet {
@@ -66,5 +68,16 @@ public class WeaponSet {
 		Log.d("weaponset","ranged :");
 		if (!(bothHands == null))
 			bothHands.show();
+	}
+	
+	public ArrayList<String[]> toArrayString()
+	{
+		ArrayList<String[]> result = new ArrayList<String[]>();
+		result.add(rightHand.toArrayString());
+		if(leftHand != null)
+			result.add(leftHand.toArrayString());
+		if(bothHands != null)
+			result.add(bothHands.toArrayString());
+		return result;
 	}
 }

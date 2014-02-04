@@ -921,4 +921,23 @@ public class Hero extends Case implements Describable {
 	public Job getJob() {
 		return job;
 	}
+	
+	public ArrayList<String[]> getWeapon(){
+		ArrayList<String[]> result = weapons.toArrayString();
+		return result;
+	}
+	public ArrayList<String[]> getArmor(){
+		ArrayList<String[]> result = armor.toArrayString();
+		return result;
+	}
+	public ArrayList<String[]> getskills(){
+		ArrayList<String[]> result = new ArrayList<String[]>();
+		for(Skills s:skills)
+			result.add(s.toArrayString(stats));
+		return result;
+	}
+	public String[] getArmorRecap(){
+		return armor.recapArmor();
+	}
+	
 }

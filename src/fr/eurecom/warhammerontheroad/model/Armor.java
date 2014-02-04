@@ -28,5 +28,26 @@ public class Armor extends GeneralItem{
 		super.show();
 		Log.d("armor",localisation + ", " + armorPoints);
 	}
+	
+	public String[] toArrayString(){
+		String[] result = new String[3];
+		result[0] = name;
+		switch(localisation){
+		case 0:
+			result[1] = "head";
+			break;
+		case 1:
+			result[1] = "arms";
+			break;
+		case 2:
+			result[1] = "body";
+			break;
+		case 3:
+			result[1] = "legs";
+			break;
+		}
+		result[2] = Integer.toBinaryString(armorPoints);
+		return result;
+	}
 
 }

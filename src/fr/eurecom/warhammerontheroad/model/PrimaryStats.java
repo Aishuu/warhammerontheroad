@@ -271,27 +271,27 @@ public class PrimaryStats implements Stats{
 	
 	@Override
 	public String describeAsString() {
-		String result = NetworkParser.constructStringFromArgs(Integer.toString(CC),
-				                                              Integer.toString(CT),
-				                                              Integer.toString(F),
-				                                              Integer.toString(E),
-				                                              Integer.toString(Ag),
-				                                              Integer.toString(Int),
-				                                              Integer.toString(FM),
-				                                              Integer.toString(Soc),
-				                                              Integer.toString(A),
-				                                              Integer.toString(B),
-				                                              Integer.toString(BF),
-				                                              Integer.toString(BE),
-				                                              Integer.toString(M),
-				                                              Integer.toString(Mag),
-				                                              Integer.toString(PF),
-				                                              Integer.toString(PD));
+		String result = Integer.toString(CC)+"PSP"+
+				                                              Integer.toString(CT)+"PSP"+
+				                                              Integer.toString(F)+"PSP"+
+				                                              Integer.toString(E)+"PSP"+
+				                                              Integer.toString(Ag)+"PSP"+
+				                                              Integer.toString(Int)+"PSP"+
+				                                              Integer.toString(FM)+"PSP"+
+				                                              Integer.toString(Soc)+"PSP"+
+				                                              Integer.toString(A)+"PSP"+
+				                                              Integer.toString(B)+"PSP"+
+				                                              Integer.toString(BF)+"PSP"+
+				                                              Integer.toString(BE)+"PSP"+
+				                                              Integer.toString(M)+"PSP"+
+				                                              Integer.toString(Mag)+"PSP"+
+				                                              Integer.toString(PF)+"PSP"+
+				                                              Integer.toString(PD);
 		return result;
 	}
 	@Override
 	public void constructFromString(String s){
-		String[] parts = s.split(NetworkParser.SEPARATOR, -1);
+		String[] parts = s.split("PSP");
 		CC = Integer.parseInt(parts[0]);
 		CT = Integer.parseInt(parts[1]);
 		F = Integer.parseInt(parts[2]);

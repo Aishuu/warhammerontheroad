@@ -6,7 +6,7 @@ public abstract class Weapon extends GeneralItem{
 	
 	private int groupe;
 	protected int degats;
-	private int attribut;
+	protected int attribut;
 	
 	public Weapon (String name, int groupe, int degats, int attribut)
 	{

@@ -40,9 +40,26 @@ public class ArmorSet {
 		return level;
 	}
 	
+	public String[] recapArmor(){
+		String[] result = new String[4];
+		result[0] = "Head : " + protection[0];
+		result[1] = "Arms : " + protection[1];
+		result[2] = "Body : " + protection[2];
+		result[3] = "Legs : " + protection[3];
+		return result;
+	}
+	
 	public void show(){
 		Log.d("armorset", Arrays.toString(protection) + ", level :" + level);
 		for(Armor a:set)
 			a.show();
+	}
+	
+	public ArrayList<String[]> toArrayString()
+	{
+		ArrayList<String[]> result = new ArrayList<String[]>();
+		for(Armor a:set)
+			result.add(a.toArrayString());
+		return result;
 	}
 }

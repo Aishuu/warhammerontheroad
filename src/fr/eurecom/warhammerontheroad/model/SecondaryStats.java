@@ -157,27 +157,27 @@ public class SecondaryStats implements Stats{
 	}
 	@Override
 	public String describeAsString() {
-		String result = NetworkParser.constructStringFromArgs(Integer.toString(CC),
-				                                              Integer.toString(CT),
-				                                              Integer.toString(F),
-				                                              Integer.toString(E),
-				                                              Integer.toString(Ag),
-				                                              Integer.toString(Int),
-				                                              Integer.toString(FM),
-				                                              Integer.toString(Soc),
-				                                              Integer.toString(A),
-				                                              Integer.toString(B),
-				                                              Integer.toString(BF),
-				                                              Integer.toString(BE),
-				                                              Integer.toString(M),
-				                                              Integer.toString(Mag),
-				                                              Integer.toString(PF),
-				                                              Integer.toString(PD));
+		String result = Integer.toString(CC)+"STS"+
+				                                              Integer.toString(CT)+"STS"+
+				                                              Integer.toString(F)+"STS"+
+				                                              Integer.toString(E)+"STS"+
+				                                              Integer.toString(Ag)+"STS"+
+				                                              Integer.toString(Int)+"STS"+
+				                                              Integer.toString(FM)+"STS"+
+				                                              Integer.toString(Soc)+"STS"+
+				                                              Integer.toString(A)+"STS"+
+				                                              Integer.toString(B)+"STS"+
+				                                              Integer.toString(BF)+"STS"+
+				                                              Integer.toString(BE)+"STS"+
+				                                              Integer.toString(M)+"STS"+
+				                                              Integer.toString(Mag)+"STS"+
+				                                              Integer.toString(PF)+"STS"+
+				                                              Integer.toString(PD);
 		return result;
 	}
 	@Override
 	public void constructFromString(String s){
-		String[] parts = s.split(NetworkParser.SEPARATOR, -1);
+		String[] parts = s.split("STS");
 		CC = Integer.parseInt(parts[0]);
 		CT = Integer.parseInt(parts[1]);
 		F = Integer.parseInt(parts[2]);
