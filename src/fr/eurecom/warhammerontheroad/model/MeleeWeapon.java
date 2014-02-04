@@ -10,5 +10,9 @@ public class MeleeWeapon extends Weapon{
 	{
 		return degats;
 	}
+	
+	public void show(){
+		super.show();
+	}
 
 }

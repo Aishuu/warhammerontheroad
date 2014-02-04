@@ -1,5 +1,7 @@
 package fr.eurecom.warhammerontheroad.model;
 
+import android.util.Log;
+
 public class Armor extends GeneralItem{
 	
 	private int localisation;
@@ -20,6 +22,11 @@ public class Armor extends GeneralItem{
 	public int getArmorPoints()
 	{
 		return armorPoints;
+	}
+	
+	public void show(){
+		super.show();
+		Log.d("armor",localisation + ", " + armorPoints);
 	}
 
 }

@@ -1,5 +1,7 @@
 package fr.eurecom.warhammerontheroad.model;
 
+import android.util.Log;
+
 public class WeaponSet {
 
 	private MeleeWeapon rightHand;
@@ -53,5 +55,16 @@ public class WeaponSet {
 			return leftHand;
 		else
 			return null;
+	}
+	
+	public void show()
+	{
+		Log.d("weaponset","melee :");
+		rightHand.show();
+		if (!(leftHand == null))
+			leftHand.show();
+		Log.d("weaponset","ranged :");
+		if (!(bothHands == null))
+			bothHands.show();
 	}
 }

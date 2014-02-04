@@ -1,7 +1,10 @@
 package fr.eurecom.warhammerontheroad.model;
 
-import java.util.ArrayList;
+import java.util.*;
+import java.lang.reflect.Array;
 import java.math.*;
+
+import android.util.Log;
 public class ArmorSet {
 	
 	private ArrayList<Armor> set;
@@ -19,13 +22,13 @@ public class ArmorSet {
 		protection[armor.getLocalisation()] += armor.getArmorPoints();
 		switch(protection[armor.getLocalisation()]){
 		case 1 :
-			level = Math.min(level, 1);
+			level = Math.max(level, 1);
 			return;
 		case 3 :
-			level = Math.min(level, 2);
+			level = Math.max(level, 2);
 			return;
 		case 5 :
-			level = Math.min(level, 3);
+			level = Math.max(level, 3);
 		}
 	}
 	
@@ -35,5 +38,11 @@ public class ArmorSet {
 	
 	public int getLevel(){
 		return level;
+	}
+	
+	public void show(){
+		Log.d("armorset", Arrays.toString(protection) + ", level :" + level);
+		for(Armor a:set)
+			a.show();
 	}
 }

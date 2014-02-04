@@ -1,5 +1,7 @@
 package fr.eurecom.warhammerontheroad.model;
 
+import android.util.Log;
+
 public class GeneralItem {
 	
 	private String name;
@@ -14,6 +16,10 @@ public class GeneralItem {
 	public String getName()
 	{
 		return name;
+	}
+	
+	public void show(){
+		Log.d("item", name);
 	}
 
 }

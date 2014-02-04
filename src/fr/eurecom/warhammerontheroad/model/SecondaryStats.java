@@ -2,6 +2,8 @@ package fr.eurecom.warhammerontheroad.model;
 
 import java.util.ArrayList;
 
+import fr.eurecom.warhammerontheroad.network.NetworkParser;
+
 public class SecondaryStats implements Stats{
 	
 	private int CC, CT, F, E, Ag, Int, FM, Soc, A, B, BF, BE, M, Mag, PF, PD;
@@ -153,5 +155,44 @@ public class SecondaryStats implements Stats{
 		stats.add(PD == 0 ? "-" : "+" + PD);
 		return stats;
 	}
-
+	@Override
+	public String describeAsString() {
+		String result = NetworkParser.constructStringFromArgs(Integer.toString(CC),
+				                                              Integer.toString(CT),
+				                                              Integer.toString(F),
+				                                              Integer.toString(E),
+				                                              Integer.toString(Ag),
+				                                              Integer.toString(Int),
+				                                              Integer.toString(FM),
+				                                              Integer.toString(Soc),
+				                                              Integer.toString(A),
+				                                              Integer.toString(B),
+				                                              Integer.toString(BF),
+				                                              Integer.toString(BE),
+				                                              Integer.toString(M),
+				                                              Integer.toString(Mag),
+				                                              Integer.toString(PF),
+				                                              Integer.toString(PD));
+		return result;
+	}
+	@Override
+	public void constructFromString(String s){
+		String[] parts = s.split(NetworkParser.SEPARATOR, -1);
+		CC = Integer.parseInt(parts[0]);
+		CT = Integer.parseInt(parts[1]);
+		F = Integer.parseInt(parts[2]);
+		E = Integer.parseInt(parts[3]);
+		Ag = Integer.parseInt(parts[4]);
+		Int = Integer.parseInt(parts[5]);
+		FM = Integer.parseInt(parts[6]);
+		Soc = Integer.parseInt(parts[7]);
+		A = Integer.parseInt(parts[8]);
+		B = Integer.parseInt(parts[9]);
+		BF = Integer.parseInt(parts[10]);
+		BE = Integer.parseInt(parts[11]);
+		M = Integer.parseInt(parts[12]);
+		Mag = Integer.parseInt(parts[13]);
+		PF = Integer.parseInt(parts[14]);
+		PD = Integer.parseInt(parts[15]);
+	}
 }

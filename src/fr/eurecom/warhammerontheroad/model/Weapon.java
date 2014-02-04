@@ -1,5 +1,7 @@
 package fr.eurecom.warhammerontheroad.model;
 
+import android.util.Log;
+
 public abstract class Weapon extends GeneralItem{
 	
 	private int groupe;
@@ -15,4 +17,8 @@ public abstract class Weapon extends GeneralItem{
 	}
 	
 	public abstract int getDegats();
+	public void show(){
+		super.show();
+		Log.d("Weapon", "groupe : "+groupe+",degats : "+degats+",attribut :"+attribut);
+	}
 }

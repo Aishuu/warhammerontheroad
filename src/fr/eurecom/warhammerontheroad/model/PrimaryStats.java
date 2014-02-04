@@ -2,6 +2,8 @@ package fr.eurecom.warhammerontheroad.model;
 
 import java.util.ArrayList;
 
+import fr.eurecom.warhammerontheroad.network.NetworkParser;
+
 public class PrimaryStats implements Stats{
 
 	private int CC, CT, F, E, Ag, Int, FM, Soc, A, B, BF, BE, M, Mag, PF, PD;
@@ -76,11 +78,101 @@ public class PrimaryStats implements Stats{
 			M = 3;
 			break;
 
-		/* TODO: debug
-		 * 
-		 */
+		case BANDIT :
+			CC = 29;
+			CT = 42;
+			F = 30;
+			E = 31;
+			Ag = 35;
+			Int = 30;
+			FM = 28;
+			Soc = 25;
+			A = 1;
+			B = 12;
+			BF = 3;
+			BE = 3;
+			M = 4;
+			Mag = 0;
+			PF = 0;
+			PD = 0;
+			return;
+			
 		case GOBLIN :
+			CC = 25;
+			CT = 30;
+			F = 30;
+			E = 30;
+			Ag = 25;
+			Int = 25;
+			FM = 30;
+			Soc = 20;
+			A = 1;
+			B = 8;
+			BF = 3;
+			BE = 3;
+			M = 4;
+			Mag = 0;
+			PF = 0;
+			PD = 0;
+			return;
+			
+		case GUARD:
+			CC = 31;
+			CT = 31;
+			F = 33;
+			E = 41;
+			Ag = 30;
+			Int = 38;
+			FM = 28;
+			Soc = 30;
+			A = 1;
+			B = 12;
+			BF = 3;
+			BE = 4;
+			M = 4;
+			Mag = 0;
+			PF = 0;
+			PD = 0;
+			return;
+			
+		case SKELETON:
+			CC = 25;
+			CT = 20;
+			F = 30;
+			E = 30;
+			Ag = 25;
+			Int = 0;
+			FM = 0;
+			Soc = 0;
+			A = 1;
+			B = 10;
+			BF = 3;
+			BE = 3;
+			M = 4;
+			Mag = 0;
+			PF = 0;
+			PD = 0;
+			return;
+			
 		case ORC:
+			CC = 35;
+			CT = 35;
+			F = 35;
+			E = 45;
+			Ag = 25;
+			Int = 25;
+			FM = 30;
+			Soc = 20;
+			A = 1;
+			B = 12;
+			BF = 3;
+			BE = 3;
+			M = 4;
+			Mag = 0;
+			PF = 0;
+			PD = 0;
+			return;
+			
 		case HOBBIT :
 			CC  = 10;
 			CT  = 30;
@@ -175,5 +267,46 @@ public class PrimaryStats implements Stats{
 		stats.add(Integer.toString(PF));
 		stats.add(Integer.toString(PD));
 		return stats;
+	}
+	
+	@Override
+	public String describeAsString() {
+		String result = NetworkParser.constructStringFromArgs(Integer.toString(CC),
+				                                              Integer.toString(CT),
+				                                              Integer.toString(F),
+				                                              Integer.toString(E),
+				                                              Integer.toString(Ag),
+				                                              Integer.toString(Int),
+				                                              Integer.toString(FM),
+				                                              Integer.toString(Soc),
+				                                              Integer.toString(A),
+				                                              Integer.toString(B),
+				                                              Integer.toString(BF),
+				                                              Integer.toString(BE),
+				                                              Integer.toString(M),
+				                                              Integer.toString(Mag),
+				                                              Integer.toString(PF),
+				                                              Integer.toString(PD));
+		return result;
+	}
+	@Override
+	public void constructFromString(String s){
+		String[] parts = s.split(NetworkParser.SEPARATOR, -1);
+		CC = Integer.parseInt(parts[0]);
+		CT = Integer.parseInt(parts[1]);
+		F = Integer.parseInt(parts[2]);
+		E = Integer.parseInt(parts[3]);
+		Ag = Integer.parseInt(parts[4]);
+		Int = Integer.parseInt(parts[5]);
+		FM = Integer.parseInt(parts[6]);
+		Soc = Integer.parseInt(parts[7]);
+		A = Integer.parseInt(parts[8]);
+		B = Integer.parseInt(parts[9]);
+		BF = Integer.parseInt(parts[10]);
+		BE = Integer.parseInt(parts[11]);
+		M = Integer.parseInt(parts[12]);
+		Mag = Integer.parseInt(parts[13]);
+		PF = Integer.parseInt(parts[14]);
+		PD = Integer.parseInt(parts[15]);
 	}
 }

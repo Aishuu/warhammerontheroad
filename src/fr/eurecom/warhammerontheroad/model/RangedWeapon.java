@@ -1,5 +1,7 @@
 package fr.eurecom.warhammerontheroad.model;
 
+import android.util.Log;
+
 public class RangedWeapon extends Weapon{
 	
 	private int range;
@@ -24,5 +26,10 @@ public class RangedWeapon extends Weapon{
 	public int getReload()
 	{
 		return reload;
+	}
+	
+	public void show(){
+		super.show();
+		Log.d("ranged", "range : "+range+",reload : "+reload);
 	}
 }

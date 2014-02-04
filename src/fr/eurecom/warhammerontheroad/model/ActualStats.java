@@ -2,6 +2,8 @@ package fr.eurecom.warhammerontheroad.model;
 
 import java.util.ArrayList;
 
+import fr.eurecom.warhammerontheroad.network.NetworkParser;
+
 public class ActualStats implements Stats {
 	
 	private PrimaryStats primary;
@@ -64,6 +66,19 @@ public class ActualStats implements Stats {
 	public ArrayList<String> getSecondaryStats()
 	{
 		return secondary.getFullStats();
+	}
+
+	@Override
+	public String describeAsString() {
+		String result = primary.describeAsString() + "SSS" + secondary.describeAsString();
+		return result;
+	}
+
+	@Override
+	public void constructFromString(String s) {
+		String[] parts = s.split("SSS");
+		primary.constructFromString(parts[0]);
+		secondary.constructFromString(parts[1]);
 	}
 
 }

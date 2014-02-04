@@ -2,6 +2,9 @@ package fr.eurecom.warhammerontheroad.application;
 
 import fr.eurecom.warhammerontheroad.R;
 import fr.eurecom.warhammerontheroad.model.Game;
+import fr.eurecom.warhammerontheroad.model.Hero;
+import fr.eurecom.warhammerontheroad.model.Player;
+import fr.eurecom.warhammerontheroad.model.Race;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -9,7 +12,9 @@ import android.widget.TextView;
 
 public class NewGameIntroActivity extends WotrActivity implements GameServiceListener {
 	private final static String GAME_ID = "gameID";
-
+	private Hero a,b,c,d,e,r;
+	private Player f,g,h,i,j,rr;
+	private String t;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -21,6 +26,20 @@ public class NewGameIntroActivity extends WotrActivity implements GameServiceLis
 		}
 		else if(this.mService.getGame().getState() == Game.STATE_NO_GAME)
 			this.mService.getNetworkParser().create();
+		a = new Hero(this, Race.BANDIT);
+		a.show();
+		b = new Hero(this, Race.ORC);
+		b.show();
+		c = new Hero(this, Race.GUARD);
+		c.show();
+		d = new Hero(this, Race.SKELETON);
+		d.show();
+		e = new Hero(this, Race.GOBLIN);
+		e.show();
+		r = new Hero(this);
+		t = a.describeAsString();
+		r.constructFromString(mService, t);
+		r.show();
 	}
 
 	@Override
