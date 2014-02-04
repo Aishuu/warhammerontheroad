@@ -34,6 +34,10 @@ public final class Cmds {
 	 */
 	public static final String CMD_BIND = 			"BND";
 	/**
+	 * Sent to create a game
+	 */
+	public static final String CMD_CREATE_GAME = 	"CRG";
+	/**
 	 * Sent to list the existing games
 	 */
 	public static final String CMD_LIST = 			"LST";

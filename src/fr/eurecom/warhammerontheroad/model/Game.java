@@ -340,7 +340,6 @@ public class Game {
 	
 	private synchronized void incrInitCounter() {
 		this.cmp_init ++;
-		Log.d(TAG, "New init received ("+this.cmp_init+" out of "+this.heros.size()+")");
 		if(this.cmp_init >= this.heros.size()) {
 			if(this.isGM) {
 				for(Hero h_tmp: this.heros)
@@ -352,9 +351,6 @@ public class Game {
 			else
 				if(this.me.getTurnInFight() == 0)
 					turnInFight(this.me);
-			
-			for(Hero h: this.heros)
-				Log.d(TAG, "Turn of "+h.representInString()+" is "+h.getTurnInFight());
 		}
 	}
 
@@ -409,6 +405,12 @@ public class Game {
 
 		if(!this.isGM)
 			this.waitForTurn();
+		else
+			for(Hero h_tmp: this.heros)
+				if(!(h_tmp instanceof Player) && h_tmp.getTurnInFight() == turnOf) {
+					this.turnInFight(h_tmp);
+					break;
+				}
 	}
 
 	private void change_state(int state) {

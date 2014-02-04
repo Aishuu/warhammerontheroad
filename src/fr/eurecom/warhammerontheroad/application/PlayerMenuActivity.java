@@ -55,6 +55,11 @@ public class PlayerMenuActivity extends WotrActivity implements GameServiceListe
 			Intent intent = new Intent(this, CombatActivity.class);
 			startActivity(intent);
 		}
+		if((exState == Game.STATE_GAME_PERSO_CREATED || exState == Game.STATE_GAME_CREATED) && newState == Game.STATE_GAME_LAUNCHED)
+			runOnUiThread(new Runnable() {
+				public void run() {
+					((WotrButton) findViewById(R.id.btnCreateChara)).setText(R.string.see_chara_stats);
+				}});
 	}
 
 	@Override

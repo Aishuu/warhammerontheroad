@@ -263,6 +263,7 @@ public class Player extends Hero {
 		}
 		
 		super.constructFromString(service, parts[9]);
+		this.init();		// init is not called from setRace since it is a player;
 		try {
 			this.setColor(Color.fromIndex(Integer.parseInt(parts[0])));
 			this.setGender(Gender.fromIndex(Integer.parseInt(parts[1])));

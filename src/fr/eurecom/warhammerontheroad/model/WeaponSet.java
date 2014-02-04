@@ -1,5 +1,7 @@
 package fr.eurecom.warhammerontheroad.model;
 
+import android.util.Log;
+
 public class WeaponSet {
 
 	private MeleeWeapon rightHand;
@@ -15,24 +17,27 @@ public class WeaponSet {
 	}
 	
 	public void addMelee(MeleeWeapon weapon){
+		this.printStackTrace();
 		if(rightHand == null)
 			rightHand = weapon;
 		else
 			leftHand = weapon;
-		return;
 	}
 	
 	public void addRange(RangedWeapon weapon){
+		this.printStackTrace();
 		bothHands = weapon;
-		return;
 	}
 	
 	public boolean canChange()
 	{
+		this.printStackTrace();
 		return !(bothHands == null);
 	}
+	
 	public void changeStyle()
 	{
+		this.printStackTrace();
 		if(melee && !(bothHands == null))
 			melee = false;
 		else
@@ -41,6 +46,7 @@ public class WeaponSet {
 	
 	public Weapon getWeapon()
 	{
+		this.printStackTrace();
 		if (melee)
 			return rightHand;
 		else
@@ -49,9 +55,15 @@ public class WeaponSet {
 	
 	public Weapon getLeftHand()
 	{
+		this.printStackTrace();
 		if(melee)
 			return leftHand;
 		else
 			return null;
+	}
+	
+	private void printStackTrace() {
+		for(StackTraceElement s: Thread.currentThread().getStackTrace())
+			Log.d("WeaponSet", s.toString());
 	}
 }
