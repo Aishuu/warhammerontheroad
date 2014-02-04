@@ -1,4 +1,3 @@
-
 package fr.eurecom.warhammerontheroad.model;
 
 import java.io.BufferedReader;
@@ -109,6 +108,10 @@ public class Job {
 
 	public int getIndex() {
 		return index;
+	}
+
+	public String getName() {
+		return name;
 	}
 }
 		

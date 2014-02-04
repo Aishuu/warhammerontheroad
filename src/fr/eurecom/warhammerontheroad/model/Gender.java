@@ -1,14 +1,21 @@
 package fr.eurecom.warhammerontheroad.model;
 
 public enum Gender {
-	FEMALE(0),
-	MALE(1);
+	FEMALE(0,"Female"),
+	MALE(1,"Male");
 
 	private int index;
+	private String name;
 
-	Gender(int index){
+	Gender(int index,String name){
 		this.index=index;
+		this.name=name;
 	}
+
+	public String getName() {
+		return name;
+	}
+
 
 	public int getIndex() {
 		return index;

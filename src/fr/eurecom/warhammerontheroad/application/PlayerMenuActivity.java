@@ -41,8 +41,10 @@ public class PlayerMenuActivity extends WotrActivity implements GameServiceListe
 
 	public void createCharaDetails(View view) {
 		Intent intent;
-		if(this.mService.getGame().getState() == Game.STATE_GAME_LAUNCHED)
+		if(this.mService.getGame().getState() == Game.STATE_GAME_LAUNCHED){
 			intent = new Intent(this, SeeStatsActivity.class);
+			intent.putExtra("chara id", this.mService.getGame().getMe().getName());
+		}
 		else
 			intent = new Intent(this, CharaCreationDetailsActivity.class);
 		startActivity(intent);

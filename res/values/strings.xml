@@ -84,7 +84,13 @@
     </string-array>
     <string name="terminate">Terminate</string>
 
-    <!-- Strings of chara creation profil -->
+    <!-- Strings of see stats -->
+    <string name="title_activity_see_stats">See your stats</string>
+    <string name="mouvement">Mouvement</string>
+    <string name="charge">Charge</string>
+    <string name="running">Running</string>
+    <string name="fortune">Fortune</string>
+    <string name="injuries">Injuries</string>
     <string name="profil_principal">Profil principal</string>
     <string name="cc">CC</string>
     <string name="ct">CT</string>
@@ -95,6 +101,8 @@
     <string name="fm">FM</string>
     <string name="soc">Soc</string>
     <string name="base">Base</string>
+    <string name="avance">Advanced</string>
+    <string name="total">Total</string>
     <string name="profil_secondaire">Profil secondaire</string>
     <string name="a">A</string>
     <string name="b">B</string>
@@ -108,7 +116,7 @@
     <string name="title_activity_combat">Fight</string>
     <string name="title_activity_create_support_chara">Create a character</string>
     <string name="title_activity_see_chara_data">All characters\' data</string>
-    <string name="title_activity_see_stats">See your stats</string>
+    
     <string name="title_activity_create_map">Create a map</string>
 
 </resources>
