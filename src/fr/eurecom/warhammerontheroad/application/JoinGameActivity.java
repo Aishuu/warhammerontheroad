@@ -6,7 +6,6 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
-import android.widget.EditText;
 import fr.eurecom.warhammerontheroad.R;
 import fr.eurecom.warhammerontheroad.model.Game;
 import fr.eurecom.warhammerontheroad.model.Player;

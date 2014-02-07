@@ -54,6 +54,7 @@ public class Game {
 	private int turnOf;
 	private int cmp_init;
 	private Map map;
+	private CombatActivity combatActivity;
 	private WotrService mService;
 	private int PA;
 
@@ -66,6 +67,7 @@ public class Game {
 		this.heros = new ArrayList<Hero>();
 		this.disconnectedPlayers = new ArrayList<Player>();
 		this.map = null;
+		this.combatActivity = null;
 	}
 
 	public Player getMe() {
@@ -547,6 +549,14 @@ public class Game {
 
 	public void removeGameServiceListener(GameServiceListener listener) {
 		gameServiceListeners.remove(listener);
+	}
+	
+	public void registerCombatActivity(CombatActivity combatActivity) {
+		this.combatActivity = combatActivity;
+	}
+	
+	public void unRegisterCombatActivity() {
+		this.combatActivity = null;
 	}
 	
 	public int getPA()

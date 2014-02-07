@@ -22,8 +22,7 @@ public class Hero extends Case implements Describable {
 	protected Race race;
 	protected ArrayList<Skills> skills;
 	private ArrayList<Talents> talents;
-	protected Job job;
-
+	private int[] randomTalentIndex;
 
 	private boolean hasVisee;
 	private WeaponSet weapons;
@@ -41,13 +40,51 @@ public class Hero extends Case implements Describable {
 		this.context = context;
 		weapons = new WeaponSet();
 		armor = new ArmorSet();
+		this.race = null;
+		randomTalentIndex = null;
 		setRace(race);
 	}
 
-	protected Hero(Context context) {
+	public Hero(Context context) {
 		this.context = context;
 		weapons = new WeaponSet();
 		armor = new ArmorSet();
+		this.race = null;
+		randomTalentIndex = null;
+	}
+
+	public void setRandomTalentIndex(String s)
+	{
+		String[] parameters = s.split("RRR");
+		if(Integer.parseInt(parameters[0]) == 0)
+			return;
+		else{
+			randomTalentIndex = new int[Integer.parseInt(parameters[0])];
+			for (int i=0; i<Integer.parseInt(parameters[0]); i++)
+			{
+				randomTalentIndex[i] = Integer.parseInt(parameters[i+1]);
+			}
+		}
+	}
+
+	public String randomTalentIndexToString()
+	{
+		String result;
+		if(randomTalentIndex != null)
+		{
+			int n = randomTalentIndex.length;
+			result = Integer.toString(n);
+			if (n != 0)
+			{
+				for (int i=0; i<n; i++)
+				{
+					result += "RRR" + randomTalentIndex[i];
+				}
+			}
+		}else{
+			result = "0";
+		}
+		return result;
 	}
 
 	public void setRace(Race race) {
@@ -73,11 +110,8 @@ public class Hero extends Case implements Describable {
 
 	public void init() {
 		this.hasVisee = false;
-
 		this.chooseImage();
-
 		this.init_stats();
-
 		skills = new ArrayList<Skills>();
 		talents = new ArrayList<Talents>();
 		CreateBasicsSkills();
@@ -87,10 +121,18 @@ public class Hero extends Case implements Describable {
 			skills.get(3).upgrade();
 			AddAdvancedSkills(4, "l'empire");
 			AddAdvancedSkills(16, "reikspiel");
-			index1 = Tools.getStartingTalent(0);
-			do{
-				index2 = Tools.getStartingTalent(0);
-			}while(index1 == index2);
+			if (randomTalentIndex.length == 0)
+			{
+				index1 = Tools.getStartingTalent(0);
+				do{
+					index2 = Tools.getStartingTalent(0);
+				}while(index1 == index2);
+				randomTalentIndex[0] = index1;
+				randomTalentIndex[1] = index2;
+			}else{
+				index1 = randomTalentIndex[0];
+				index2 = randomTalentIndex[1];
+			}
 			AddTalents(index1);
 			AddTalents(index2);
 			break;
@@ -123,6 +165,7 @@ public class Hero extends Case implements Describable {
 			break;
 
 		case HOBBIT:
+			int index3 = Tools.getStartingTalent(3);
 			skills.get(3).upgrade();
 			AddAdvancedSkills(3, "genealogie/heraldique");
 			AddAdvancedSkills(4, "halflings");
@@ -133,19 +176,98 @@ public class Hero extends Case implements Describable {
 			AddTalents(48);
 			AddTalents(59);
 			AddTalents(81);
-			AddTalents(Tools.getStartingTalent(3));
+			if (randomTalentIndex.length == 0)
+				randomTalentIndex[0] = index3;
+			else
+				index3 = randomTalentIndex[0];
+			AddTalents(index3);
 			break;
-		default:
-			//TODO: create skills for other races
-			
-
-			//TODO: this is for testing purpose
-			this.weapons = new WeaponSet();
-			this.weapons.addMelee(new MeleeWeapon("cuillere", 0, 0, 0));
-
-			Log.d(TAG, "Creating a "+race.toString()+" with a "+this.weapons.getWeapon().getName());
-			
+		case BANDIT:
+			skills.get(3).upgrade();
+			skills.get(4).upgrade();
+			skills.get(6).upgrade();
+			skills.get(7).upgrade();
+			skills.get(9).upgrade();
+			skills.get(16).upgrade();
+			skills.get(18).upgrade();
+			AddAdvancedSkills(2, "");
+			AddAdvancedSkills(4, "Empire");
+			AddAdvancedSkills(9, "");
+			AddAdvancedSkills(16, "reikspiel");
+			AddTalents(3);
+			AddTalents(7);
+			AddTalents(22);
+			AddTalents(56);
+			AddItem(5);
+			AddItem(8);
+			AddItem(6);
+			AddItem(0);
+			AddItem(1);
+			AddItem(2);
 			break;
+
+		case GOBLIN:
+			skills.get(6).upgrade();
+			skills.get(7).upgrade();
+			skills.get(8).upgrade();
+			skills.get(9).upgrade();
+			skills.get(16).upgrade();
+			skills.get(19).upgrade();
+			AddAdvancedSkills(16, "Goblinoid");
+			AddTalents(81);
+			AddItem(6);
+			AddItem(0);
+			AddItem(10);
+			break;
+
+		case GUARD:
+			skills.get(3);
+			skills.get(3);
+			skills.get(11);
+			skills.get(12);
+			skills.get(16);
+			AddAdvancedSkills(3, "droit");
+			AddAdvancedSkills(4, "Empire");
+			AddAdvancedSkills(9, "");
+			AddAdvancedSkills(16, "reikspiel");
+			AddAdvancedSkills(48, "");
+			AddTalents(17);
+			AddTalents(19);
+			AddTalents(21);
+			AddTalents(37);
+			AddTalents(58);
+			AddTalents(64);
+			AddItem(6);
+			AddItem(8);
+			AddItem(0);
+			break;
+
+		case SKELETON:
+			AddTalents(24);
+			AddTalents(51);
+			AddItem(6);
+			AddItem(5);
+			AddItem(0);
+			break;
+
+		case ORC:
+			skills.get(8).upgrade();
+			skills.get(9).upgrade();
+			skills.get(12).upgrade();
+			skills.get(16).upgrade();
+
+			skills.get(19).upgrade();
+			AddAdvancedSkills(16, "goblinoid");
+			AddAdvancedSkills(52, "");
+			AddTalents(13);
+			AddTalents(19);
+			AddTalents(50);
+			AddTalents(81);
+			AddItem(9);
+			AddItem(8);
+			AddItem(6);
+			AddItem(5);
+			AddItem(11);
 		}
 	}
 
@@ -328,16 +450,18 @@ public class Hero extends Case implements Describable {
 
 	public void show(){
 		Log.d("race",race.toString());
-		/*
-		if(stats != null)
-			stats.show();
-		 */
+
+		Log.d("stats",stats.describeAsString());
+
 		for(Skills s : skills){
 			s.show();
 		}
 		for(Talents t: talents){
 			t.show();
 		}
+
+		weapons.show();
+		armor.show();
 	}
 
 	public boolean skillTest(boolean skill, int index, int dice, int diffModificator)// if skill is true, the index is the one of the skill in the array. Else it's the index of the stat we want to test.
@@ -703,19 +827,26 @@ public class Hero extends Case implements Describable {
 
 	@Override
 	public String describeAsString() {
-		// TODO: dummy implementation here
-		String result = NetworkParser.constructStringFromArgs(Integer.toString(this.race.getIndex()));
+
+		String result = Integer.toString(this.race.getIndex()) + "HHH" + stats.describeAsString() + "HHH" + randomTalentIndexToString();
 		return result;
 	}
 
 	@Override
 	public void constructFromString(WotrService service, String s) {
 		// TODO: dummy implementation here
-		String[] parts = s.split(NetworkParser.SEPARATOR, -1);
+		String[] parts = s.split("HHH");
+		String test = "[";
+		for(int i=0;i<parts.length;i++)
+			test += parts[i] + ",";
+		test += "]";
+		Log.d("ro",test);
 		try {
+			setRandomTalentIndex(parts[2]);
 			this.setRace(Race.fromIndex(Integer.parseInt(parts[0])));
+			stats.constructFromString(service, parts[1]);
 		} catch(NumberFormatException e) {
-			Log.e(TAG, "Not a number !");
+			Log.e(TAG, "Not a number !" + parts[0]);
 		}
 	}
 
@@ -788,7 +919,22 @@ public class Hero extends Case implements Describable {
 		hasBlocked = false;
 	}
 
-	public Job getJob() {
-		return job;
+	public ArrayList<String[]> getWeapon(){
+		ArrayList<String[]> result = weapons.toArrayString();
+		return result;
 	}
+	public ArrayList<String[]> getArmor(){
+		ArrayList<String[]> result = armor.toArrayString();
+		return result;
+	}
+	public ArrayList<String[]> getskills(){
+		ArrayList<String[]> result = new ArrayList<String[]>();
+		for(Skills s:skills)
+			result.add(s.toArrayString(stats));
+		return result;
+	}
+	public String[] getArmorRecap(){
+		return armor.recapArmor();
+	}
+
 }

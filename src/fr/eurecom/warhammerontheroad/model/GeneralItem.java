@@ -1,8 +1,10 @@
 package fr.eurecom.warhammerontheroad.model;
 
+import android.util.Log;
+
 public class GeneralItem {
 	
-	private String name;
+	protected String name;
 	private int enc;
 	private int price;
 	
@@ -14,6 +16,10 @@ public class GeneralItem {
 	public String getName()
 	{
 		return name;
+	}
+	
+	public void show(){
+		Log.d("item", name);
 	}
 
 }

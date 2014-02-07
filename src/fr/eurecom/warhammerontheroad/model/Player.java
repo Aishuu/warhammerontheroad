@@ -16,6 +16,8 @@ public class Player extends Hero {
 	private int age, size, weight, siblings;
 	private String eyeColor, hairColor;
 	private Place birthPlace;
+	private int jobIndex;
+	private Job job;
 
 
 	public Player(Context context, String name) {
@@ -46,6 +48,7 @@ public class Player extends Hero {
 	public void AddJob(int index)
 	{
 		int i;
+		jobIndex = index;
 		job = new Job(index, context);
 		((ActualStats) stats).SetSecondaryStats(job.getSecondaryStats());
 		resetB();
@@ -249,7 +252,7 @@ public class Player extends Hero {
 	public String describeAsString() {
 		String result = NetworkParser.constructStringFromArgs(color.toString(), gender.toString(),
 				eyeColor, hairColor,Integer.toString(age), Integer.toString(size), Integer.toString(weight), 
-				Integer.toString(siblings), birthPlace.toString(), 
+				Integer.toString(siblings), birthPlace.toString(), Integer.toString(jobIndex), 
 				super.describeAsString());
 		return result;
 	}
@@ -274,9 +277,7 @@ public class Player extends Hero {
 			this.setWeight(Integer.parseInt(parts[6]));
 			this.setSiblings(Integer.parseInt(parts[7]));
 			this.setBirthPlace(Place.fromIndex(Integer.parseInt(parts[8])));
-			
-			//TODO: for testing purpose
-			this.AddJob(1);			
+			this.AddJob(Integer.parseInt(parts[9]));			
 		} catch(NumberFormatException e) {
 			Log.e(TAG, "Not a number !");
 		}
@@ -399,5 +400,9 @@ public class Player extends Hero {
 
 	private void setBirthPlace(Place birthPlace) {
 		this.birthPlace = birthPlace;
+	}
+
+	public Job getJob() {
+		return job;
 	}
 }

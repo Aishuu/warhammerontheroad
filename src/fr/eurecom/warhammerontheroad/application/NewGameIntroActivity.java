@@ -9,7 +9,6 @@ import android.widget.TextView;
 
 public class NewGameIntroActivity extends WotrActivity implements GameServiceListener {
 	private final static String GAME_ID = "gameID";
-
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
