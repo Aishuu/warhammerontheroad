@@ -75,6 +75,7 @@
     <string name="title_activity_chara_creation_profil">Character Creation</string>
     <string name="hello_world">Hello world!</string>
     <string name="carrier">Carrier</string>
+
     <string-array name="carrier_array">
         <item>Hunter</item>
         <item>Student</item>
@@ -82,6 +83,7 @@
         <item>Mercenary</item>
         <item>Thief</item>
     </string-array>
+
     <string name="terminate">Terminate</string>
 
     <!-- Strings of see stats -->
@@ -91,6 +93,8 @@
     <string name="running">Running</string>
     <string name="fortune">Fortune</string>
     <string name="injuries">Injuries</string>
+
+    <!-- Strings of stats profile -->
     <string name="profil_principal">Profil principal</string>
     <string name="cc">CC</string>
     <string name="ct">CT</string>
@@ -112,11 +116,12 @@
     <string name="m">M</string>
     <string name="pf">PF</string>
     <string name="pd">PD</string>
-    
     <string name="title_activity_combat">Fight</string>
     <string name="title_activity_create_support_chara">Create a character</string>
     <string name="title_activity_see_chara_data">All characters\' data</string>
-    
     <string name="title_activity_create_map">Create a map</string>
+    <string name="title_activity_stats_profil">StatsProfilActivity</string>
+    <string name="title_activity_stats_object">StatsObjectActivity</string>
+    <string name="title_activity_stats_skill">StatsSkillActivity</string>
 
 </resources>

@@ -39,13 +39,15 @@ public class Hero extends Case implements Describable {
 	public Hero(Context context, Race race){
 		this.id = ++cmp_id;
 		this.context = context;
-		setRace(race);
 		weapons = new WeaponSet();
 		armor = new ArmorSet();
+		setRace(race);
 	}
 
 	protected Hero(Context context) {
 		this.context = context;
+		weapons = new WeaponSet();
+		armor = new ArmorSet();
 	}
 
 	public void setRace(Race race) {
@@ -71,9 +73,6 @@ public class Hero extends Case implements Describable {
 
 	public void init() {
 		this.hasVisee = false;
-
-		this.weapons = new WeaponSet();
-		this.weapons.addMelee(new MeleeWeapon("cuillere", 0, 0, 0));
 
 		this.chooseImage();
 
@@ -138,6 +137,14 @@ public class Hero extends Case implements Describable {
 			break;
 		default:
 			//TODO: create skills for other races
+			
+
+			//TODO: this is for testing purpose
+			this.weapons = new WeaponSet();
+			this.weapons.addMelee(new MeleeWeapon("cuillere", 0, 0, 0));
+
+			Log.d(TAG, "Creating a "+race.toString()+" with a "+this.weapons.getWeapon().getName());
+			
 			break;
 		}
 	}
@@ -563,7 +570,7 @@ public class Hero extends Case implements Describable {
 		Log.d(TAG, nameAttacker+" performs a standard attack on "+nameDefender+" !");
 
 		int result = dice.hundredDice();
-		int invresult = result == 100 ? 0 : (result-result/10)*10 + result/10;
+		int invresult = result == 100 ? 0 : (result-(result/10)*10)*10 + result/10;
 		int localisation;
 		int modif = hasVisee ? 10 : 0;
 		int damages, tmpDamage;
@@ -591,6 +598,7 @@ public class Hero extends Case implements Describable {
 					damages += tmpDamage;
 				}
 			}
+			Log.d(TAG, this.representInString()+" weapon : "+weapons.getWeapon());
 			if (weapons.getWeapon() instanceof RangedWeapon){
 				hero.recevoirDamage(weapons.getWeapon().getDegats() + damages, localisation, dice);
 				loaded = false;
@@ -652,6 +660,8 @@ public class Hero extends Case implements Describable {
 	}
 
 	public void recharger(Game game) {
+		if(!(weapons.getWeapon() instanceof RangedWeapon))
+			return;
 		game.usePA(((RangedWeapon)(weapons.getWeapon())).getReload());
 		loaded = true;
 	}
@@ -749,7 +759,6 @@ public class Hero extends Case implements Describable {
 	public void resetB()
 	{
 		B = stats.getStats(9);
-		Log.d(TAG, "B of "+this.representInString()+" set to "+this.B);
 	}
 
 	protected void chooseImage() {
@@ -782,4 +791,13 @@ public class Hero extends Case implements Describable {
 	public Job getJob() {
 		return job;
 	}
+
+	public Stats getStats() {
+		return stats;
+	}
+
+	public int getB() {
+		return B;
+	}
+	
 }

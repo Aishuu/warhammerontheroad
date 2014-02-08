@@ -41,13 +41,16 @@ public class PlayerMenuActivity extends WotrActivity implements GameServiceListe
 
 	public void createCharaDetails(View view) {
 		Intent intent;
+		android.util.Log.d("chara", "state= "+this.mService.getGame().getState());
 		if(this.mService.getGame().getState() == Game.STATE_GAME_LAUNCHED){
 			intent = new Intent(this, SeeStatsActivity.class);
 			intent.putExtra("chara id", this.mService.getGame().getMe().getName());
+			android.util.Log.d("chara", "creating intent see stats");
 		}
 		else
 			intent = new Intent(this, CharaCreationDetailsActivity.class);
 		startActivity(intent);
+		android.util.Log.d("chara", "starting intent");
 	}
 
 	@Override
@@ -57,6 +60,11 @@ public class PlayerMenuActivity extends WotrActivity implements GameServiceListe
 			Intent intent = new Intent(this, CombatActivity.class);
 			startActivity(intent);
 		}
+		if((exState == Game.STATE_GAME_PERSO_CREATED || exState == Game.STATE_GAME_CREATED) && newState == Game.STATE_GAME_LAUNCHED)
+			runOnUiThread(new Runnable() {
+				public void run() {
+					((WotrButton) findViewById(R.id.btnCreateChara)).setText(R.string.see_chara_stats);
+				}});
 	}
 
 	@Override

@@ -65,7 +65,7 @@
                 android:layout_weight="2" />
         </LinearLayout>
 
-        <!-- Put mvt fortune blessures (point d'armures?) -->
+        <!-- Put mvt blessures point d'armures -->
 
         <TableLayout
             android:id="@+id/tablePoints"
@@ -84,8 +84,6 @@
 
                 <fr.eurecom.warhammerontheroad.application.WotrTextView android:text="@string/running" />
 
-                <fr.eurecom.warhammerontheroad.application.WotrTextView android:text="@string/fortune" />
-
                 <fr.eurecom.warhammerontheroad.application.WotrTextView android:text="@string/injuries" />
             </TableRow>
 
@@ -97,8 +95,6 @@
                 <fr.eurecom.warhammerontheroad.application.WotrTextView android:id="@+id/seeStatsCharge" />
 
                 <fr.eurecom.warhammerontheroad.application.WotrTextView android:id="@+id/seeStatsRunning" />
-
-                <fr.eurecom.warhammerontheroad.application.WotrTextView android:id="@+id/seeStatsFort" />
 
                 <fr.eurecom.warhammerontheroad.application.WotrTextView android:id="@+id/seeStatsInj" />
             </TableRow>

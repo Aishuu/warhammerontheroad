@@ -1,12 +1,14 @@
 package fr.eurecom.warhammerontheroad.model;
 
-import fr.eurecom.warhammerontheroad.network.NetworkParser;
+import java.util.ArrayList;
+
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Binder;
 import android.os.IBinder;
 import android.util.Log;
+import fr.eurecom.warhammerontheroad.network.NetworkParser;
 
 /**
  * 
@@ -20,6 +22,7 @@ public class WotrService extends Service {
 	private NetworkParser np;
 	private Chat chat;
 	private Game game;
+	private ArrayList<GeneralErrorListener> generalErrorListeners;
 
 	private final IBinder mBinder = new LocalBinder();
 
@@ -41,6 +44,7 @@ public class WotrService extends Service {
 		super.onCreate();
 		this.chat = new Chat();
 		this.game = new Game(this);
+		this.generalErrorListeners = new ArrayList<GeneralErrorListener>();
 		this.np = new NetworkParser(this);
 		Log.d(TAG, "Creating the socket..");
 		new Thread(this.np).start();
@@ -50,6 +54,7 @@ public class WotrService extends Service {
 		this.np.stop();
 		this.np = new NetworkParser(this);
 		this.game = new Game(this);
+		this.generalErrorListeners = new ArrayList<GeneralErrorListener>();
 		this.chat = new Chat();
 		Log.d(TAG, "Creating the socket..");
 		new Thread(this.np).start();
@@ -83,5 +88,18 @@ public class WotrService extends Service {
 	
 	public Context getContext() {
 		return getApplicationContext();
+	}
+	
+	public void addGeneralErrorListener(GeneralErrorListener l) {
+		this.generalErrorListeners.add(l);
+	}
+	
+	public void removeGeneralErrorListener(GeneralErrorListener l) {
+		this.generalErrorListeners.remove(l);
+	}
+	
+	public void error(String s) {
+		for(GeneralErrorListener l: this.generalErrorListeners)
+			l.error(s);
 	}
 }

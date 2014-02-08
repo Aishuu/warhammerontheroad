@@ -15,27 +15,29 @@ public class SeeStatsActivity extends WotrActivity implements GameServiceListene
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_see_stats);
+		android.util.Log.d("seeStats","entered class");
 		this.mService.getGame().addGameServiceListener(this);
 		Intent i=getIntent();
 		String s=i.getStringExtra("chara id");
 		Player player=(Player) this.mService.getGame().getHero(s);
 		
 		//Info principales
-		TextView name, race, carrier, mvt, charge, running, fortune, inj;
+		TextView name, race, carrier, mvt, charge, running, inj;
 		name=(TextView) findViewById(R.id.txtSeeStatsName);
 		race=(TextView) findViewById(R.id.txtSeeStatsRace);
 		carrier=(TextView) findViewById(R.id.txtSeeStatsCarrier);
 		mvt=(TextView) findViewById(R.id.seeStatsMvt);
 		charge=(TextView) findViewById(R.id.seeStatsCharge);
 		running=(TextView) findViewById(R.id.seeStatsRunning);
-		fortune=(TextView) findViewById(R.id.seeStatsFort);
 		inj=(TextView) findViewById(R.id.seeStatsInj);
 		
 		name.setText(player.getName());
 		race.setText(player.getRace().toString());
 		carrier.setText(player.getJob().getName());
-		//TODO: finish mvt, fort, inj
-		
+		mvt.setText(Integer.toString(player.getStats().getStats(12)));
+		charge.setText(Integer.toString(player.getStats().getStats(12)*2));
+		running.setText(Integer.toString(player.getStats().getStats(12)*3));
+		inj.setText(Integer.toString(player.getB())+"/"+Integer.toString(player.getStats().getStats(9)));
 		//Profil principal
 		
 		//Profil secondaire

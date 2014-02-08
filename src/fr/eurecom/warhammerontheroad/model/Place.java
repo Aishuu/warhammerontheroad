@@ -48,7 +48,7 @@ public enum Place {
 			return NULN;
 		case 3:
 			return MIDDENHEIM;
-		case 5:
+		case 4:
 			return TALABHEIM;
 		default:
 			return null;

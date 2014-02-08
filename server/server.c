@@ -253,20 +253,8 @@ void bindToGame(player p, char * buffer) {
 
     // if it doesn't exist, 
     if(!g) {
-        // Too many games
-        if(nb_game >= MAX_GAME) {
-            printf("\rThere are so many games boy...\n");
-            senderror(p->fd, CMD_BIND, ERR_TOO_MANY_GAMES);
-            return;
-        }
-
-        // Create a new game
-        printf("\rNew game created by %s\n", buffer+10);
-        games[nb_game] = g = malloc(sizeof(struct _game));
-        g->nb_players = 0;
-        g->id = id;
-        g->game_master = p;
-        nb_game++;
+        senderror(p->fd, CMD_BIND, ERR_GAME_DOESNT_EXIST);
+        return;
     }
 
     // update the name of the player
@@ -299,6 +287,53 @@ void bindToGame(player p, char * buffer) {
     p->game = g;
     g->players[g->nb_players] = p;
     g->nb_players++;
+    sendack(p->fd, CMD_BIND, buffer+4);
+}
+
+// create a game and bind to it
+void createGame(player p, char * buffer) {
+    int j;
+    buffer[9] = 0;
+
+    // already in a game
+    if(p->game) {
+        senderror(p->fd, NULL, ERR_ALREADY_IN_GAME);
+        return;
+    }
+
+    // id of the game
+    int id = atoi(buffer+4);
+
+    // search for the game
+    game g = NULL;
+    for(j=0; j<nb_game; j++)
+        if(games[j]->id == id) {
+            g = games[j];
+            break;
+        }
+
+    // if it exists, 
+    if(g) {
+        senderror(p->fd, CMD_CREATE_GAME, ERR_GAME_ALREADY_EXIST);
+        return;
+    }
+
+    // Too many games
+    if(nb_game >= MAX_GAME) {
+        printf("\rThere are so many games boy...\n");
+        senderror(p->fd, CMD_CREATE_GAME, ERR_TOO_MANY_GAMES);
+        return;
+    }
+
+    // Create a new game
+    printf("\rNew game created by %s\n", buffer+10);
+    games[nb_game] = g = malloc(sizeof(struct _game));
+    g->nb_players = 0;
+    g->id = id;
+    g->game_master = p;
+    nb_game++;
+
+    bindToGame(p, buffer);
 }
 
 void listGames(player p) {
@@ -655,7 +690,7 @@ void register_game_master(player p) {
         senderror(p->fd, CMD_REGISTER_GM, ERR_ALREADY_A_GM);
         return;
     }
-    
+
     p->game->game_master = p;
 }
 
@@ -682,7 +717,7 @@ void send_to_game_master(player p, char * buffer) {
 // Send message to a player
 void send_to_player(player p, char * buffer) {
     int j;
-    
+
     // Not in a game
     if(!p->game) {
         senderror(p->fd, CMD_SEND_TO_PLAYER, ERR_NOT_IN_GAME);
@@ -733,6 +768,10 @@ void parseClientRequest(player p, char * buffer) {
         // bind to a game
         else if(strlen(buffer+4) > 6 && buffer[9] == '#' && strcmp(buffer, CMD_BIND) == 0)
             bindToGame(p, buffer);
+
+        // create a game
+        else if(strlen(buffer+4) > 6 && buffer[9] == '#' && strcmp(buffer, CMD_CREATE_GAME) == 0)
+            createGame(p, buffer);
 
         // list existing games
         else if(strcmp(buffer, CMD_LIST) == 0)

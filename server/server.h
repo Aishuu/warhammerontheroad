@@ -21,6 +21,7 @@
 #define CMD_CONNECTED       "CNT"                       // A player is now connected
 #define CMD_MESSAGE         "MSG"                       // Broadcast a message
 #define CMD_BIND            "BND"                       // Bind to a game
+#define CMD_CREATE_GAME     "CRG"                       // Create a game
 #define CMD_LIST            "LST"                       // List existing games
 #define CMD_CREATE          "CRT"                       // Ask for an available id
 #define CMD_FILE            "FLE"                       // Want to send a file

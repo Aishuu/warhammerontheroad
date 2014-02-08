@@ -77,7 +77,7 @@ void senderror(int fd, const char * subtype, const char * description) {
     }
     else {
         msg = malloc(sizeof(char)*(6+strlen(description)));
-        sprintf(msg, "%s#%s\n", CMD_ERR, description);
+        sprintf(msg, "%s#___#%s\n", CMD_ERR, description);
     }
     sendline(fd, msg);
     free(msg);

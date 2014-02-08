@@ -19,8 +19,10 @@ public class NewGameIntroActivity extends WotrActivity implements GameServiceLis
 			TextView text = (TextView) findViewById(R.id.new_game_number);
 			text.setText(Integer.toString(savedInstanceState.getInt(GAME_ID)));
 		}
-		else if(this.mService.getGame().getState() == Game.STATE_NO_GAME)
+		else if(this.mService.getGame().getState() == Game.STATE_NO_GAME) {
 			this.mService.getNetworkParser().create();
+			((WotrButton) findViewById(R.id.btnAccessGMMenu)).setEnabled(false);
+		}
 	}
 
 	@Override
@@ -67,7 +69,7 @@ public class NewGameIntroActivity extends WotrActivity implements GameServiceLis
 				public void run() {
 					TextView text = (TextView) findViewById(R.id.new_game_number);
 					text.setText(Integer.toString(id));
-
+					((WotrButton) findViewById(R.id.btnAccessGMMenu)).setEnabled(true);
 				}
 			});
 		}

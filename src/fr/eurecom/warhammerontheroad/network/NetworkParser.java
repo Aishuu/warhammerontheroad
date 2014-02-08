@@ -114,7 +114,7 @@ public class NetworkParser implements Runnable {
 		}
 		return result;
 	}
-	
+
 	public void stop() {
 		this.stop = true;
 	}
@@ -129,7 +129,8 @@ public class NetworkParser implements Runnable {
 				connect(NetworkParser.SERVER_ADDR, NetworkParser.SERVER_PORT);
 
 			// autobind
-			this.bind(this.mService.getGame().getIdGame());
+			if(this.mService.getGame().mustBind())
+				this.bind(this.mService.getGame().getIdGame());
 
 			// BufferedReader from the socket
 			in = new BufferedReader(new InputStreamReader(this.sock.getInputStream()));
@@ -156,8 +157,14 @@ public class NetworkParser implements Runnable {
 				Log.d(TAG, "message : "+line);
 
 				// Error from the server
-				if(parts[0].equals(CMD_ERR))
-					Log.e(TAG, "Error from server : "+line.split(NetworkParser.SEPARATOR, 2)[1]);
+				if(parts[0].equals(CMD_ERR)) {
+					if(parts.length < 3) {
+						line = "";
+						continue;
+					}
+					Log.e(TAG, "Error from server : "+line.split(NetworkParser.SEPARATOR, 3)[2]);
+					this.mService.error("Error from server : "+line.split(NetworkParser.SEPARATOR, 3)[2]);
+				}
 
 				// Message broadcasted
 				else if(parts[0].equals(CMD_MESSAGE)) {
@@ -339,8 +346,21 @@ public class NetworkParser implements Runnable {
 						continue;
 					}
 
+					// Successfully bound
+					if(parts[1].equals(CMD_BIND)) {
+						if(parts.length < 3) {
+							line = "";
+							continue;
+						}
+						try {
+							this.mService.getGame().bound(Integer.parseInt(parts[2]));
+						} catch(NumberFormatException e) {
+							Log.e(TAG, "Not a number");
+						}
+					}
+
 					// File successfully broadcasted
-					if(parts[1].equals(CMD_FILE)) {
+					else if(parts[1].equals(CMD_FILE)) {
 						if(parts.length < 3) {
 							line = "";
 							continue;
@@ -387,7 +407,7 @@ public class NetworkParser implements Runnable {
 						try {
 							int id = Integer.parseInt(parts[2]);
 							this.mService.getGame().bound(id);
-							bind(id);
+							createBind(id);
 						}catch(NumberFormatException e){
 							Log.e(TAG, "This is no fuckin number !");
 						}
@@ -466,7 +486,7 @@ public class NetworkParser implements Runnable {
 				}
 				finally {
 					if (NetworkParser.lock.isHeldByCurrentThread()) {
-					    NetworkParser.lock.unlock();
+						NetworkParser.lock.unlock();
 					}
 				}
 			}}).start();
@@ -492,7 +512,7 @@ public class NetworkParser implements Runnable {
 				}
 				finally {
 					if (NetworkParser.lock.isHeldByCurrentThread()) {
-					    NetworkParser.lock.unlock();
+						NetworkParser.lock.unlock();
 					}
 				}
 			}}).start();
@@ -557,7 +577,7 @@ public class NetworkParser implements Runnable {
 			ss+= s+NetworkParser.SEPARATOR;
 		this.sendCommand(CMD_ACTION, Game.CMD_FIGHT, Integer.toString(action.getIndex()), ss.substring(0, ss.length()-1), d.toString());
 	}
-	
+
 	public void sendDicedAction(CombatAction action, Dice d, Hero h, String... args) {
 		if(this.mService.getGame().getState() != Game.STATE_GAME_WAIT_ACTION && this.mService.getGame().getState() != Game.STATE_GAME_CONFIRM_ACTION)
 			return;
@@ -570,7 +590,7 @@ public class NetworkParser implements Runnable {
 	public void createHero(Hero h) {
 		this.sendCommand(CMD_ACTION, Integer.toString(h.getId()), Game.CMD_CREATE_HERO, h.describeAsString());
 	}
-	
+
 	public void createHero(Hero h, String name) {
 		this.sendCommand(CMD_SEND_TO_PLAYER, name, CMD_ACTION, Integer.toString(h.getId()), Game.CMD_CREATE_HERO, h.describeAsString());
 	}
@@ -578,7 +598,7 @@ public class NetworkParser implements Runnable {
 	public void createPlayer(Player p) {
 		this.sendCommand(CMD_ACTION, Game.CMD_CREATE_HERO, p.describeAsString());
 	}
-	
+
 	public void createPlayer(Player p, String name) {
 		this.sendCommand(CMD_SEND_TO_PLAYER, name, CMD_ACTION, Game.CMD_CREATE_HERO, p.describeAsString());
 	}
@@ -587,7 +607,7 @@ public class NetworkParser implements Runnable {
 		/* "_" is used since this command is issued by GM, other will try to get the hero actually sending */
 		this.sendCommand(CMD_ACTION, "_", Game.CMD_BEGIN_FIGHT, m.describeAsString());
 	}
-	
+
 	public void prepareFight() {
 		/* "_" is used since this command is issued by GM, other will try to get the hero actually sending */
 		this.sendCommand(CMD_ACTION, "_", Game.CMD_PREPARE_FIGHT);
@@ -619,12 +639,20 @@ public class NetworkParser implements Runnable {
 	 * @param id Id of the game to bind to
 	 */
 	public void bind(int id) {
-		Game game = this.mService.getGame();
-		if(!game.mustBind())
-			return;
-		Log.d(TAG, "State : "+game.getState());
 		if(id > 0 && id < 100000)
 			this.sendCommand(CMD_BIND, String.format("%05d", id), this.mService.getName());
+		else
+			Log.e(TAG, "bind : number "+id+" is too damn big !");
+	}
+
+	/**
+	 * Create a game and bind to it
+	 * 
+	 * @param id Id of the game to create
+	 */
+	public void createBind(int id) {
+		if(id > 0 && id < 100000)
+			this.sendCommand(CMD_CREATE_GAME, String.format("%05d", id), this.mService.getName());
 		else
 			Log.e(TAG, "bind : number "+id+" is too damn big !");
 	}
@@ -677,7 +705,9 @@ public class NetworkParser implements Runnable {
 
 			connect(NetworkParser.SERVER_ADDR, NetworkParser.SERVER_PORT);
 
-			this.bind(this.mService.getGame().getIdGame());
+
+			if(this.mService.getGame().mustBind())
+				this.bind(this.mService.getGame().getIdGame());
 
 			// Send commands not yet sent
 			for(String l : delayedCommands)
