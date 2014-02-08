@@ -113,6 +113,18 @@
             android:name="fr.eurecom.warhammerontheroad.application.CreateMapActivity"
             android:label="@string/title_activity_create_map" >
         </activity>
+        <activity
+            android:name="fr.eurecom.warhammerontheroad.application.StatsProfilActivity"
+            android:label="@string/title_activity_stats_profil" >
+        </activity>
+        <activity
+            android:name="fr.eurecom.warhammerontheroad.application.StatsObjectActivity"
+            android:label="@string/title_activity_stats_object" >
+        </activity>
+        <activity
+            android:name="fr.eurecom.warhammerontheroad.application.StatsSkillActivity"
+            android:label="@string/title_activity_stats_skill" >
+        </activity>
     </application>
 
 </manifest>

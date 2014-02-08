@@ -1,5 +1,6 @@
 package fr.eurecom.warhammerontheroad.model;
 
+import java.util.ArrayList;
 import android.util.Log;
 
 public class WeaponSet {
@@ -17,7 +18,6 @@ public class WeaponSet {
 	}
 	
 	public void addMelee(MeleeWeapon weapon){
-		this.printStackTrace();
 		if(rightHand == null)
 			rightHand = weapon;
 		else
@@ -25,19 +25,16 @@ public class WeaponSet {
 	}
 	
 	public void addRange(RangedWeapon weapon){
-		this.printStackTrace();
 		bothHands = weapon;
 	}
 	
 	public boolean canChange()
 	{
-		this.printStackTrace();
 		return !(bothHands == null);
 	}
 	
 	public void changeStyle()
 	{
-		this.printStackTrace();
 		if(melee && !(bothHands == null))
 			melee = false;
 		else
@@ -46,7 +43,6 @@ public class WeaponSet {
 	
 	public Weapon getWeapon()
 	{
-		this.printStackTrace();
 		if (melee)
 			return rightHand;
 		else
@@ -55,15 +51,31 @@ public class WeaponSet {
 	
 	public Weapon getLeftHand()
 	{
-		this.printStackTrace();
 		if(melee)
 			return leftHand;
 		else
 			return null;
 	}
 	
-	private void printStackTrace() {
-		for(StackTraceElement s: Thread.currentThread().getStackTrace())
-			Log.d("WeaponSet", s.toString());
+	public void show()
+	{
+		Log.d("weaponset","melee :");
+		rightHand.show();
+		if (!(leftHand == null))
+			leftHand.show();
+		Log.d("weaponset","ranged :");
+		if (!(bothHands == null))
+			bothHands.show();
+	}
+	
+	public ArrayList<String[]> toArrayString()
+	{
+		ArrayList<String[]> result = new ArrayList<String[]>();
+		result.add(rightHand.toArrayString());
+		if(leftHand != null)
+			result.add(leftHand.toArrayString());
+		if(bothHands != null)
+			result.add(bothHands.toArrayString());
+		return result;
 	}
 }

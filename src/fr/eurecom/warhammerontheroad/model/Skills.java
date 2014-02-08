@@ -109,4 +109,54 @@ public class Skills {
     	}
     	Log.d("skill", skills);
     }
+    
+    public String[] toArrayString(Stats stats){
+    	String[] result = new String[4];
+    	result[0] = name;
+    	switch(stat){
+    	case 0:
+    		result[1] += "(CC)";
+    		break;
+    	case 1:
+    		result[1] += "(CT)";
+    		break;
+    	case 2:
+    		result[1] += "(F)";
+    		break;
+    	case 3:
+    		result[1] += "(E)";
+    		break;
+    	case 4:
+    		result[1] += "(Ag)";
+    		break;
+    	case 5:
+    		result[1] += "(Int)";
+    		break;
+    	case 6:
+    		result[1] += "(FM)";
+    		break;
+    	case 7:
+    		result[1] += "(Soc)";
+    		break;
+    	}
+    	switch(level){
+    	case 0:
+    		result[2]="nonAcq";
+    		result[3]=Integer.toString(stats.getStats(stat)/2);
+    		break;
+    	case 1:
+    		result[2]="Acq";
+    		result[3]=Integer.toString(stats.getStats(stat));
+    		break;
+    	case 2:
+    		result[2]="10";
+    		result[3]=Integer.toString(stats.getStats(stat)+10);
+    		break;
+    	case 3:
+    		result[2]="20";
+    		result[3]=Integer.toString(stats.getStats(stat)+20);
+    		break;
+    	}
+    	return result;
+    }
 }

@@ -1,27 +1,23 @@
 package fr.eurecom.warhammerontheroad.model;
 
 import java.io.File;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 
-import fr.eurecom.warhammerontheroad.application.CombatActivity;
-import fr.eurecom.warhammerontheroad.network.Describable;
-import fr.eurecom.warhammerontheroad.network.NetworkParser;
-import android.annotation.SuppressLint;
 import android.content.Context;
-import android.graphics.drawable.Drawable;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
 import android.os.Environment;
 import android.util.Log;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
+import fr.eurecom.warhammerontheroad.network.Describable;
+import fr.eurecom.warhammerontheroad.network.NetworkParser;
 
 public class Map implements Describable{
 	private Case[][] cases;
 	private int maxX, maxY;
-	private Drawable imageFond;
+	private Bitmap imageFond;
 	private String imageFondFileName;
-	private CombatActivity combatActivity;
+	private int cell_size;
 
 	private final static String TAG	=	"Map";
 
@@ -29,11 +25,12 @@ public class Map implements Describable{
 		this.maxX = maxX;
 		this.maxY = maxY;
 		this.imageFondFileName = imageFondFileName;
-		this.combatActivity = null;
 		new Thread() {
 			public void run() {
+				BitmapFactory.Options options = new BitmapFactory.Options();
+				options.inPreferredConfig = Bitmap.Config.ARGB_8888;
 				//Map.this.imageFond = Drawable.createFromPath(context.getFilesDir().getAbsolutePath()+"/"+Map.this.imageFondFileName);
-				Map.this.imageFond = Drawable.createFromPath(Environment.getExternalStorageDirectory().getAbsolutePath()+"/"+Map.this.imageFondFileName);
+				Map.this.imageFond = BitmapFactory.decodeFile(Environment.getExternalStorageDirectory().getAbsolutePath()+"/"+Map.this.imageFondFileName, options);
 				//Map.this.imageFond = Drawable.createFromPath("/sdcard/"+Map.this.imageFondFileName); 	
 			}
 		}.start();
@@ -44,14 +41,21 @@ public class Map implements Describable{
 	}
 
 	public Map(WotrService service, String s) {
-		this.combatActivity = null;
 		this.constructFromString(service, s);
 	}
 	
-	public void unRegisterActivity() {
-		this.combatActivity = null;
+	public int getMaxX() {
+		return this.maxX;
+	}
+	
+	public int getMaxY() {
+		return this.maxY;
 	}
 
+	public int getCellSize() {
+		return this.cell_size;
+	}
+	
 	public Case getCase(int x, int y) {
 		if(x<0 || x>=this.maxX || y<0 || y>=this.maxY) {
 			Log.e(TAG, "Position ("+x+","+y+") is not in Map ("+this.maxX+","+this.maxY+")...");
@@ -115,59 +119,29 @@ public class Map implements Describable{
 		return getInRangeCases(c.getX(), c.getY(), min, max);
 	}
 
-	public Drawable getImageFond() {
+	public Bitmap getImageFond() {
 		return this.imageFond;
 	}
 
-	@SuppressWarnings({"deprecation", "rawtypes"})
-	@SuppressLint("NewApi")
-	public synchronized void draw(LinearLayout table, int total_width, int total_height, CombatActivity act) {
-		this.combatActivity = act;
-		table.removeAllViews();
+	public synchronized void doDraw(Canvas canvas, int width, int height) {
+		if(canvas == null)
+			return;
+		canvas.drawBitmap(this.imageFond, 0, 0, null);
 
-		int cell_size = total_width/this.maxX < total_height/this.maxY ? (int) (total_width/this.maxX) : (int) (total_height/this.maxY);
-
-		try {
-			Class drawableClass = Class.forName("android.graphics.drawable.Drawable");
-			Method newSetBackground = LinearLayout.class.getMethod("setBackground", new Class[]{ drawableClass });
-
-			newSetBackground.invoke(table, this.imageFond);
-		} catch(NoSuchMethodException ex) {
-			table.setBackgroundDrawable(this.imageFond);
-		} catch(ClassNotFoundException ex) {
-			table.setBackgroundDrawable(this.imageFond);
-		} catch(InvocationTargetException ex) {
-			table.setBackgroundDrawable(this.imageFond);
-		} catch(IllegalAccessException ex) {
-			table.setBackgroundDrawable(this.imageFond);
-		}
-
-		Log.d(TAG, "Size of the layout : "+this.maxX*cell_size+"x"+this.maxY*cell_size);
-
-		LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(this.maxX*cell_size,this.maxY*cell_size);
-		lp.setMargins(0, 0, 0, 0);
-		table.setLayoutParams(lp);
 		for(int i=0; i<this.maxY; i++) {
-			LinearLayout line = new LinearLayout(act);
-			LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(this.maxX*cell_size, cell_size);
-			params.setMargins(0, 0, 0, 0);
-			line.setLayoutParams(params);
-			line.setOrientation(LinearLayout.HORIZONTAL);
-
 			for(int j=0; j<this.maxX; j++) {
-				ImageView im = new ImageView(act);
-				params = new LinearLayout.LayoutParams(cell_size, cell_size);
-				params.setMargins(0, 0, 0, 0);
-				im.setLayoutParams(params);
 				Case c = getCase(j, i);
-				if(!(c instanceof Vide))
-					im.setImageResource(c.getResource());
-				line.addView(im);
+				if(c instanceof Hero)
+					((Hero) c).doDraw(canvas, cell_size);
 			}
-			table.addView(line);
 		}
 	}
-
+	
+	public void scaleImage(int width, int height) {
+		this.imageFond = Bitmap.createScaledBitmap(this.imageFond, width, height, true);
+		this.cell_size = width/this.maxX < height/this.maxY ? (int) (width/this.maxX) : (int) (height/this.maxY);
+	}
+	
 	@Override
 	public String describeAsString() {
 		String result = this.imageFondFileName+NetworkParser.SEPARATOR+this.maxX+NetworkParser.SEPARATOR+this.maxY;
@@ -198,9 +172,11 @@ public class Map implements Describable{
 				if(!file.exists())
 					Log.e(TAG, "The file : "+file.getAbsolutePath()+" doesn't exist...");
 				else {
-					Map.this.imageFond = Drawable.createFromPath(service.getContext().getFilesDir().getAbsolutePath()+"/"+Map.this.imageFondFileName);
-					if(Map.this.combatActivity != null)
-						Map.this.combatActivity.reDraw();
+
+					BitmapFactory.Options options = new BitmapFactory.Options();
+					options.inPreferredConfig = Bitmap.Config.ARGB_8888;
+					//Map.this.imageFond = Drawable.createFromPath(context.getFilesDir().getAbsolutePath()+"/"+Map.this.imageFondFileName);
+					Map.this.imageFond = BitmapFactory.decodeFile(Environment.getExternalStorageDirectory().getAbsolutePath()+"/"+Map.this.imageFondFileName, options);
 				}
 				//Map.this.imageFond = Drawable.createFromPath(Environment.getExternalStorageDirectory().getAbsolutePath()+"/"+Map.this.imageFondFileName);
 				//Map.this.imageFond = Drawable.createFromPath("/sdcard/"+Map.this.imageFondFileName);
@@ -209,7 +185,7 @@ public class Map implements Describable{
 		try {
 			this.maxX = Integer.parseInt(parts[1]);
 			this.maxY = Integer.parseInt(parts[2]);
-			
+
 			Log.d(TAG, "Size of the Map : ("+this.maxX+","+this.maxY+")");
 
 			if(parts.length < 3+this.maxX*this.maxY) {
@@ -240,7 +216,7 @@ public class Map implements Describable{
 			Log.e(TAG, "Not a number...");
 		}
 	}
-	
+
 	public void newFileReceived(final WotrService service) {
 		new Thread() {
 			public void run() {
@@ -248,9 +224,10 @@ public class Map implements Describable{
 				if(!file.exists())
 					Log.e(TAG, "The file : "+file.getAbsolutePath()+" doesn't exist...");
 				else {
-					Map.this.imageFond = Drawable.createFromPath(service.getContext().getFilesDir().getAbsolutePath()+"/"+Map.this.imageFondFileName);
-					if(Map.this.combatActivity != null)
-						Map.this.combatActivity.reDraw();
+					BitmapFactory.Options options = new BitmapFactory.Options();
+					options.inPreferredConfig = Bitmap.Config.ARGB_8888;
+					//Map.this.imageFond = Drawable.createFromPath(context.getFilesDir().getAbsolutePath()+"/"+Map.this.imageFondFileName);
+					Map.this.imageFond = BitmapFactory.decodeFile(Environment.getExternalStorageDirectory().getAbsolutePath()+"/"+Map.this.imageFondFileName, options);
 				}
 				//Map.this.imageFond = Drawable.createFromPath(Environment.getExternalStorageDirectory().getAbsolutePath()+"/"+Map.this.imageFondFileName);
 				//Map.this.imageFond = Drawable.createFromPath("/sdcard/"+Map.this.imageFondFileName);

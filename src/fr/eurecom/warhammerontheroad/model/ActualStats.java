@@ -66,4 +66,23 @@ public class ActualStats implements Stats {
 		return secondary.getFullStats();
 	}
 
+	@Override
+	public String describeAsString() {
+		String result = primary.describeAsString() + "SSS" + secondary.describeAsString();
+		return result;
+	}
+
+	@Override
+	public void constructFromString(WotrService service, String s) {
+		String[] parts = s.split("SSS");
+		primary.constructFromString(service, parts[0]);
+		this.secondary = new SecondaryStats();
+		secondary.constructFromString(service, parts[1]);
+	}
+
+	@Override
+	public String representInString() {
+		return null;
+	}
+
 }

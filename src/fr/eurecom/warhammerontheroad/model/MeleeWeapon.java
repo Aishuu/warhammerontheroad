@@ -10,5 +10,22 @@ public class MeleeWeapon extends Weapon{
 	{
 		return degats;
 	}
+	
+	public void show(){
+		super.show();
+	}
+	
+	public String[] toArrayString(){
+		String[] result = new String[5];
+		result[0] = name;
+		result[1] = Integer.toString(degats);
+		result[2] = "";
+		result[3] = "";
+		if (attribut == 1)
+			result[4] = "defensive, speciale";
+		else
+			result[4] = "";
+		return result;
+	}
 
 }

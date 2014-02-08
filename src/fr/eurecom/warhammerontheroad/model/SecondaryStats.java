@@ -3,9 +3,13 @@ package fr.eurecom.warhammerontheroad.model;
 import java.util.ArrayList;
 
 public class SecondaryStats implements Stats{
-	
+
 	private int CC, CT, F, E, Ag, Int, FM, Soc, A, B, BF, BE, M, Mag, PF, PD;
-	
+
+	public SecondaryStats() {
+
+	}
+
 	public SecondaryStats(String input)
 	{
 		String stats[] = input.split(" ");
@@ -26,7 +30,7 @@ public class SecondaryStats implements Stats{
 		PF  = 0;
 		PD  = 0;
 	}
-	
+
 	public void upgrade(int index)
 	{
 		int level, max;
@@ -153,5 +157,49 @@ public class SecondaryStats implements Stats{
 		stats.add(PD == 0 ? "-" : "+" + PD);
 		return stats;
 	}
+	@Override
+	public String describeAsString() {
+		String result = Integer.toString(CC)+"STS"+
+				Integer.toString(CT)+"STS"+
+				Integer.toString(F)+"STS"+
+				Integer.toString(E)+"STS"+
+				Integer.toString(Ag)+"STS"+
+				Integer.toString(Int)+"STS"+
+				Integer.toString(FM)+"STS"+
+				Integer.toString(Soc)+"STS"+
+				Integer.toString(A)+"STS"+
+				Integer.toString(B)+"STS"+
+				Integer.toString(BF)+"STS"+
+				Integer.toString(BE)+"STS"+
+				Integer.toString(M)+"STS"+
+				Integer.toString(Mag)+"STS"+
+				Integer.toString(PF)+"STS"+
+				Integer.toString(PD);
+		return result;
+	}
+	@Override
+	public void constructFromString(WotrService service, String s){
+		String[] parts = s.split("STS");
+		CC = Integer.parseInt(parts[0]);
+		CT = Integer.parseInt(parts[1]);
+		F = Integer.parseInt(parts[2]);
+		E = Integer.parseInt(parts[3]);
+		Ag = Integer.parseInt(parts[4]);
+		Int = Integer.parseInt(parts[5]);
+		FM = Integer.parseInt(parts[6]);
+		Soc = Integer.parseInt(parts[7]);
+		A = Integer.parseInt(parts[8]);
+		B = Integer.parseInt(parts[9]);
+		BF = Integer.parseInt(parts[10]);
+		BE = Integer.parseInt(parts[11]);
+		M = Integer.parseInt(parts[12]);
+		Mag = Integer.parseInt(parts[13]);
+		PF = Integer.parseInt(parts[14]);
+		PD = Integer.parseInt(parts[15]);
+	}
 
+	@Override
+	public String representInString() {
+		return null;
+	}
 }

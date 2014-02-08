@@ -8,6 +8,7 @@ import android.util.Log;
 import fr.eurecom.warhammerontheroad.application.CharaCreationDetailsActivity;
 import fr.eurecom.warhammerontheroad.application.ChatRoomActivity;
 import fr.eurecom.warhammerontheroad.application.CombatActivity;
+import fr.eurecom.warhammerontheroad.application.CombatView;
 import fr.eurecom.warhammerontheroad.application.CreateMapActivity;
 import fr.eurecom.warhammerontheroad.application.CreateSupportCharaActivity;
 import fr.eurecom.warhammerontheroad.application.GMMenuActivity;
@@ -54,6 +55,7 @@ public class Game {
 	private int turnOf;
 	private int cmp_init;
 	private Map map;
+	private CombatView.CombatThread combatThread;
 	private WotrService mService;
 	private int PA;
 
@@ -66,6 +68,7 @@ public class Game {
 		this.heros = new ArrayList<Hero>();
 		this.disconnectedPlayers = new ArrayList<Player>();
 		this.map = null;
+		this.combatThread = null;
 	}
 
 	public Player getMe() {
@@ -84,10 +87,14 @@ public class Game {
 
 	public void setMe(Player player) {
 		this.me = player;
-		this.heros.add(player);
+		this.addHero(player);
 	}
 
 	public void addHero(Hero hero) {
+		if(hero instanceof Player)
+			for(Hero h: this.heros)
+				if(h instanceof Player)
+					((Player) h).updateColor(((Player) hero).getName());
 		this.heros.add(hero);
 	}
 
@@ -305,7 +312,7 @@ public class Game {
 				Player p = this.getPlayer(name);
 				if(p != null)
 					this.removeHero(p);
-				p = new Player(this.mService.getContext(), name);
+				p = new Player(this.mService.getContext(), name, this.heros);
 				p.constructFromString(this.mService, parts[1]);
 				this.addHero(p);
 			}
@@ -349,8 +356,13 @@ public class Game {
 					}
 			}
 			else
-				if(this.me.getTurnInFight() == 0)
+				if(this.me.getTurnInFight() == 0) {
+					try {
+						Thread.sleep(1000);
+					} catch (InterruptedException e) {
+					}
 					turnInFight(this.me);
+				}
 		}
 	}
 
@@ -358,6 +370,11 @@ public class Game {
 		if(!this.isGM)
 			this.myTurnNow();
 
+		if(!h.isAlive()) {
+			this.turnNext();
+			return;
+		}
+		
 		h.nextTurn();
 		Hero cible;
 		if(this.isGM) {
@@ -547,6 +564,30 @@ public class Game {
 
 	public void removeGameServiceListener(GameServiceListener listener) {
 		gameServiceListeners.remove(listener);
+	}
+	
+	public void registerCombatThread(CombatView.CombatThread combatThread) {
+		this.combatThread = combatThread;
+	}
+	
+	public void unRegisterCombatThread() {
+		this.combatThread = null;
+	}
+	
+	public void printDamage(int x, int y, int dmg) {
+		if(this.combatThread != null)
+			this.combatThread.printDamage(x, y, dmg);
+	}
+
+	
+	public void printStatus(int x, int y, String status) {
+		if(this.combatThread != null)
+			this.combatThread.printStatus(x, y, status);
+	}
+	
+	public void printStandard(int x, int y, String text) {
+		if(this.combatThread != null)
+			this.combatThread.printStandard(x, y, text);
 	}
 	
 	public int getPA()
