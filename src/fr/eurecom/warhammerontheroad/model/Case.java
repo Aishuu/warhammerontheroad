@@ -3,7 +3,7 @@ package fr.eurecom.warhammerontheroad.model;
 import fr.eurecom.warhammerontheroad.network.Describable;
 
 public abstract class Case implements Describable {
-	private int x,y;
+	protected int x,y;
 	
 	protected Case() {
 		this.x = -1;
@@ -26,10 +26,6 @@ public abstract class Case implements Describable {
 	public void setPos(int x, int y) {
 		this.x = x;
 		this.y = y;
-	}
-	
-	public int getResource() {
-		return -1;
 	}
 	
 	@Override

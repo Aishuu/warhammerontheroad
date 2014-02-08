@@ -76,6 +76,7 @@ public class ActualStats implements Stats {
 	public void constructFromString(WotrService service, String s) {
 		String[] parts = s.split("SSS");
 		primary.constructFromString(service, parts[0]);
+		this.secondary = new SecondaryStats();
 		secondary.constructFromString(service, parts[1]);
 	}
 

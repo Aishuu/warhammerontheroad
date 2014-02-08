@@ -5,15 +5,12 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
 
 import android.content.Context;
-import android.util.Log;
 import fr.eurecom.warhammerontheroad.R;
 
 public class Job {
 	
-	private Context context;
 	private String name;
 	private SecondaryStats secondarystats;
 	private int[] skills;
@@ -25,14 +22,12 @@ public class Job {
 	{
 		int j;
 		int k = 0;
-		this.context = context;
 		this.index=index;
 		InputStream is = context.getResources().openRawResource(R.raw.job);
 		if (is != null) {
             InputStreamReader inputStreamReader = new InputStreamReader(is);
             BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
             String receiveString = "";
-            StringBuilder stringBuilder = new StringBuilder();
 
             try {
 				while ( (receiveString = bufferedReader.readLine()) != null) {
@@ -88,6 +83,10 @@ public class Job {
 				e.printStackTrace();
 			}
 		}
+	}
+	
+	public String getName() {
+		return this.name;
 	}
 	
 	public SecondaryStats getSecondaryStats()

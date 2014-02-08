@@ -72,7 +72,7 @@ public class JoinGameActivity extends WotrActivity implements GameServiceListene
 			return;
 		try {
 			int id = Integer.parseInt(this.idEdit.getText().toString());
-			this.mService.getGame().setMe(new Player(this.mService.getContext(), this.nameEdit.getText().toString()));
+			this.mService.getGame().setMe(new Player(this.mService.getContext(), this.nameEdit.getText().toString(), this.mService.getGame().getHeros()));
 			this.mService.getNetworkParser().bind(id);
 		} catch (NumberFormatException e) {
 			Log.e("JoinGameActivity", "This is not a number !");

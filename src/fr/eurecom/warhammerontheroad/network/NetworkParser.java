@@ -43,9 +43,9 @@ public class NetworkParser implements Runnable {
 	 * IP address of the server
 	 */
 	//public final static String SERVER_ADDR = 	"82.236.41.149";
-	public final static String SERVER_ADDR = 	"172.24.10.37";
+//	public final static String SERVER_ADDR = 	"172.24.10.37";
 	//public final static String SERVER_ADDR =	"192.168.1.38";
-//	public final static String SERVER_ADDR = "192.168.0.11";
+	public final static String SERVER_ADDR = "192.168.0.11";
 
 	/**
 	 * Separator for commands
@@ -129,8 +129,14 @@ public class NetworkParser implements Runnable {
 				connect(NetworkParser.SERVER_ADDR, NetworkParser.SERVER_PORT);
 
 			// autobind
-			if(this.mService.getGame().mustBind())
-				this.bind(this.mService.getGame().getIdGame());
+			if(this.mService.getGame().mustBind()) {
+				if(this.mService.getGame().isGM()) {
+					this.createBind(this.mService.getGame().getIdGame());
+					this.bind(this.mService.getGame().getIdGame());
+				}
+				else
+					this.bind(this.mService.getGame().getIdGame());
+			}
 
 			// BufferedReader from the socket
 			in = new BufferedReader(new InputStreamReader(this.sock.getInputStream()));

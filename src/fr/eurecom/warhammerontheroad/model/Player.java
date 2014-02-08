@@ -1,11 +1,12 @@
 package fr.eurecom.warhammerontheroad.model;
 
+import java.util.ArrayList;
 import java.util.Random;
 
-import fr.eurecom.warhammerontheroad.R;
-import fr.eurecom.warhammerontheroad.network.NetworkParser;
 import android.content.Context;
 import android.util.Log;
+import fr.eurecom.warhammerontheroad.R;
+import fr.eurecom.warhammerontheroad.network.NetworkParser;
 
 public class Player extends Hero {	
 	private final static String TAG =		"Player";
@@ -20,23 +21,21 @@ public class Player extends Hero {
 	private Job job;
 
 
-	public Player(Context context, String name) {
+	public Player(Context context, String name, ArrayList<Hero> heros) {
 		super(context);
 		this.setId(0);
 		this.name = name;
+		int index = 0;
+		for(Hero h: heros)
+			if(h instanceof Player && ((Player)h).getName().compareTo(this.name) < 0)
+				index++;
+		this.color = Color.fromIndex(index);
 		setOrigin();
 	}
-
-	public Player(Context context, Race race, String name) {
-		super(context);
-		this.setId(0);
-		this.name = name;
-		setRace(race);
-		this.init();
-		setOrigin();
-		
-		//TODO: for testing purpose
-		this.AddJob(1);
+	
+	public void updateColor(String newname) {
+		if(newname.compareTo(this.name) < 0)
+			this.color = Color.fromIndex(this.color.getIndex()+1);
 	}
 	
 	@Override
@@ -106,64 +105,64 @@ public class Player extends Hero {
 			case HUMAN:
 				switch(color){
 				case BLUE:
-					this.resource = R.drawable.human_f_blue;
+					this.resource = this.context.getResources().getDrawable(R.drawable.human_f_blue);
 					break;
 				case GREEN:
-					this.resource = R.drawable.human_f_green;
+					this.resource = this.context.getResources().getDrawable(R.drawable.human_f_green);
 					break;
 				case VIOLET:
-					this.resource = R.drawable.human_f_violet;
+					this.resource = this.context.getResources().getDrawable(R.drawable.human_f_violet);
 					break;
 				case ORANGE:
-					this.resource = R.drawable.human_f_orange;
+					this.resource = this.context.getResources().getDrawable(R.drawable.human_f_orange);
 					break;
 				}
 				break;
 			case ELF:
 				switch(color){
 				case BLUE:
-					this.resource = R.drawable.elf_f_blue;
+					this.resource = this.context.getResources().getDrawable(R.drawable.elf_f_blue);
 					break;
 				case GREEN:
-					this.resource = R.drawable.elf_f_green;
+					this.resource = this.context.getResources().getDrawable(R.drawable.elf_f_green);
 					break;
 				case VIOLET:
-					this.resource = R.drawable.elf_f_violet;
+					this.resource = this.context.getResources().getDrawable(R.drawable.elf_f_violet);
 					break;
 				case ORANGE:
-					this.resource = R.drawable.elf_f_orange;
+					this.resource = this.context.getResources().getDrawable(R.drawable.elf_f_orange);
 					break;
 				}
 				break;
 			case DWARF:
 				switch(color){
 				case BLUE:
-					this.resource = R.drawable.dwarf_f_blue;
+					this.resource = this.context.getResources().getDrawable(R.drawable.dwarf_f_blue);
 					break;
 				case GREEN:
-					this.resource = R.drawable.dwarf_f_green;
+					this.resource = this.context.getResources().getDrawable(R.drawable.dwarf_f_green);
 					break;
 				case VIOLET:
-					this.resource = R.drawable.dwarf_f_violet;
+					this.resource = this.context.getResources().getDrawable(R.drawable.dwarf_f_violet);
 					break;
 				case ORANGE:
-					this.resource = R.drawable.dwarf_f_orange;
+					this.resource = this.context.getResources().getDrawable(R.drawable.dwarf_f_orange);
 					break;
 				}
 				break;
 			case HOBBIT:
 				switch(color){
 				case BLUE:
-					this.resource = R.drawable.halfling_f_blue;
+					this.resource = this.context.getResources().getDrawable(R.drawable.halfling_f_blue);
 					break;
 				case GREEN:
-					this.resource = R.drawable.halfling_f_green;
+					this.resource = this.context.getResources().getDrawable(R.drawable.halfling_f_green);
 					break;
 				case VIOLET:
-					this.resource = R.drawable.halfling_f_violet;
+					this.resource = this.context.getResources().getDrawable(R.drawable.halfling_f_violet);
 					break;
 				case ORANGE:
-					this.resource = R.drawable.halfling_f_orange;
+					this.resource = this.context.getResources().getDrawable(R.drawable.halfling_f_orange);
 					break;
 				}
 				break;
@@ -176,64 +175,64 @@ public class Player extends Hero {
 			case HUMAN:
 				switch(color){
 				case BLUE:
-					this.resource = R.drawable.human_m_blue;
+					this.resource = this.context.getResources().getDrawable(R.drawable.human_m_blue);
 					break;
 				case GREEN:
-					this.resource = R.drawable.human_m_green;
+					this.resource = this.context.getResources().getDrawable(R.drawable.human_m_green);
 					break;
 				case VIOLET:
-					this.resource = R.drawable.human_m_violet;
+					this.resource = this.context.getResources().getDrawable(R.drawable.human_m_violet);
 					break;
 				case ORANGE:
-					this.resource = R.drawable.human_m_orange;
+					this.resource = this.context.getResources().getDrawable(R.drawable.human_m_orange);
 					break;
 				}
 				break;
 			case ELF:
 				switch(color){
 				case BLUE:
-					this.resource = R.drawable.elf_m_blue;
+					this.resource = this.context.getResources().getDrawable(R.drawable.elf_m_blue);
 					break;
 				case GREEN:
-					this.resource = R.drawable.elf_m_green;
+					this.resource = this.context.getResources().getDrawable(R.drawable.elf_m_green);
 					break;
 				case VIOLET:
-					this.resource = R.drawable.elf_m_violet;
+					this.resource = this.context.getResources().getDrawable(R.drawable.elf_m_violet);
 					break;
 				case ORANGE:
-					this.resource = R.drawable.elf_m_orange;
+					this.resource = this.context.getResources().getDrawable(R.drawable.elf_m_orange);
 					break;
 				}
 				break;
 			case DWARF:
 				switch(color){
 				case BLUE:
-					this.resource = R.drawable.dwarf_m_blue;
+					this.resource = this.context.getResources().getDrawable(R.drawable.dwarf_m_blue);
 					break;
 				case GREEN:
-					this.resource = R.drawable.dwarf_m_green;
+					this.resource = this.context.getResources().getDrawable(R.drawable.dwarf_m_green);
 					break;
 				case VIOLET:
-					this.resource = R.drawable.dwarf_m_violet;
+					this.resource = this.context.getResources().getDrawable(R.drawable.dwarf_m_violet);
 					break;
 				case ORANGE:
-					this.resource = R.drawable.dwarf_m_orange;
+					this.resource = this.context.getResources().getDrawable(R.drawable.dwarf_m_orange);
 					break;
 				}
 				break;
 			case HOBBIT:
 				switch(color){
 				case BLUE:
-					this.resource = R.drawable.halfling_m_blue;
+					this.resource = this.context.getResources().getDrawable(R.drawable.halfling_m_blue);
 					break;
 				case GREEN:
-					this.resource = R.drawable.halfling_m_green;
+					this.resource = this.context.getResources().getDrawable(R.drawable.halfling_m_green);
 					break;
 				case VIOLET:
-					this.resource = R.drawable.halfling_m_violet;
+					this.resource = this.context.getResources().getDrawable(R.drawable.halfling_m_violet);
 					break;
 				case ORANGE:
-					this.resource = R.drawable.halfling_m_orange;
+					this.resource = this.context.getResources().getDrawable(R.drawable.halfling_m_orange);
 					break;
 				}
 				break;
@@ -250,25 +249,23 @@ public class Player extends Hero {
 
 	@Override
 	public String describeAsString() {
-		String result = NetworkParser.constructStringFromArgs(color.toString(), gender.toString(),
+		String result = NetworkParser.constructStringFromArgs(super.describeAsString(), gender.toString(),
 				eyeColor, hairColor,Integer.toString(age), Integer.toString(size), Integer.toString(weight), 
-				Integer.toString(siblings), birthPlace.toString(), Integer.toString(jobIndex), 
-				super.describeAsString());
+				Integer.toString(siblings), birthPlace.toString(), Integer.toString(jobIndex));
 		return result;
 	}
 
 	@Override
 	public void constructFromString(WotrService service, String s) {
 		String[] parts = s.split(NetworkParser.SEPARATOR, 10);
-		if(parts.length < 2) {
+		if(parts.length < 10) {
 			Log.e(TAG, "Not enough arguments !");
 			return;
 		}
-		
-		super.constructFromString(service, parts[9]);
-		this.init();		// init is not called from setRace since it is a player;
+
+		super.constructFromString(service, parts[0]);
+		this.init();		// not called from Hero
 		try {
-			this.setColor(Color.fromIndex(Integer.parseInt(parts[0])));
 			this.setGender(Gender.fromIndex(Integer.parseInt(parts[1])));
 			this.setEyeColor(parts[2]);
 			this.setHairColor(parts[3]);
@@ -277,7 +274,8 @@ public class Player extends Hero {
 			this.setWeight(Integer.parseInt(parts[6]));
 			this.setSiblings(Integer.parseInt(parts[7]));
 			this.setBirthPlace(Place.fromIndex(Integer.parseInt(parts[8])));
-			this.AddJob(Integer.parseInt(parts[9]));			
+			this.AddJob(Integer.parseInt(parts[9]));
+			this.stats.constructFromString(service, parts[0].split("HHH")[1]);	// not called from Hero. Must be last otherwise AddJob and init change the stats
 		} catch(NumberFormatException e) {
 			Log.e(TAG, "Not a number !");
 		}

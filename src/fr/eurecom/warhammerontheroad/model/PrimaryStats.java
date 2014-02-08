@@ -7,8 +7,9 @@ public class PrimaryStats implements Stats{
 	private int CC, CT, F, E, Ag, Int, FM, Soc, A, B, BF, BE, M, Mag, PF, PD;
 
 	public PrimaryStats(Race race) {
-		int randB = Tools.tenDice();
-		int randPD = Tools.tenDice();
+		Dice d = new Dice();
+		int randB = d.tenDice();
+		int randPD = d.tenDice();
 		Int = 20;
 		FM  = 20;
 		A   =  1;
@@ -193,14 +194,14 @@ public class PrimaryStats implements Stats{
 		default:
 			break;
 		}
-		CC  += Tools.twentyDice();
-		CT  += Tools.twentyDice();
-		F   += Tools.twentyDice();
-		E   += Tools.twentyDice();
-		Ag  += Tools.twentyDice();
-		Int += Tools.twentyDice();
-		FM  += Tools.twentyDice();
-		Soc += Tools.twentyDice();
+		CC  += d.twentyDice();
+		CT  += d.twentyDice();
+		F   += d.twentyDice();
+		E   += d.twentyDice();
+		Ag  += d.twentyDice();
+		Int += d.twentyDice();
+		FM  += d.twentyDice();
+		Soc += d.twentyDice();
 		BF = F/10;
 		BE = E/10;
 		PF = 0;

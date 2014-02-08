@@ -102,7 +102,6 @@ public class CharaCreationDetailsActivity extends WotrActivity implements OnItem
 			player.setHairColor(hair.getText().toString());
 		player.init();
 
-		//TODO: for testing purpose
 		player.AddJob(spinnerCarrier.getSelectedItemPosition());
 		player.setColor(Color.BLUE);
 		player.setGender(Gender.fromIndex(spinnerGender.getSelectedItemPosition()));

@@ -3,9 +3,13 @@ package fr.eurecom.warhammerontheroad.model;
 import java.util.ArrayList;
 
 public class SecondaryStats implements Stats{
-	
+
 	private int CC, CT, F, E, Ag, Int, FM, Soc, A, B, BF, BE, M, Mag, PF, PD;
-	
+
+	public SecondaryStats() {
+
+	}
+
 	public SecondaryStats(String input)
 	{
 		String stats[] = input.split(" ");
@@ -26,7 +30,7 @@ public class SecondaryStats implements Stats{
 		PF  = 0;
 		PD  = 0;
 	}
-	
+
 	public void upgrade(int index)
 	{
 		int level, max;
@@ -156,21 +160,21 @@ public class SecondaryStats implements Stats{
 	@Override
 	public String describeAsString() {
 		String result = Integer.toString(CC)+"STS"+
-				                                              Integer.toString(CT)+"STS"+
-				                                              Integer.toString(F)+"STS"+
-				                                              Integer.toString(E)+"STS"+
-				                                              Integer.toString(Ag)+"STS"+
-				                                              Integer.toString(Int)+"STS"+
-				                                              Integer.toString(FM)+"STS"+
-				                                              Integer.toString(Soc)+"STS"+
-				                                              Integer.toString(A)+"STS"+
-				                                              Integer.toString(B)+"STS"+
-				                                              Integer.toString(BF)+"STS"+
-				                                              Integer.toString(BE)+"STS"+
-				                                              Integer.toString(M)+"STS"+
-				                                              Integer.toString(Mag)+"STS"+
-				                                              Integer.toString(PF)+"STS"+
-				                                              Integer.toString(PD);
+				Integer.toString(CT)+"STS"+
+				Integer.toString(F)+"STS"+
+				Integer.toString(E)+"STS"+
+				Integer.toString(Ag)+"STS"+
+				Integer.toString(Int)+"STS"+
+				Integer.toString(FM)+"STS"+
+				Integer.toString(Soc)+"STS"+
+				Integer.toString(A)+"STS"+
+				Integer.toString(B)+"STS"+
+				Integer.toString(BF)+"STS"+
+				Integer.toString(BE)+"STS"+
+				Integer.toString(M)+"STS"+
+				Integer.toString(Mag)+"STS"+
+				Integer.toString(PF)+"STS"+
+				Integer.toString(PD);
 		return result;
 	}
 	@Override
