@@ -324,6 +324,16 @@ public class Player extends Hero {
 		
 	}
 
+	public boolean nextToEnemy(Game game)
+	{
+		ArrayList<Case> enemy = game.getMap().getInRangeCases(this, 1, 1);
+		for(Case c: enemy)
+			if(c instanceof Hero)
+				if(!(c instanceof Player))
+					return true;
+		return false;
+	}
+	
 	public void setOrigin(){
 		Random rand=new Random();
 		//birthPlace
