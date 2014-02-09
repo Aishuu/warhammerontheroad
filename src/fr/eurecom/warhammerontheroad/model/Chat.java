@@ -6,26 +6,42 @@ import java.util.Collection;
 import fr.eurecom.warhammerontheroad.application.ChatListener;
 
 public class Chat {
-    private final Collection<ChatListener> chatListeners = new ArrayList<ChatListener>();
+    private final Collection<ChatListener> chatListeners;
+    private ArrayList<ChatMessage> messages;
+    private Game game;
+    
+    public Chat(Game game) {
+    	this.game = game;
+    	this.chatListeners =  new ArrayList<ChatListener>();
+    	this.messages = new ArrayList<ChatMessage>();
+    }
+    
+    public void registerMessage(ChatMessage cm) {
+    	this.messages.add(cm);
+    }
     
     public void receiveMessage(String name, String message) {
-    	// TODO: store messages in history
-    	fireMessageReceived(name, message);
+    	ChatMessage cm = new ChatMessage(name, message, this.game, false);
+    	this.messages.add(cm);
+    	fireMessageReceived(cm);
     }
     
     public void receivePrivateMessage(String name, String message) {
-    	// TODO: store messages in history
-    	firePrivateMessageReceived(name, message);
+    	ChatMessage cm = new ChatMessage(name, message, this.game, false);
+    	this.messages.add(cm);
+    	fireMessageReceived(cm);
     }
     
     public void userDisconnected(String name) {
-    	// TODO: store in history
-    	fireUserDisconnected(name);
+    	ChatMessage cm = new ChatMessage(name+" disconnected...");
+    	this.messages.add(cm);
+    	fireMessageReceived(cm);
     }
     
     public void userConnected(String name) {
-    	// TODO: store in history
-    	fireUserConnected(name);
+    	ChatMessage cm = new ChatMessage(name+" is now connected !");
+    	this.messages.add(cm);
+    	fireMessageReceived(cm);
     }
     
     public void fileTransferStatusChanged(String name, int status) {
@@ -33,24 +49,9 @@ public class Chat {
     		l.fileTransferStatusChanged(name, status);
     }
     
-    private void fireUserDisconnected(String name) {
+    private void fireMessageReceived(ChatMessage cm) {
     	for(ChatListener l: chatListeners)
-    		l.userConnectionChanged(name, false);
-    }
-    
-    private void fireUserConnected(String name) {
-    	for(ChatListener l: chatListeners)
-    		l.userConnectionChanged(name, true);
-    }
-    
-    private void fireMessageReceived(String name, String message) {
-    	for(ChatListener l: chatListeners)
-    		l.messageReceived(name, message);
-    }
-    
-    private void firePrivateMessageReceived(String name, String message) {
-    	for(ChatListener l: chatListeners)
-    		l.privateMessageReceived(name, message);
+    		l.messageReceived(cm);
     }
     
     public void addChatListener(ChatListener listener) {
@@ -59,5 +60,12 @@ public class Chat {
     
     public void removeChatListener(ChatListener listener) {
         chatListeners.remove(listener);
+    }
+    
+    public String describeAsHTML() {
+    	String s = "";
+    	for(ChatMessage cm: this.messages)
+    		s += cm.describeAsHTML() + "<br />";
+    	return s;
     }
 }

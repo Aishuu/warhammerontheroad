@@ -42,8 +42,8 @@ public class WotrService extends Service {
 	@Override
 	public void onCreate() {
 		super.onCreate();
-		this.chat = new Chat();
 		this.game = new Game(this);
+		this.chat = new Chat(this.game);
 		this.generalErrorListeners = new ArrayList<GeneralErrorListener>();
 		this.np = new NetworkParser(this);
 		Log.d(TAG, "Creating the socket..");
@@ -55,7 +55,7 @@ public class WotrService extends Service {
 		this.np = new NetworkParser(this);
 		this.game = new Game(this);
 		this.generalErrorListeners = new ArrayList<GeneralErrorListener>();
-		this.chat = new Chat();
+		this.chat = new Chat(this.game);
 		Log.d(TAG, "Creating the socket..");
 		new Thread(this.np).start();
 	}

@@ -1,5 +1,8 @@
 package fr.eurecom.warhammerontheroad.application;
 
+import fr.eurecom.warhammerontheroad.model.ChatMessage;
+import fr.eurecom.warhammerontheroad.network.NetworkParser;
+
 /**
  * Interface used to register a class to get notifications about relevant events for the chat.
  * 
@@ -13,15 +16,7 @@ public interface ChatListener {
 	 * @param name name of the sender
 	 * @param message content of the message
 	 */
-	public void messageReceived(String name, String message);
-	
-	/**
-	 * A private message has been received
-	 * 
-	 * @param name name of the sender
-	 * @param message content of the message
-	 */
-	public void privateMessageReceived(String name, String message);
+	public void messageReceived(ChatMessage cm);
 	
 	/**
 	 * The status of the transfer of a file changed
@@ -33,12 +28,4 @@ public interface ChatListener {
 	 * @see NetworkParser.FILE_DOES_NOT_EXIST
 	 */
 	public void fileTransferStatusChanged(String name, int file_status);
-	
-	/**
-	 * A user connection changed.
-	 * 
-	 * @param name the name of the user
-	 * @param isNowConnected wether the user connected or disconnected
-	 */
-	public void userConnectionChanged(String name, boolean isNowConnected);
 }
