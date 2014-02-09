@@ -323,7 +323,92 @@ public class Player extends Hero {
 		}
 		
 	}
+	public void move(Game game, Case dest, Dice dice) {
+		if(!game.usePA(1))
+			return;
+		if (isengaged)
+		{
+			ArrayList<Case> enemy = game.getMap().getInRangeCases(this, 1, 1);
+			for(Case c: enemy)
+				if(c instanceof Hero)
+					if(!(c instanceof Player))
+						((Hero)(c)).attaqueStandard(game, this, dice, true);
+		}
+		hasVisee = false;
+		isengaged = false;
+		this._move(game, dest, 1f);
+	}
+	
+	public void charge(Game game, Hero hero, Case dest, Dice dice) {
+		if(!game.usePA(2))
+			return;
+		if (isengaged)
+		{
+			ArrayList<Case> enemy = game.getMap().getInRangeCases(this, 1, 1);
+			for(Case c: enemy)
+				if(c instanceof Hero)
+					if(!(c instanceof Player))
+						((Hero)(c)).attaqueStandard(game, this, dice, true);
+		}
+		Log.d(TAG, this.representInString()+" charges "+hero.representInString());
+		game.printStandard(this.x, this.y, CombatAction.CHARGE.getLabel());
 
+		this._move(game, dest, 2f);
+
+		int result = dice.hundredDice();
+		int invresult = result == 100 ? 0 : (result-result/10)*10 + result/10;
+		int localisation;
+		int damages, tmpDamage;
+		if (invresult < 16)
+			localisation = 0;
+		else if (invresult < 56)
+			localisation = 1;
+		else if (invresult < 81)
+			localisation = 2;
+		else
+			localisation = 3;
+		if (skillTest(false, 0, result, 20))
+		{
+			damages = dice.tenDice();
+			if (damages == 10)
+			{
+				this.waitABit();
+				game.printStatus(this.x, this.y, "Ulrich fury !");
+				Log.d(TAG, "Ulrich fury !");
+				if (skillTest(false, 0, result, 20))
+				{
+					do{
+						tmpDamage = dice.tenDice();
+						if (tmpDamage == 10)
+							damages += 10;
+					}while (tmpDamage == 10);
+					damages += tmpDamage;
+				}
+			}
+			this.waitABit();
+			hero.recevoirDamage(weapons.getWeapon().getDegats() + stats.getStats(10) + damages, localisation, dice, game, true);
+		}
+		else {
+			this.waitABit();
+			game.printStatus(this.x, this.y, "Miss");
+			Log.d(TAG, this.representInString()+" misses "+hero.representInString());
+		}
+		hasVisee = false;
+		if (nextToEnemy(game))
+			isengaged = true;
+		else
+			isengaged = false;
+	}
+	public boolean nextToEnemy(Game game)
+	{
+		ArrayList<Case> enemy = game.getMap().getInRangeCases(this, 1, 1);
+		for(Case c: enemy)
+			if(c instanceof Hero)
+				if(!(c instanceof Player))
+					return true;
+		return false;
+	}
+	
 	public void setOrigin(){
 		Random rand=new Random();
 		//birthPlace

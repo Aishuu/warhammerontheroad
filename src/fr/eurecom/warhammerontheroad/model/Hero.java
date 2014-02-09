@@ -28,12 +28,13 @@ public class Hero extends Case implements Describable {
 	private ArrayList<Talents> talents;
 	private int[] randomTalentIndex;
 
-	private boolean hasVisee;
-	private WeaponSet weapons;
+	protected boolean hasVisee;
+	protected WeaponSet weapons;
 	private ArmorSet armor;
-	private boolean isengaged;
+	protected boolean isengaged;
 	private boolean loaded;
 	private boolean hasBlocked;
+	private boolean hasAttacked;
 	private int id;
 	private int turn_in_fight;
 	private int initiative_for_fight;
@@ -60,7 +61,7 @@ public class Hero extends Case implements Describable {
 		setRace(race);
 	}
 
-	private void waitABit() {
+	protected void waitABit() {
 		try {
 			Thread.sleep(Game.SLEEP_TIME);
 		} catch (InterruptedException e) {
@@ -272,13 +273,17 @@ public class Hero extends Case implements Describable {
 			if (weapons.getWeapon() instanceof RangedWeapon){
 				if(describe)
 					this.waitABit();
-				hero.recevoirDamage(weapons.getWeapon().getDegats() + damages, localisation, dice, game);
+				hero.recevoirDamage(weapons.getWeapon().getDegats() + damages, localisation, dice, game, false);
 				loaded = false;
 			}
 			else {
 				if(describe)
 					this.waitABit();
-				hero.recevoirDamage(weapons.getWeapon().getDegats() + stats.getStats(10) + damages, localisation, dice, game);
+				hero.recevoirDamage(weapons.getWeapon().getDegats() + stats.getStats(10) + damages, localisation, dice, game, true);
+				if(nextToEnemy(game))
+					isengaged = true;
+				else
+					isengaged = false;
 			}
 		}
 		else {
@@ -297,9 +302,8 @@ public class Hero extends Case implements Describable {
 		{
 			ArrayList<Case> enemy = game.getMap().getInRangeCases(this, 1, 1);
 			for(Case c: enemy)
-				if(c instanceof Hero)
-					if(!(c instanceof Player))
-						((Hero)(c)).attaqueStandard(game, this, dice, true);
+				if(c instanceof Player)
+					((Hero)(c)).attaqueStandard(game, this, dice, true);
 		}
 		Log.d(TAG, this.representInString()+" charges "+hero.representInString());
 		game.printStandard(this.x, this.y, CombatAction.CHARGE.getLabel());
@@ -337,7 +341,7 @@ public class Hero extends Case implements Describable {
 				}
 			}
 			this.waitABit();
-			hero.recevoirDamage(weapons.getWeapon().getDegats() + stats.getStats(10) + damages, localisation, dice, game);
+			hero.recevoirDamage(weapons.getWeapon().getDegats() + stats.getStats(10) + damages, localisation, dice, game, true);
 		}
 		else {
 			this.waitABit();
@@ -345,6 +349,10 @@ public class Hero extends Case implements Describable {
 			Log.d(TAG, this.representInString()+" misses "+hero.representInString());
 		}
 		hasVisee = false;
+		if (nextToEnemy(game))
+			isengaged = true;
+		else
+			isengaged = false;
 	}
 
 	protected void chooseImage() {
@@ -706,7 +714,7 @@ public class Hero extends Case implements Describable {
 		return this.B != 0;
 	}
 
-	private void _move(Game game, Case dest, float speed) {
+	protected void _move(Game game, Case dest, float speed) {
 		int x_start = this.x;
 		int y_start = this.y;
 		game.getMap().setCase(this, dest);
@@ -732,14 +740,22 @@ public class Hero extends Case implements Describable {
 		{
 			ArrayList<Case> enemy = game.getMap().getInRangeCases(this, 1, 1);
 			for(Case c: enemy)
-				if(c instanceof Hero)
-					if(!(c instanceof Player))
-						((Hero)(c)).attaqueStandard(game, this, dice, true);
+				if(c instanceof Player)
+					((Hero)(c)).attaqueStandard(game, this, dice, true);
 		}
 		hasVisee = false;
+		isengaged = false;
 		this._move(game, dest, 1f);
 	}
 
+	public boolean nextToEnemy(Game game)
+	{
+		ArrayList<Case> enemy = game.getMap().getInRangeCases(this, 1, 1);
+		for(Case c: enemy)
+			if(c instanceof Player)
+				return true;
+		return false;
+	}
 	public void nextTurn()
 	{
 		hasBlocked = false;
@@ -870,14 +886,14 @@ public class Hero extends Case implements Describable {
 		return result;
 	}
 
-	public void recevoirDamage(int damages, int localisation, Dice dice, Game g) {
+	public void recevoirDamage(int damages, int localisation, Dice dice, Game g, boolean closeRange) {
 		String nameDefender;
 		if(this instanceof Player)
 			nameDefender = ((Player) this).getName();
 		else
 			nameDefender = this.getRace().toString();
 
-
+		
 		if (weapons.getLeftHand() != null && !hasBlocked)
 		{
 			hasBlocked = true;
@@ -897,6 +913,8 @@ public class Hero extends Case implements Describable {
 		B -= tmpDamage;
 		if (B == 0)
 			death(g);
+		if (closeRange)
+			isengaged = true;
 	}
 
 	public void recharger(Game game) {
@@ -1029,10 +1047,14 @@ public class Hero extends Case implements Describable {
 	public ArrayList<Case> whereAttaqueStandard(Game game) {
 		if(!game.canUsePA(1))
 			return null;
+		if (hasAttacked)
+			return null;
 		int rangeMin = 1;
 		int rangeMax = 1;
 		if (weapons.getWeapon() instanceof RangedWeapon)
 		{
+			if (isengaged)
+				return null;
 			rangeMin = 2;
 			rangeMax = ((RangedWeapon) (weapons.getWeapon())).getRange();	
 			if (!loaded)
