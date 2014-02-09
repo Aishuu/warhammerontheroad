@@ -1,11 +1,13 @@
 package fr.eurecom.warhammerontheroad.application;
 
+import fr.eurecom.warhammerontheroad.R;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Paint.Style;
 import android.graphics.Rect;
+import android.graphics.Typeface;
 import android.os.SystemClock;
 
 public class SmallText {
@@ -14,10 +16,10 @@ public class SmallText {
 	private long timeStart;
 	private int x_start, y_start;
 	private int size;
+	private Context context;
 
 	private static final float TIME_PRINT =	1500f;
 	private static final float UP_PERCENT = 0.2f;
-	private static final float GESTURE_THRESHOLD_DIP = 16.0f;
 	
 	public SmallText(String text, int red, int green, int blue, int x_start, int y_start, Context context) {
 		this.text = text;
@@ -26,12 +28,13 @@ public class SmallText {
 		this.blue = blue;
 		this.timeStart = SystemClock.elapsedRealtime();
 		this.y_start = y_start;
+		this.context = context;
 
-		// Convert the dips to pixels
-		final float scale = context.getResources().getDisplayMetrics().density;
-		this.size = (int) (GESTURE_THRESHOLD_DIP * scale + 0.5f)*2;
+		this.size = context.getResources().getDimensionPixelSize(R.dimen.fontSize);
+		Typeface tf = Typeface.createFromAsset(context.getAssets(), "WashingtonText.ttf");
 		Paint p = new Paint();
-		p.setColor(Color.argb(1, red, green, blue));
+		p.setTypeface(tf);
+		p.setColor(Color.argb(255, red, green, blue));
 		p.setStyle(Style.FILL);
 		p.setTextSize(this.size);
 		Rect textBounds = new Rect();
@@ -50,7 +53,9 @@ public class SmallText {
 		if(ratio > 1)
 			ratio = 1;
 		int y = y_start - ((int)(ratio*UP_PERCENT*height));
+		Typeface tf = Typeface.createFromAsset(this.context.getAssets(), "WashingtonText.ttf");
 		Paint p = new Paint();
+		p.setTypeface(tf);
 		p.setColor(Color.argb(((int)((1-ratio)*255)), red, green, blue));
 		p.setStyle(Style.FILL);
 		p.setTextSize(this.size);

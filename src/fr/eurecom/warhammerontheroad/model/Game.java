@@ -41,6 +41,8 @@ public class Game {
 	public final static String CMD_CREATE_HERO			= "HER";
 	public final static String CMD_INITIATIVE			= "INI";
 	public final static String CMD_TURN					= "TRN";
+	
+	public final static int SLEEP_TIME					= 200;
 
 	private final static String TAG						= "Game";
 
@@ -229,6 +231,7 @@ public class Game {
 		else if(msg.equals(CMD_PREPARE_FIGHT) && !this.isInFight) {
 			this.cmp_init = 0;
 			this.turnOf = 0;
+			this.PA = 2;
 			this.me.prepareBattle();
 			for(Hero h: this.heros)
 				h.resetB();
@@ -241,6 +244,7 @@ public class Game {
 
 		if(parts[0].equals(CMD_FIGHT) && this.isInFight) {
 			Hero h = this.getHero(name);
+			Log.d(TAG, "FIGHT : received \""+msg+"\"; hero is "+h.representInString());
 			if(h != null)
 				h.parseCommand(this, parts[1]);
 		}
@@ -249,6 +253,7 @@ public class Game {
 			try {
 				int turn = Integer.parseInt(parts[1]);
 				this.turnOf = turn;
+				this.PA = 2;
 				if(this.isGM) {
 					for(Hero h_tmp: this.heros)
 						if(!(h_tmp instanceof Player) && h_tmp.getTurnInFight() == turn) {
@@ -322,6 +327,7 @@ public class Game {
 	public void sendNotifPrepareFight() {
 		if(!this.isGM)
 			return;
+		this.PA = 2;
 		this.mService.getNetworkParser().prepareFight();
 		for(Hero h: this.heros) {
 			if(!(h instanceof Player))
@@ -338,7 +344,7 @@ public class Game {
 		for(Hero h: this.heros)
 			if(!(h instanceof Player)) {
 				for(Hero htmp: this.heros)
-					if(!(htmp instanceof Player))
+					if(!(htmp instanceof Player) && htmp != h)
 						htmp.computeTurnInFight(h, h.getInitiativeForFight());
 				this.mService.getNetworkParser().sendInitiative(h.getInitiativeForFight(), h);
 				this.incrInitCounter();
@@ -349,13 +355,16 @@ public class Game {
 		this.cmp_init ++;
 		if(this.cmp_init >= this.heros.size()) {
 			if(this.isGM) {
-				for(Hero h_tmp: this.heros)
+				for(Hero h_tmp: this.heros) {
+					Log.d(TAG, "Turn of "+h_tmp.representInString()+" is "+h_tmp.getTurnInFight());
 					if(!(h_tmp instanceof Player) && h_tmp.getTurnInFight() == 0) {
 						this.turnInFight(h_tmp);
 						break;
 					}
+				}
 			}
-			else
+			else {
+				Log.d(TAG, "Turn of "+this.me.representInString()+" is "+this.me.getTurnInFight());
 				if(this.me.getTurnInFight() == 0) {
 					try {
 						Thread.sleep(1000);
@@ -363,7 +372,121 @@ public class Game {
 					}
 					turnInFight(this.me);
 				}
+			}
 		}
+	}
+	
+	private void reDisplayMenu(Hero h) {
+		if(this.PA > 0 && this.combatThread != null)
+			this.combatThread.displayMenu(h);
+		else
+			this.endTurn();
+	}
+	
+	public void performAndSendAttaqueStandard(Hero h, Hero cible) {
+		if(this.combatThread != null)
+			this.combatThread.hideMenu();
+
+		Dice d = new Dice();
+		h.attaqueStandard(this, cible, d, true);
+		if(this.isGM)
+			this.mService.getNetworkParser().sendDicedAction(CombatAction.STD_ATTACK, d, h, cible.representInString());
+		else
+			this.mService.getNetworkParser().sendDicedAction(CombatAction.STD_ATTACK, d, cible.representInString());
+		this.reDisplayMenu(h);
+	}
+	
+	public void performAndSendAttaqueRapide(Hero h, Hero cible) {
+		if(this.combatThread != null)
+			this.combatThread.hideMenu();
+
+		Dice d = new Dice();
+		h.attaqueRapide(this, cible, d);
+		if(this.isGM)
+			this.mService.getNetworkParser().sendDicedAction(CombatAction.ATTAQUE_RAPIDE, d, h, cible.representInString());
+		else
+			this.mService.getNetworkParser().sendDicedAction(CombatAction.ATTAQUE_RAPIDE, d, cible.representInString());
+		this.reDisplayMenu(h);
+	}
+	
+	public void performAndSendCharge(Hero h, Hero cible, Case dest) {
+		if(this.combatThread != null)
+			this.combatThread.hideMenu();
+
+		if(!(dest instanceof Vide) || dest.getX()<0 || dest.getY()<0)
+			return;
+		Dice d = new Dice();
+		h.charge(this, cible, dest, d);
+		if(this.isGM)
+			this.mService.getNetworkParser().sendDicedAction(CombatAction.CHARGE, d, h, cible.representInString(), Integer.toString(dest.getX()), Integer.toString(dest.getY()));
+		else
+			this.mService.getNetworkParser().sendDicedAction(CombatAction.CHARGE, d, cible.representInString(), Integer.toString(dest.getX()), Integer.toString(dest.getY()));
+		this.reDisplayMenu(h);
+	}
+	
+	public void performAndSendDegainer(Hero h) {
+		if(this.combatThread != null)
+			this.combatThread.hideMenu();
+
+		h.degainer(this);
+		if(this.isGM)
+			this.mService.getNetworkParser().sendDicedAction(CombatAction.DEGAINER, null, h);
+		else
+			this.mService.getNetworkParser().sendDicedAction(CombatAction.DEGAINER, null);
+		this.reDisplayMenu(h);
+	}
+	
+	public void performAndSendMove(Hero h, Case dest) {
+		if(this.combatThread != null)
+			this.combatThread.hideMenu();
+
+		if(!(dest instanceof Vide))
+			return;
+		Dice d = new Dice();
+		h.move(this, dest, d);
+		if(this.isGM)
+			this.mService.getNetworkParser().sendDicedAction(CombatAction.MOVE, d, h, Integer.toString(dest.getX()), Integer.toString(dest.getY()));
+		else
+			this.mService.getNetworkParser().sendDicedAction(CombatAction.MOVE, d, Integer.toString(dest.getX()), Integer.toString(dest.getY()));
+		this.reDisplayMenu(h);
+	}
+	
+	public void performAndSendDesengager(Hero h, Case dest) {
+		if(this.combatThread != null)
+			this.combatThread.hideMenu();
+
+		if(!(dest instanceof Vide))
+			return;
+		h.desengager(this, dest);
+		if(this.isGM)
+			this.mService.getNetworkParser().sendDicedAction(CombatAction.DESENGAGER, null, h, Integer.toString(dest.getX()), Integer.toString(dest.getY()));
+		else
+			this.mService.getNetworkParser().sendDicedAction(CombatAction.DESENGAGER, null, Integer.toString(dest.getX()), Integer.toString(dest.getY()));
+		this.reDisplayMenu(h);
+	}
+	
+	public void performAndSendRecharger(Hero h) {
+		if(this.combatThread != null)
+			this.combatThread.hideMenu();
+		
+		h.recharger(this);
+		if(this.isGM)
+			this.mService.getNetworkParser().sendDicedAction(CombatAction.RECHARGER, null, h);
+		else
+			this.mService.getNetworkParser().sendDicedAction(CombatAction.RECHARGER, null);
+		this.reDisplayMenu(h);
+	}
+	
+	public void performAndSendViser(Hero h) {
+		if(this.combatThread != null)
+			this.combatThread.hideMenu();
+
+		h.viser(this);
+		if(this.isGM)
+			this.mService.getNetworkParser().sendDicedAction(CombatAction.VISER, null, h);
+		else
+			this.mService.getNetworkParser().sendDicedAction(CombatAction.VISER, null);
+		this.reDisplayMenu(h);
 	}
 
 	private void turnInFight(Hero h) {
@@ -376,6 +499,12 @@ public class Game {
 		}
 		
 		h.nextTurn();
+		
+		if(this.combatThread != null)
+			this.combatThread.displayMenu(h);
+		
+		/* --- TEST --- */
+		/*
 		Hero cible;
 		if(this.isGM) {
 			int i = (int) Math.random()*this.heros.size();
@@ -391,34 +520,16 @@ public class Game {
 			} while (cible instanceof Player || !cible.isAlive());
 		}
 		
-		Dice d = new Dice();
-		h.attaqueStandard(this, cible, d);
-		if(this.isGM)
-			this.mService.getNetworkParser().sendDicedAction(CombatAction.STD_ATTACK, d, h, cible.representInString());
-		else
-			this.mService.getNetworkParser().sendDicedAction(CombatAction.STD_ATTACK, d, cible.representInString());
+		this.performAndSendAttaqueStandard(h, cible);
+		*/
+		/* ------------ */
 		
-		try {
-			Thread.sleep(3000);
-		} catch (InterruptedException e) {
-			Log.e(TAG, "Can't wait...");
-		}
-		
-		boolean isPlayerAlive = false, isEnemyAlive = false;
-		for(Hero htmp : this.heros)
-			if(htmp instanceof Player) {
-				if(htmp.isAlive())
-					isPlayerAlive = true;
-			} else
-				if(htmp.isAlive())
-					isEnemyAlive = true;
-		if(isPlayerAlive && isEnemyAlive)
-			this.turnNext();
 	}
 
 	private void turnNext() {
 		this.turnOf = (this.turnOf+1)%this.heros.size();
 		this.mService.getNetworkParser().nextTurn(this.turnOf, this.isGM);
+		this.PA = 2;
 
 		if(!this.isGM)
 			this.waitForTurn();
@@ -428,6 +539,38 @@ public class Game {
 					this.turnInFight(h_tmp);
 					break;
 				}
+	}
+	
+	public void endTurn() {
+		this.combatThread.hideMenu();
+		
+		if(!this.checkEndFight())
+			this.turnNext();
+		else {
+			if(!this.isGM)
+				this.waitForTurn();
+			//TODO: change that
+			this.displayEndFight(true);
+		}
+	}
+	
+	private void displayEndFight(boolean victory) {
+		if(this.combatThread != null)
+			this.combatThread.displayEnd(victory);
+		this.combatThread = null;
+		this.endFight();
+	}
+	
+	public boolean checkEndFight() {
+		boolean isPlayerAlive = false, isEnemyAlive = false;
+		for(Hero htmp : this.heros)
+			if(htmp instanceof Player) {
+				if(htmp.isAlive())
+					isPlayerAlive = true;
+			} else
+				if(htmp.isAlive())
+					isEnemyAlive = true;
+		return !(isPlayerAlive && isEnemyAlive);
 	}
 
 	private void change_state(int state) {
@@ -567,6 +710,7 @@ public class Game {
 	}
 	
 	public void registerCombatThread(CombatView.CombatThread combatThread) {
+		Log.d(TAG, "register combatthread");
 		this.combatThread = combatThread;
 	}
 	
@@ -590,14 +734,17 @@ public class Game {
 			this.combatThread.printStandard(x, y, text);
 	}
 	
-	public int getPA()
+	public boolean canUsePA(int nbPA)
 	{
-		return PA;
+		return PA>=nbPA;
 	}
 	
-	public void usePA(int value)
+	public boolean usePA(int value)
 	{
+		if(value > PA)
+			return false;
 		PA -= value;
+		return true;
 	}
 
 }

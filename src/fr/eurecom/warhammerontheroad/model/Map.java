@@ -44,6 +44,12 @@ public class Map implements Describable{
 		this.constructFromString(service, s);
 	}
 	
+	public void setHighlighted(boolean highlighted) {
+		for(int i = 0; i<maxX; i++)
+			for(int j=0; j<maxY; j++)
+				this.cases[i][j].setHighlighted(highlighted);
+	}
+	
 	public int getMaxX() {
 		return this.maxX;
 	}
@@ -62,6 +68,21 @@ public class Map implements Describable{
 			return null;
 		}
 		return cases[x][y];
+	}
+	
+	public void removeCase(Case c) {
+		if(c == null) {
+			Log.e(TAG, "Can't remove null case...");
+			return;
+		}
+		int x = c.getX();
+		int y = c.getY();
+		if(x<0 || x>=this.maxX || y<0 || y>=this.maxY) {
+			Log.e(TAG, "Case is not in Map ("+this.maxX+","+this.maxY+")...");
+			return;
+		}
+		this.cases[x][y] = new Vide(x, y);
+		c.setPos(-1, -1);
 	}
 
 	public void setCase(Case c, int x, int y) {

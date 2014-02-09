@@ -1,18 +1,21 @@
 package fr.eurecom.warhammerontheroad.model;
 
 public enum CombatAction {
-	VISER(0),
-	MOVE(1),
-	STD_ATTACK(2),
-	CHARGE(3),
-	DEGAINER(4),
-	RECHARGER(5),
-	ATTAQUE_RAPIDE(6);
+	VISER(0, "Aim"),
+	MOVE(1, "Move"),
+	STD_ATTACK(2, "Standard Attack"),
+	CHARGE(3, "Charge"),
+	DEGAINER(4, "Draw"),
+	RECHARGER(5, "Reload"),
+	ATTAQUE_RAPIDE(6, "Fast Attack"),
+	DESENGAGER(7, "Disengage");
 	
 	private int index;
+	private String label;
 	
-	CombatAction(int index){
+	CombatAction(int index, String label){
 		this.index=index;
+		this.label = label;
 	}
 
 	public int getIndex() {
@@ -22,6 +25,10 @@ public enum CombatAction {
 	@Override
 	public String toString(){
 		return Integer.toString(index);
+	}
+	
+	public String getLabel() {
+		return this.label;
 	}
 	
 	public boolean equals(CombatAction ca){
@@ -45,6 +52,8 @@ public enum CombatAction {
 			return RECHARGER;
 		case 6:
 			return ATTAQUE_RAPIDE;
+		case 7:
+			return DESENGAGER;
 		default:
 			return null;
 		}

@@ -1,32 +1,40 @@
 package fr.eurecom.warhammerontheroad.application;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-
 import android.content.Context;
 import android.graphics.Canvas;
+import android.os.Bundle;
 import android.util.AttributeSet;
-import android.util.Log;
-import android.view.KeyEvent;
+import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import fr.eurecom.warhammerontheroad.model.Game;
+import fr.eurecom.warhammerontheroad.model.Hero;
 
 public class CombatView extends SurfaceView implements SurfaceHolder.Callback {
 	public class CombatThread extends Thread {
 		private Game g;
 		private int width, height, cell_size;
 		private SurfaceHolder surfaceHolder;
-		private ArrayList<SmallText> smallTexts;
+		
+		private SmallText[] smallTexts;
+		private int startSmallTexts, nbSmallTexts;
+		private static final int NB_SMALL_TEXT		= 5;
+		
 		private boolean running;
 		private final Object mRunLock = new Object();
 		private Context context;
+		private CombatMenu menu;
+		private Bundle savedStatePause;
 
 		public CombatThread(SurfaceHolder surfaceHolder, Context context)  {
 			this.surfaceHolder = surfaceHolder;
-			this.smallTexts = new ArrayList<SmallText>();
+			this.smallTexts = new SmallText[NB_SMALL_TEXT];
+			this.startSmallTexts = 0;
+			this.nbSmallTexts = 0;
 			this.running = true;
 			this.context = context;
+			this.menu = null;
+			this.savedStatePause = null;
 		}
 		
 		public void setGame(Game g) {
@@ -55,39 +63,98 @@ public class CombatView extends SurfaceView implements SurfaceHolder.Callback {
 				}
 			}
 		}
+		
+		public void pause() {
+			this.savedStatePause = new Bundle();
+			this.saveState(this.savedStatePause);
+		}
+		
+		public void resumePause() {
+			if(this.savedStatePause != null) {
+				this.restoreState(this.savedStatePause);
+				this.savedStatePause = null;
+			}
+		}
+		
+		public void saveState(Bundle outState) {
+			if(this.menu != null) {
+				outState.putBoolean("isCombatMenu", true);
+				this.menu.saveState(outState);
+			}
+		}
+		
+		public void restoreState(Bundle savedState) {
+			if(savedState.getBoolean("isCombatMenu")) {
+				Hero h = this.g.getHero(savedState.getString("menuHero"));
+				if(h != null) {
+					this.menu = new CombatMenu(this.g, h, this.width, this.height, this.context);
+					this.menu.restoreState(savedState);
+				}
+			}
+		}
+		
+		public void displayEnd(boolean victory) {
+			// TODO: display victory / defeat
+			try {
+				Thread.sleep(5000);
+			} catch (InterruptedException e) {
+			}
+		}
 
 		private void update() {
-			for(Iterator<SmallText> iterator = this.smallTexts.iterator(); iterator.hasNext();) {
-				SmallText st = iterator.next();
-				if(st.hasEnded())
-					iterator.remove();
+			for(int i=0; i<this.nbSmallTexts; i++)
+				if(this.smallTexts[(this.startSmallTexts+i)%NB_SMALL_TEXT].hasEnded()) {
+					this.startSmallTexts ++;
+					this.startSmallTexts %= NB_SMALL_TEXT;
+					this.nbSmallTexts --;
+				} else
+					break;
+		}
+		
+		public void displayMenu(Hero h) {
+			this.menu = new CombatMenu(this.g, h, this.width, this.height, this.context);
+		}
+		
+		public void hideMenu() {
+			this.g.getMap().setHighlighted(false);
+			this.menu = null;
+			try {
+				Thread.sleep(500);
+			} catch (InterruptedException e) {
+			}
+		}
+		
+		private void addSmallText(SmallText st) {
+			this.smallTexts[(this.startSmallTexts+this.nbSmallTexts)%NB_SMALL_TEXT] = st;
+			this.nbSmallTexts++;
+			if(this.nbSmallTexts > NB_SMALL_TEXT) {
+				this.startSmallTexts = (this.startSmallTexts+1)%NB_SMALL_TEXT;
+				this.nbSmallTexts = NB_SMALL_TEXT;
 			}
 		}
 
 		public void printDamage(int x, int y, int dmg) {
 			synchronized(this.surfaceHolder) {
-				Log.d("WOTR", "Added damage for case ("+x+","+y+")");
-				this.smallTexts.add(new SmallText(dmg+" hp", 255, 0, 0, x*this.cell_size + this.cell_size/2, y*this.cell_size, this.context));
+				this.addSmallText(new SmallText(dmg+" hp", 255, 0, 0, x*this.cell_size + this.cell_size/2, y*this.cell_size, this.context));
 			}
 		}
 		
 		public void printStatus(int x, int y, String status) {
 			synchronized(this.surfaceHolder) {
-				this.smallTexts.add(new SmallText(status, 0, 255, 255, x*this.cell_size + this.cell_size/2, y*this.cell_size, this.context));
+				this.addSmallText(new SmallText(status, 0, 255, 255, x*this.cell_size + this.cell_size/2, y*this.cell_size, this.context));
 			}
 		}
 		
 		public void printStandard(int x, int y, String text) {
 			synchronized(this.surfaceHolder) {
-				this.smallTexts.add(new SmallText(text, 25, 25, 25, x*this.cell_size + this.cell_size/2, y*this.cell_size, this.context));
+				this.addSmallText(new SmallText(text, 25, 25, 25, x*this.cell_size + this.cell_size/2, y*this.cell_size, this.context));
 			}
 		}
 
-		public boolean doOnKeyDown(int keycode, KeyEvent msg) {
-			return true;
-		}
-
-		public boolean doOnKeyUp(int keycode, KeyEvent msg) {
+		public boolean doOnTouchEvent(MotionEvent event) {
+			if(this.menu == null)
+				return false;
+			this.menu.doOnTouchEvent(event);
 			return true;
 		}
 
@@ -98,7 +165,9 @@ public class CombatView extends SurfaceView implements SurfaceHolder.Callback {
 				this.g.getMap().scaleImage(width, height);
 				int maxX = g.getMap().getMaxX();
 				int maxY = g.getMap().getMaxY();
-				this.cell_size = width/maxX < height/maxY ? (int) (width/maxX) : (int) (height/maxY);
+				this.cell_size = width/maxX < height/maxY ? (width/maxX) : (height/maxY);
+				if(this.menu != null)
+					this.menu.updateSize(width, height);
 			}
 		}
 
@@ -109,13 +178,21 @@ public class CombatView extends SurfaceView implements SurfaceHolder.Callback {
 		}
 		
 		private void doDraw(Canvas c) {
-			this.g.getMap().doDraw(c, this.width, this.height);
-			for(SmallText st: this.smallTexts)
-				st.doDraw(c, height);
+			c.drawBitmap(this.g.getMap().getImageFond(), 0, 0, null);
+
+			for(Hero h: g.getHeros())
+				h.doDraw(c, cell_size);
+		
+			for(int i=0; i<this.nbSmallTexts; i++)
+				this.smallTexts[(this.startSmallTexts+i)%NB_SMALL_TEXT].doDraw(c, height);
+			
+			if(this.menu != null)
+				this.menu.doDraw(c);
 		}
 	}
 	
-	public final static long DELAY_DEATH_ANIM =	1000;
+	public final static long DELAY_DEATH_ANIM 	= 1000;
+	public final static long DELAY_CROSS_X		= 2000;
 
 	private CombatThread combatThread;
 
@@ -135,13 +212,8 @@ public class CombatView extends SurfaceView implements SurfaceHolder.Callback {
 	}
 
 	@Override
-	public boolean onKeyDown(int keycode, KeyEvent msg) {
-		return combatThread.doOnKeyDown(keycode, msg);
-	}
-
-	@Override
-	public boolean onKeyUp(int keycode, KeyEvent msg) {
-		return combatThread.doOnKeyUp(keycode, msg);
+	public boolean onTouchEvent(MotionEvent event) {
+		return combatThread.doOnTouchEvent(event);
 	}
 
 	@Override

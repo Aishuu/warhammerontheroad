@@ -89,7 +89,6 @@ public class CharaCreationDetailsActivity extends WotrActivity implements OnItem
 	}
 
 	public void next(View view) {
-		// TODO save info model
 		if(eye.getText().length()==0){
 			player.setEyeColor("Blue");
 			Toast.makeText(getApplicationContext(), "Eye color set to blue", Toast.LENGTH_SHORT).show();

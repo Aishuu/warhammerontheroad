@@ -31,7 +31,8 @@ public abstract class WotrActivity extends Activity implements GeneralErrorListe
 	
 	@Override
 	protected void onDestroy() {
-		this.mService.removeGeneralErrorListener(this);
+		if(this.mService != null)
+			this.mService.removeGeneralErrorListener(this);
 		super.onDestroy();
 	}
 	

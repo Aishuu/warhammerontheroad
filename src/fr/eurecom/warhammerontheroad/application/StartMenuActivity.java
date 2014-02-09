@@ -38,17 +38,4 @@ public class StartMenuActivity extends WotrActivity {
 		this.finish();
 	}
 
-	public void onResume() {
-		super.onResume();
-	}
-
-	public void onPause() {
-		super.onPause();
-	}
-
-	@Override
-	public void onBackPressed() {
-		this.finish();
-	}
-
 }

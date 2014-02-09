@@ -581,7 +581,12 @@ public class NetworkParser implements Runnable {
 		String ss = "";
 		for(String s: args)
 			ss+= s+NetworkParser.SEPARATOR;
-		this.sendCommand(CMD_ACTION, Game.CMD_FIGHT, Integer.toString(action.getIndex()), ss.substring(0, ss.length()-1), d.toString());
+		if(args.length == 0)
+			ss = NetworkParser.SEPARATOR;
+		if(d != null)
+			this.sendCommand(CMD_ACTION, Game.CMD_FIGHT, Integer.toString(action.getIndex()), ss.substring(0, ss.length()-1), d.toString());
+		else
+			this.sendCommand(CMD_ACTION, Game.CMD_FIGHT, Integer.toString(action.getIndex()), ss.substring(0, ss.length()-1));
 	}
 
 	public void sendDicedAction(CombatAction action, Dice d, Hero h, String... args) {
@@ -590,7 +595,12 @@ public class NetworkParser implements Runnable {
 		String ss = "";
 		for(String s: args)
 			ss+= s+NetworkParser.SEPARATOR;
-		this.sendCommand(CMD_ACTION, h.representInString(), Game.CMD_FIGHT, Integer.toString(action.getIndex()), ss.substring(0, ss.length()-1), d.toString());
+		if(args.length == 0)
+			ss = NetworkParser.SEPARATOR;
+		if(d != null)
+			this.sendCommand(CMD_ACTION, h.representInString(), Game.CMD_FIGHT, Integer.toString(action.getIndex()), ss.substring(0, ss.length()-1), d.toString());
+		else
+			this.sendCommand(CMD_ACTION, h.representInString(), Game.CMD_FIGHT, Integer.toString(action.getIndex()), ss.substring(0, ss.length()-1));
 	}
 
 	public void createHero(Hero h) {

@@ -182,7 +182,7 @@ void removeClient(player p) {
 
         // no more players in the game
         if(g->nb_players == 0) {
-            printf("\rNo more players in game %d : game deleted\n", g->id);
+            printf("\rNo more players in game %d : game deleted (total : %d)\n", g->id, nb_game-1);
             for(j=0; j<nb_game; j++)
                 if(g == games[j]) {
                     // update the table of games
@@ -191,6 +191,7 @@ void removeClient(player p) {
                     break;
                 }
             free(g);
+            nb_game--;
         }
     }
 
@@ -326,7 +327,7 @@ void createGame(player p, char * buffer) {
     }
 
     // Create a new game
-    printf("\rNew game created by %s\n", buffer+10);
+    printf("\rNew game created by %s (total : %d)\n", buffer+10, nb_game+1);
     games[nb_game] = g = malloc(sizeof(struct _game));
     g->nb_players = 0;
     g->id = id;

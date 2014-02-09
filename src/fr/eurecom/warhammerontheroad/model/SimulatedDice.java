@@ -27,6 +27,8 @@ public class SimulatedDice extends Dice {
 		Log.d("SimulatedDice", "DEBUG : new SimulatedDice \""+s+"\"");
 		String[] numbers = s.split(NetworkParser.SEPARATOR, 0);
 		for(String n: numbers) {
+			if(n.length() == 0)
+				continue;
 			try {
 				this.num.add(Integer.parseInt(n));
 				Log.d("SimulatedDice", "DEBUG : "+n);
