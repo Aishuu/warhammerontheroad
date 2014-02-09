@@ -17,8 +17,12 @@ import fr.eurecom.warhammerontheroad.application.JoinGameActivity;
 import fr.eurecom.warhammerontheroad.application.NewGameIntroActivity;
 import fr.eurecom.warhammerontheroad.application.PlayerMenuActivity;
 import fr.eurecom.warhammerontheroad.application.SeeCharaDataActivity;
+import fr.eurecom.warhammerontheroad.application.SeeEnemyStatsActivity;
 import fr.eurecom.warhammerontheroad.application.SeeStatsActivity;
 import fr.eurecom.warhammerontheroad.application.StartMenuActivity;
+import fr.eurecom.warhammerontheroad.application.StatsObjectActivity;
+import fr.eurecom.warhammerontheroad.application.StatsProfilActivity;
+import fr.eurecom.warhammerontheroad.application.StatsSkillActivity;
 import fr.eurecom.warhammerontheroad.application.WotrActivity;
 import fr.eurecom.warhammerontheroad.application.WriteAndReadStoryActivity;
 import fr.eurecom.warhammerontheroad.network.NetworkParser;
@@ -100,6 +104,7 @@ public class Game {
 
 	public void removeHero(Hero hero) {
 		this.heros.remove(hero);
+		//TODO broadcast hero suppression
 	}
 
 	public void removePlayer(String name) {
@@ -473,17 +478,22 @@ public class Game {
 		case STATE_GAME_CREATE_WAIT:
 			return act instanceof NewGameIntroActivity;
 		case STATE_GAME_CREATED:
-			return (act instanceof NewGameIntroActivity || act instanceof GMMenuActivity || act instanceof PlayerMenuActivity || act instanceof ChatRoomActivity || (act instanceof WriteAndReadStoryActivity && this.isGM) || act instanceof CreateMapActivity || act instanceof CreateSupportCharaActivity || act instanceof SeeCharaDataActivity || act instanceof CharaCreationDetailsActivity);
+			return (act instanceof NewGameIntroActivity || act instanceof GMMenuActivity || act instanceof PlayerMenuActivity || act instanceof ChatRoomActivity || (act instanceof WriteAndReadStoryActivity && this.isGM) || act instanceof CreateMapActivity ||
+					act instanceof CreateSupportCharaActivity || act instanceof SeeEnemyStatsActivity || act instanceof SeeCharaDataActivity || act instanceof CharaCreationDetailsActivity);
 		case STATE_GAME_PERSO_CREATED:
 			return (act instanceof PlayerMenuActivity || act instanceof ChatRoomActivity || act instanceof CharaCreationDetailsActivity);
 		case STATE_GAME_LAUNCHED:
-			return (act instanceof GMMenuActivity || act instanceof PlayerMenuActivity || act instanceof ChatRoomActivity || act instanceof WriteAndReadStoryActivity || act instanceof CreateMapActivity || act instanceof CreateSupportCharaActivity || act instanceof SeeCharaDataActivity || act instanceof CharaCreationDetailsActivity);
+			return (act instanceof GMMenuActivity || act instanceof PlayerMenuActivity || act instanceof ChatRoomActivity || 
+					act instanceof WriteAndReadStoryActivity || act instanceof CreateMapActivity || act instanceof CreateSupportCharaActivity || act instanceof SeeEnemyStatsActivity || 
+					act instanceof SeeCharaDataActivity || act instanceof SeeStatsActivity|| act instanceof StatsProfilActivity|| 
+					act instanceof StatsObjectActivity|| act instanceof StatsSkillActivity);
 		case STATE_GAME_WAIT_TURN:
 		case STATE_GAME_TURN:
-			return (act instanceof CombatActivity || act instanceof SeeStatsActivity || act instanceof ChatRoomActivity);
+			return (act instanceof CombatActivity || act instanceof SeeStatsActivity || act instanceof ChatRoomActivity|| act instanceof StatsProfilActivity|| 
+					act instanceof StatsObjectActivity|| act instanceof StatsSkillActivity);
 		case STATE_GAME_WAIT_ACTION:
 		case STATE_GAME_CONFIRM_ACTION:
-			return (act instanceof GMMenuActivity || act instanceof ChatRoomActivity || act instanceof WriteAndReadStoryActivity || act instanceof CreateSupportCharaActivity || act instanceof SeeCharaDataActivity || act instanceof CombatActivity);
+			return (act instanceof GMMenuActivity || act instanceof ChatRoomActivity || act instanceof WriteAndReadStoryActivity || act instanceof SeeCharaDataActivity || act instanceof SeeEnemyStatsActivity || act instanceof CombatActivity);
 		default:
 			return false;
 		}

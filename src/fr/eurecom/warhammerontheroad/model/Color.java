@@ -1,19 +1,25 @@
 package fr.eurecom.warhammerontheroad.model;
 
 public enum Color {
-	BLUE(0),
-	GREEN(1),
-	VIOLET(2),
-	ORANGE(3);
+	BLUE(0,"#0000CD"),
+	GREEN(1,"#006400"),
+	VIOLET(2,"#8B008B"),
+	ORANGE(3,"#A0522D");
 
 	private int index;
+	private String value;
 
-	Color(int index){
+	Color(int index, String value){
 		this.index=index;
+		this.value=value;
 	}
 
 	public int getIndex() {
 		return index;
+	}
+
+	public String getValue() {
+		return value;
 	}
 
 	public String toString(){

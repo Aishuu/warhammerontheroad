@@ -125,6 +125,10 @@
             android:name="fr.eurecom.warhammerontheroad.application.StatsSkillActivity"
             android:label="@string/title_activity_stats_skill" >
         </activity>
+        <activity
+            android:name="fr.eurecom.warhammerontheroad.application.SeeEnemyStatsActivity"
+            android:label="@string/title_activity_see_enemy_stats" >
+        </activity>
     </application>
 
 </manifest>

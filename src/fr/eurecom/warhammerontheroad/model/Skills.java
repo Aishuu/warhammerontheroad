@@ -113,30 +113,32 @@ public class Skills {
     public String[] toArrayString(Stats stats){
     	String[] result = new String[4];
     	result[0] = name;
+    	 if (speciality != "")
+    	      result[0] += " (" + speciality + ")";
     	switch(stat){
     	case 0:
-    		result[1] += "(CC)";
+    		result[1] = "(CC)";
     		break;
     	case 1:
-    		result[1] += "(CT)";
+    		result[1] = "(CT)";
     		break;
     	case 2:
-    		result[1] += "(F)";
+    		result[1] = "(F)";
     		break;
     	case 3:
-    		result[1] += "(E)";
+    		result[1] = "(E)";
     		break;
     	case 4:
-    		result[1] += "(Ag)";
+    		result[1] = "(Ag)";
     		break;
     	case 5:
-    		result[1] += "(Int)";
+    		result[1] = "(Int)";
     		break;
     	case 6:
-    		result[1] += "(FM)";
+    		result[1] = "(FM)";
     		break;
     	case 7:
-    		result[1] += "(Soc)";
+    		result[1] = "(Soc)";
     		break;
     	}
     	switch(level){

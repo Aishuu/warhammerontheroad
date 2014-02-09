@@ -764,4 +764,8 @@ public class NetworkParser implements Runnable {
 	public void removeConnectionStateListener(ConnectionStateListener listener) {
 		this.connectionStateListeners.remove(listener);
 	}
+	
+	public void removeHero(Hero hero){
+		//TODO
+	}
 }

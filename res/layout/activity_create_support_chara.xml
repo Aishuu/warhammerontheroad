@@ -1,16 +1,89 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/parchemin_vierge_vert"
     android:paddingBottom="@dimen/activity_vertical_margin"
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context=".CreateSupportCharaActivity" >
 
-    <TextView
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/hello_world" />
+        android:gravity="center"
+        android:orientation="vertical" >
 
-</RelativeLayout>
+        <Spinner
+            android:id="@+id/spinCreateSupportRace"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:prompt="@string/race" />
+
+        <fr.eurecom.warhammerontheroad.application.WotrTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="@string/stats" />
+
+        <WebView
+            android:id="@+id/createSupportStats"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingTop="20dp" />
+
+        <fr.eurecom.warhammerontheroad.application.WotrTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="@string/profile" />
+
+        <WebView
+            android:id="@+id/createSupportProfil"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingTop="20dp" />
+
+        <fr.eurecom.warhammerontheroad.application.WotrTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="@string/weapon" />
+
+        <WebView
+            android:id="@+id/createSupportWeapons"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingTop="20dp" />
+
+        <fr.eurecom.warhammerontheroad.application.WotrTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="@string/armor" />
+
+        <WebView
+            android:id="@+id/createSupportArmor"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingTop="20dp" />
+
+        <fr.eurecom.warhammerontheroad.application.WotrButton
+            android:id="@+id/btnSaveChara"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="saveChara"
+            android:text="@string/validate" />
+
+        <LinearLayout
+            android:id="@+id/layCreateSupportIm"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="horizontal" >
+        </LinearLayout>
+    </LinearLayout>
+
+</ScrollView>

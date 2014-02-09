@@ -1,18 +1,21 @@
 package fr.eurecom.warhammerontheroad.application;
 
-import fr.eurecom.warhammerontheroad.R;
-import fr.eurecom.warhammerontheroad.model.Game;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
+import android.text.Html;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
+import fr.eurecom.warhammerontheroad.R;
+import fr.eurecom.warhammerontheroad.model.Game;
+import fr.eurecom.warhammerontheroad.model.WotrService;
 
 /**
  * Activity used for testing purpose as a chat room
@@ -23,6 +26,9 @@ import android.widget.Toast;
 public class ChatRoomActivity extends WotrActivity implements ChatListener, GameServiceListener {
 	private TextView chatRoom;
 	private String newline;
+	private ScrollView scroll;
+	private final String font="<font color=", end="</font>";
+	private String color;
 
 	@SuppressLint("NewApi")
 	@Override
@@ -38,8 +44,11 @@ public class ChatRoomActivity extends WotrActivity implements ChatListener, Game
 		this.mService.getChat().addChatListener(this);
 		this.mService.getGame().addGameServiceListener(this);
 		this.newline = "";
-		if(savedInstanceState != null)
+		this.scroll=(ScrollView)findViewById(R.id.scrollChat);
+		if(savedInstanceState != null){
 			this.chatRoom.setText(savedInstanceState.getString("chatContent"));
+			scroll.fullScroll(View.FOCUS_DOWN);
+		}
 		
 	}
 
@@ -84,12 +93,23 @@ public class ChatRoomActivity extends WotrActivity implements ChatListener, Game
 		if(editMessage.getText().length() > 0) {
 			String message = editMessage.getText().toString();
 			this.mService.getNetworkParser().sendMessage(message);
-			this.chatRoom.append("You : "+message+"\n");
+			String chat=font;
+			String name;
+			if(this.mService.getGame().isGM()){
+				color="#8B0000";
+				name=WotrService.GM_NAME;
+			}else{
+				color=this.mService.getGame().getMe().getColor().getValue();
+				name=this.mService.getName();
+			}
+			chat+=color+">"+name+": "+message+"\n"+end;
+			this.chatRoom.append(Html.fromHtml(chat));
+			scroll.fullScroll(View.FOCUS_DOWN);
 		}
 		editMessage.setText("");
 	}
 	
-	public void sendFile(View view) {
+	/*public void sendFile(View view) {
 		EditText editFile = (EditText) findViewById(R.id.editFile);
 		if(editFile.getText().length() > 0) {
 			String filename = editFile.getText().toString();
@@ -97,17 +117,21 @@ public class ChatRoomActivity extends WotrActivity implements ChatListener, Game
 		}
 		editFile.setText("");
 		
-	}
+	}*/
 
 	@Override
 	public void messageReceived(String name, String message) {
-		this.newline = this.newline + name + " : " + message + "\n";
+		if(name.equals(WotrService.GM_NAME))
+			color="#8B0000";
+		else
+			color=this.mService.getGame().getPlayer(name).getColor().getValue();
+		this.newline =font+color+">"+this.newline + name + " : " + message + "\n"+end;
 		runOnUiThread(new Runnable() {
 			public void run() {
 
-				ChatRoomActivity.this.chatRoom.append(ChatRoomActivity.this.newline);
+				ChatRoomActivity.this.chatRoom.append(Html.fromHtml(ChatRoomActivity.this.newline));
 				ChatRoomActivity.this.newline = "";
-
+				ChatRoomActivity.this.scroll.fullScroll(View.FOCUS_DOWN);
 			}
 		});
 	}

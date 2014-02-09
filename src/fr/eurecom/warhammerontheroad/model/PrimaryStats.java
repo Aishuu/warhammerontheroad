@@ -249,14 +249,14 @@ public class PrimaryStats implements Stats{
 	@Override
 	public ArrayList<String> getFullStats() {
 		ArrayList<String> stats = new ArrayList<String>();
-		stats.add(CC + "%");
-		stats.add(CT + "%");
-		stats.add(F + "%");
-		stats.add(E + "%");
-		stats.add(Ag + "%");
-		stats.add(Int + "%");
-		stats.add(FM + "%");
-		stats.add(Soc + "%");
+		stats.add(Integer.toString(CC));
+		stats.add(Integer.toString(CT));
+		stats.add(Integer.toString(F));
+		stats.add(Integer.toString(E));
+		stats.add(Integer.toString(Ag));
+		stats.add(Integer.toString(Int));
+		stats.add(Integer.toString(FM));
+		stats.add(Integer.toString(Soc));
 		stats.add(Integer.toString(A));
 		stats.add(Integer.toString(B));
 		stats.add(Integer.toString(BF));
