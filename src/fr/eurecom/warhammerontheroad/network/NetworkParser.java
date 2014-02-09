@@ -648,6 +648,17 @@ public class NetworkParser implements Runnable {
 		else
 			this.sendCommand(CMD_ACTION, Game.CMD_TURN, Integer.toString(turnOf));
 	}
+	
+	public void sendEndFight(boolean isGM) {
+		if(isGM)
+			this.sendCommand(CMD_ACTION, "_", Game.CMD_END_FIGHT);
+		else
+			this.sendCommand(CMD_ACTION, Game.CMD_END_FIGHT);
+	}
+	
+	public void removeHero(Hero h) {
+		this.sendCommand(CMD_ACTION, h.representInString(), Game.CMD_REMOVE_HERO);
+	}
 
 	/**
 	 * Bind to a game

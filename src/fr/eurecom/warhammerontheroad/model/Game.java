@@ -37,8 +37,10 @@ public class Game {
 	public final static String CMD_FIGHT				= "FGT";
 	public final static String CMD_BEGIN_FIGHT			= "BFT";
 	public final static String CMD_PREPARE_FIGHT		= "PFT";
+	public final static String CMD_END_FIGHT			= "EFT";
 	public final static String CMD_START_GAME			= "SGM";
 	public final static String CMD_CREATE_HERO			= "HER";
+	public final static String CMD_REMOVE_HERO			= "RMH";
 	public final static String CMD_INITIATIVE			= "INI";
 	public final static String CMD_TURN					= "TRN";
 	
@@ -226,6 +228,7 @@ public class Game {
 
 		if(msg.equals(CMD_START_GAME)) {
 			this.gameStarted();
+			return;
 		}
 
 		else if(msg.equals(CMD_PREPARE_FIGHT) && !this.isInFight) {
@@ -236,6 +239,22 @@ public class Game {
 			for(Hero h: this.heros)
 				h.resetB();
 			this.firePrepareFight();
+			return;
+		}
+		
+		else if(msg.equals(CMD_END_FIGHT) && this.isInFight) {
+			if(this.checkEndFight() < 0)
+				return;
+			this.displayEndFight((this.checkEndFight() == 1 && isGM) || (this.checkEndFight() == 0 && !isGM));
+			return;
+		}
+		
+		else if(msg.equals(CMD_REMOVE_HERO)) {
+			Hero h = this.getHero(name);
+			if(h == null || h instanceof Player)
+				return;
+			this.removeHero(h);
+			return;
 		}
 
 		String parts[] = msg.split(NetworkParser.SEPARATOR, 2);
@@ -244,7 +263,6 @@ public class Game {
 
 		if(parts[0].equals(CMD_FIGHT) && this.isInFight) {
 			Hero h = this.getHero(name);
-			Log.d(TAG, "FIGHT : received \""+msg+"\"; hero is "+h.representInString());
 			if(h != null)
 				h.parseCommand(this, parts[1]);
 		}
@@ -544,13 +562,13 @@ public class Game {
 	public void endTurn() {
 		this.combatThread.hideMenu();
 		
-		if(!this.checkEndFight())
+		if(this.checkEndFight() == -1)
 			this.turnNext();
 		else {
 			if(!this.isGM)
 				this.waitForTurn();
-			//TODO: change that
-			this.displayEndFight(true);
+			this.mService.getNetworkParser().sendEndFight(this.isGM);
+			this.displayEndFight((this.checkEndFight() == 1 && isGM) || (this.checkEndFight() == 0 && !isGM));
 		}
 	}
 	
@@ -561,7 +579,7 @@ public class Game {
 		this.endFight();
 	}
 	
-	public boolean checkEndFight() {
+	public int checkEndFight() {
 		boolean isPlayerAlive = false, isEnemyAlive = false;
 		for(Hero htmp : this.heros)
 			if(htmp instanceof Player) {
@@ -570,7 +588,11 @@ public class Game {
 			} else
 				if(htmp.isAlive())
 					isEnemyAlive = true;
-		return !(isPlayerAlive && isEnemyAlive);
+		if(isPlayerAlive && isEnemyAlive)
+			return -1;
+		if(isPlayerAlive)
+			return 0;
+		return 1;
 	}
 
 	private void change_state(int state) {
