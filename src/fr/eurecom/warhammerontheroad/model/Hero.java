@@ -28,10 +28,10 @@ public class Hero extends Case implements Describable {
 	private ArrayList<Talents> talents;
 	private int[] randomTalentIndex;
 
-	private boolean hasVisee;
-	private WeaponSet weapons;
+	protected boolean hasVisee;
+	protected WeaponSet weapons;
 	private ArmorSet armor;
-	private boolean isengaged;
+	protected boolean isengaged;
 	private boolean loaded;
 	private boolean hasBlocked;
 	private boolean hasAttacked;
@@ -61,7 +61,7 @@ public class Hero extends Case implements Describable {
 		setRace(race);
 	}
 
-	private void waitABit() {
+	protected void waitABit() {
 		try {
 			Thread.sleep(Game.SLEEP_TIME);
 		} catch (InterruptedException e) {
@@ -302,9 +302,8 @@ public class Hero extends Case implements Describable {
 		{
 			ArrayList<Case> enemy = game.getMap().getInRangeCases(this, 1, 1);
 			for(Case c: enemy)
-				if(c instanceof Hero)
-					if(!(c instanceof Player))
-						((Hero)(c)).attaqueStandard(game, this, dice, true);
+				if(c instanceof Player)
+					((Hero)(c)).attaqueStandard(game, this, dice, true);
 		}
 		Log.d(TAG, this.representInString()+" charges "+hero.representInString());
 		game.printStandard(this.x, this.y, CombatAction.CHARGE.getLabel());
@@ -715,7 +714,7 @@ public class Hero extends Case implements Describable {
 		return this.B != 0;
 	}
 
-	private void _move(Game game, Case dest, float speed) {
+	protected void _move(Game game, Case dest, float speed) {
 		int x_start = this.x;
 		int y_start = this.y;
 		game.getMap().setCase(this, dest);
@@ -741,9 +740,8 @@ public class Hero extends Case implements Describable {
 		{
 			ArrayList<Case> enemy = game.getMap().getInRangeCases(this, 1, 1);
 			for(Case c: enemy)
-				if(c instanceof Hero)
-					if(!(c instanceof Player))
-						((Hero)(c)).attaqueStandard(game, this, dice, true);
+				if(c instanceof Player)
+					((Hero)(c)).attaqueStandard(game, this, dice, true);
 		}
 		hasVisee = false;
 		isengaged = false;
