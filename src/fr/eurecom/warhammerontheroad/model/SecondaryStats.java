@@ -139,22 +139,22 @@ public class SecondaryStats implements Stats{
 	@Override
 	public ArrayList<String> getFullStats() {
 		ArrayList<String> stats = new ArrayList<String>();
-		stats.add(CC == 0 ? "-" : "+" + (CC/10)*5 + "/" + (CC-(CC/10))*5+ "%");
-		stats.add(CT == 0 ? "-" : "+" + (CT/10)*5 + "/" + (CT-(CT/10))*5+ "%");
-		stats.add(F == 0 ? "-" : "+" + (F/10)*5 + "/" + (F-(F/10))*5+ "%");
-		stats.add(E == 0 ? "-" : "+" + (E/10)*5 + "/" + (E-(E/10))*5+ "%");
-		stats.add(Ag == 0 ? "-" : "+" + (Ag/10)*5 + "/" + (Ag-(Ag/10))*5+ "%");
-		stats.add(Int == 0 ? "-" : "+" + (Int/10)*5 + "/" + (Int-(Int/10))*5+ "%");
-		stats.add(FM == 0 ? "-" : "+" + (FM/10)*5 + "/" + (FM-(FM/10))*5+ "%");
-		stats.add(Soc == 0 ? "-" : "+" + (Soc/10)*5 + "/" + (Soc-(Soc/10))*5+ "%");
-		stats.add(A == 0 ? "-" : "+" + A/10 + "/" + (A-(A/10)));
-		stats.add(B == 0 ? "-" : "+" + B/10 + "/" + (B-(B/10)));
-		stats.add(BE == 0 ? "-" : "+" + BF);
-		stats.add(BF == 0 ? "-" : "+" + BE);
-		stats.add(M == 0 ? "-" : "+" + M);
-		stats.add(Mag == 0 ? "-" : "+" + Mag);
-		stats.add(PF == 0 ? "-" : "+" + PF);
-		stats.add(PD == 0 ? "-" : "+" + PD);
+		stats.add(CC == 0 ? "-" : (CC/10)*5 + "/" + (CC-(CC/10))*5);
+		stats.add(CT == 0 ? "-" : (CT/10)*5 + "/" + (CT-(CT/10))*5);
+		stats.add(F == 0 ? "-" : (F/10)*5 + "/" + (F-(F/10))*5);
+		stats.add(E == 0 ? "-" : (E/10)*5 + "/" + (E-(E/10))*5);
+		stats.add(Ag == 0 ? "-" : (Ag/10)*5 + "/" + (Ag-(Ag/10))*5);
+		stats.add(Int == 0 ? "-" : (Int/10)*5 + "/" + (Int-(Int/10))*5);
+		stats.add(FM == 0 ? "-" : (FM/10)*5 + "/" + (FM-(FM/10))*5);
+		stats.add(Soc == 0 ? "-" : (Soc/10)*5 + "/" + (Soc-(Soc/10))*5);
+		stats.add(A == 0 ? "-" : A/10 + "/" + (A-(A/10)));
+		stats.add(B == 0 ? "-" : B/10 + "/" + (B-(B/10)));
+		stats.add(BE == 0 ? "-" :Integer.toString(BF));
+		stats.add(BF == 0 ? "-" :Integer.toString(BE));
+		stats.add(M == 0 ? "-" :Integer.toString(M));
+		stats.add(Mag == 0 ? "-" :Integer.toString(Mag));
+		stats.add(PF == 0 ? "-" : Integer.toString(PF));
+		stats.add(PD == 0 ? "-" : Integer.toString(PD));
 		return stats;
 	}
 	@Override

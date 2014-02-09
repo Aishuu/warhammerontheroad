@@ -4,7 +4,7 @@ public enum Race {
 	HUMAN(0,"Human"),
 	ELF(1,"Elf"),
 	DWARF(2,"Dwarf"),	
-	HOBBIT(3,"Hobbit"),
+	HOBBIT(3,"Halfling"),
 	BANDIT(4,"Bandit"),
 	GOBLIN(5,"Goblin"),
 	GUARD(6,"Guard"),

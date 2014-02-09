@@ -178,6 +178,7 @@ public class CombatView extends SurfaceView implements SurfaceHolder.Callback {
 		}
 		
 		private void doDraw(Canvas c) {
+			
 			c.drawBitmap(this.g.getMap().getImageFond(), 0, 0, null);
 
 			for(Hero h: g.getHeros())

@@ -1,16 +1,208 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/parchemin_vierge_vert"
     android:paddingBottom="@dimen/activity_vertical_margin"
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context=".SeeStatsActivity" >
 
-    <TextView
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/hello_world" />
+        android:gravity="center"
+        android:orientation="vertical" >
 
-</RelativeLayout>
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:orientation="horizontal" >
+
+            <fr.eurecom.warhammerontheroad.application.WotrTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/name" />
+
+            <fr.eurecom.warhammerontheroad.application.WotrTextView
+                android:id="@+id/txtSeeStatsName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingLeft="10dp" />
+        </LinearLayout>
+
+        <fr.eurecom.warhammerontheroad.application.WotrTextView
+            android:id="@+id/txtSeeStatsRaceCarrier"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:paddingBottom="10dp"
+            android:paddingTop="10dp" />
+
+        <!-- mvt blessures -->
+
+        <TableLayout
+            android:id="@+id/tablePoints"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:shrinkColumns="*"
+            android:stretchColumns="*" >
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" >
+
+                <fr.eurecom.warhammerontheroad.application.WotrTextView
+                    android:layout_gravity="center_horizontal"
+                    android:text="@string/mouvement" />
+
+                <fr.eurecom.warhammerontheroad.application.WotrTextView
+                    android:layout_gravity="center_horizontal"
+                    android:text="@string/charge" />
+
+                <fr.eurecom.warhammerontheroad.application.WotrTextView
+                    android:layout_gravity="center_horizontal"
+                    android:text="@string/running" />
+
+                <fr.eurecom.warhammerontheroad.application.WotrTextView
+                    android:layout_gravity="center_horizontal"
+                    android:text="@string/injuries" />
+            </TableRow>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" >
+
+                <fr.eurecom.warhammerontheroad.application.WotrTextView
+                    android:id="@+id/seeStatsMvt"
+                    android:layout_gravity="center_horizontal" />
+
+                <fr.eurecom.warhammerontheroad.application.WotrTextView
+                    android:id="@+id/seeStatsCharge"
+                    android:layout_gravity="center_horizontal" />
+
+                <fr.eurecom.warhammerontheroad.application.WotrTextView
+                    android:id="@+id/seeStatsRunning"
+                    android:layout_gravity="center_horizontal" />
+
+                <fr.eurecom.warhammerontheroad.application.WotrTextView
+                    android:id="@+id/seeStatsInj"
+                    android:layout_gravity="center_horizontal" />
+            </TableRow>
+        </TableLayout>
+        <!-- Put point d'armures -->
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_margin="10dp"
+            android:orientation="horizontal" >
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:weightSum="4" >
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1" />
+
+                <fr.eurecom.warhammerontheroad.application.WotrTextView
+                    android:id="@+id/txtSeeStatsArm"
+                    android:layout_width="wrap_content"
+                    android:layout_height="0dp"
+                    android:layout_weight="1" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1" />
+
+                <fr.eurecom.warhammerontheroad.application.WotrTextView
+                    android:id="@+id/txtSeeStatsLeg"
+                    android:layout_width="wrap_content"
+                    android:layout_height="0dp"
+                    android:layout_weight="1" />
+            </LinearLayout>
+
+            <ImageView
+                android:id="@+id/imSeeStatsPlayer"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:contentDescription="@string/player_image" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:weightSum="4" >
+
+                <fr.eurecom.warhammerontheroad.application.WotrTextView
+                    android:id="@+id/txtSeeStatsHead"
+                    android:layout_width="wrap_content"
+                    android:layout_height="0dp"
+                    android:layout_weight="1" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1" />
+
+                <fr.eurecom.warhammerontheroad.application.WotrTextView
+                    android:id="@+id/txtSeeStatsBody"
+                    android:layout_width="wrap_content"
+                    android:layout_height="0dp"
+                    android:layout_weight="1" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="50dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_margin="5dp"
+            android:contentDescription="@null"
+            android:src="@drawable/frise_dark" />
+
+        <!-- Put buttons -->
+
+        <fr.eurecom.warhammerontheroad.application.WotrButton
+            android:id="@+id/btnSeeStatsProfil"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="left"
+            android:background="@null"
+            android:onClick="changePage"
+            android:text="@string/see_stats_profil" />
+
+        <fr.eurecom.warhammerontheroad.application.WotrButton
+            android:id="@+id/btnSeeStatsObjects"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="left"
+            android:background="@null"
+            android:onClick="changePage"
+            android:text="@string/see_stats_objects" />
+
+        <fr.eurecom.warhammerontheroad.application.WotrButton
+            android:id="@+id/btnSeeStatsSkills"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="left"
+            android:background="@null"
+            android:onClick="changePage"
+            android:text="@string/see_stats_skills" />
+    </LinearLayout>
+
+</ScrollView>

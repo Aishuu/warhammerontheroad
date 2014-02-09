@@ -10,7 +10,7 @@
     <string name="backgroundImageDesc">Background Image</string>
     <string name="title_activity_chat_room">Chat Room</string>
     <string name="sendMessage">Write your message</string>
-    <string name="buttonSendMessage">Send Message</string>
+    <string name="buttonSendMessage">Send</string>
     <string name="sendFile">Name of a file to send</string>
     <string name="buttonSendFile">Send File</string>
     <string name="listAvailGames">List Games</string>
@@ -75,6 +75,7 @@
     <string name="title_activity_chara_creation_profil">Character Creation</string>
     <string name="hello_world">Hello world!</string>
     <string name="carrier">Carrier</string>
+
     <string-array name="carrier_array">
         <item>Hunter</item>
         <item>Student</item>
@@ -82,9 +83,23 @@
         <item>Mercenary</item>
         <item>Thief</item>
     </string-array>
+
     <string name="terminate">Terminate</string>
 
-    <!-- Strings of chara creation profil -->
+    <!-- Strings of see stats -->
+    <string name="title_activity_see_stats">See your stats</string>
+    <string name="mouvement">Mouvement</string>
+    <string name="charge">Charge</string>
+    <string name="running">Running</string>
+    <string name="fortune">Fortune</string>
+    <string name="injuries">Injuries</string>
+    <string name="see_stats_profil">See your profile</string>
+    <string name="see_stats_objects">See your weapons, armor set and details</string>
+    <string name="see_stats_skills">See your skills</string>
+    <string name="player_image">Image of the player</string>
+
+    <!-- Strings of stats profile -->
+    <string name="title_activity_stats_profil">See your profile</string>
     <string name="profil_principal">Profil principal</string>
     <string name="cc">CC</string>
     <string name="ct">CT</string>
@@ -95,6 +110,8 @@
     <string name="fm">FM</string>
     <string name="soc">Soc</string>
     <string name="base">Base</string>
+    <string name="avance">Advanced</string>
+    <string name="total">Total</string>
     <string name="profil_secondaire">Profil secondaire</string>
     <string name="a">A</string>
     <string name="b">B</string>
@@ -104,11 +121,36 @@
     <string name="m">M</string>
     <string name="pf">PF</string>
     <string name="pd">PD</string>
+
+    <!-- Strings of stats objects -->
+    <string name="title_activity_stats_object">See your weapon and armor</string>
+    <string name="weapon">Weapon set</string>
+    <string name="armor">Armor set</string>
+
+    <!-- Strings of stats skills -->
+    <string name="title_activity_stats_skill">See your skills</string>
+
+    <!-- Strings of create support chara -->
+    <string-array name="ennemy_array">
+        <item>Bandit</item>
+        <item>Goblin</item>
+        <item>Guard</item>
+        <item>Skeleton</item>
+        <item>Orc</item>
+    </string-array>
+
+    <string name="stats">Stats</string>
+    <string name="profile">Profile</string>
+    <string name="validate">Save Character</string>
+    
+    <!-- Strings of see ennemy stats -->
+    <string name="title_activity_see_enemy_stats">Ennemy Stats</string>
+    <string name="suppress_chara">Suppress this character</string>
     
     <string name="title_activity_combat">Fight</string>
     <string name="title_activity_create_support_chara">Create a character</string>
     <string name="title_activity_see_chara_data">All characters\' data</string>
-    <string name="title_activity_see_stats">See your stats</string>
     <string name="title_activity_create_map">Create a map</string>
+    
 
 </resources>

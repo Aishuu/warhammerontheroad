@@ -395,8 +395,10 @@ public class Hero extends Case implements Describable {
 		try {
 			setRandomTalentIndex(parts[2]);
 			this.setRace(Race.fromIndex(Integer.parseInt(parts[0])));
-			if(this.stats != null)
+			if(this.stats != null){
 				stats.constructFromString(service, parts[1]);
+				resetB();
+			}
 		} catch(NumberFormatException e) {
 			Log.e(TAG, "Not a number ! " + parts[0]);
 		}
@@ -708,6 +710,7 @@ public class Hero extends Case implements Describable {
 
 	protected void init_stats() {
 		stats = new PrimaryStats(race);
+		this.resetB();
 	}
 
 	public boolean isAlive() {
@@ -1130,4 +1133,17 @@ public class Hero extends Case implements Describable {
 			return null;
 		return result;
 	}
+
+	public Stats getStats() {
+		return stats;
+	}
+
+	public int getB() {
+		return B;
+	}
+
+	public Drawable getResource() {
+		return resource;
+	}
+	
 }

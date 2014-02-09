@@ -276,6 +276,7 @@ public class Player extends Hero {
 			this.setBirthPlace(Place.fromIndex(Integer.parseInt(parts[8])));
 			this.AddJob(Integer.parseInt(parts[9]));
 			this.stats.constructFromString(service, parts[0].split("HHH")[1]);	// not called from Hero. Must be last otherwise AddJob and init change the stats
+			this.resetB();
 		} catch(NumberFormatException e) {
 			Log.e(TAG, "Not a number !");
 		}
@@ -488,4 +489,5 @@ public class Player extends Hero {
 	public Job getJob() {
 		return job;
 	}
+	
 }
