@@ -6,12 +6,14 @@ import fr.eurecom.warhammerontheroad.network.Describable;
 
 public abstract class Case implements Describable {
 	protected int x,y;
+	protected int flag;
 	private boolean highlighted, fadingAway;
 	private long start_highlight_time;
 
 	protected Case() {
 		this.x = -1;
 		this.y = -1;
+		this.flag = 0;
 		this.highlighted = false;
 		this.fadingAway = false;
 		this.start_highlight_time = 0;
@@ -32,7 +34,14 @@ public abstract class Case implements Describable {
 	public int getY() {
 		return this.y;
 	}
-
+	
+	public int getFlag(){
+		return this.flag;
+	}
+	
+	public void setFlag(int flag){
+		this.flag = flag;
+	}
 	public void setPos(int x, int y) {
 		this.x = x;
 		this.y = y;

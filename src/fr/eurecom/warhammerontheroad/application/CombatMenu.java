@@ -275,7 +275,7 @@ public class CombatMenu {
 					this.chargeCase = cc; 
 					for(Case ccc: where)
 						ccc.setHighlighted(false);
-					for(Case ccc: this.game.getMap().getInRangeCases(cc, 1, 1))
+					for(Case ccc: this.game.getMap().getInRangeCases(cc, 1, 1, true, false))
 						if(ccc instanceof Hero && ((this.h instanceof Player && !(ccc instanceof Player)) || (!(this.h instanceof Player) && ccc instanceof Player)))
 							ccc.setHighlighted(true);
 					break;

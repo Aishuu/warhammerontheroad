@@ -119,25 +119,63 @@ public class Map implements Describable{
 		setCase(c, dest.getX(), dest.getY());
 	}
 
-	public ArrayList<Case> getInRangeCases(int x, int y, int min, int max) {
+	public ArrayList<Case> getInRangeCases(int x, int y, int min, int max, boolean shoot, boolean charge) {
 		if(x<0 || x>=this.maxX || y<0 || y>=this.maxY) {
 			Log.e(TAG, "Position ("+x+","+y+") is not in Map ("+this.maxX+","+this.maxY+")...");
 			return null;
 		}
 		ArrayList<Case> result = new ArrayList<Case>();
 
-		for(int i = x-max<0 ? 0 : x-max; i<= (x+max>=this.maxX ? this.maxX-1 : x+max); i++) {
-			int n = max-Math.abs(i-x);
-			for(int j = y-n<0 ? 0 : y-n; j<= (y+n>=this.maxY? this.maxY-1 : y+n); j++)
-				if(Math.abs(i-x)+Math.abs(j-y) >= min)
-					result.add(this.cases[i][j]);
-		}
-
+		progressByOne(result, x, y, min, max, shoot, charge);
+		for(int i = 0; i<maxX; i++)
+			for(int j=0; j<maxY; j++)
+				this.cases[i][j].setFlag(0);
 		return result;
 	}
 
-	public ArrayList<Case> getInRangeCases(Case c, int min, int max) {
-		return getInRangeCases(c.getX(), c.getY(), min, max);
+	private void progressByOne (ArrayList<Case> result, int x, int y, int min, int range, boolean shoot, boolean charge){
+		Case c = this.cases[x][y];
+		c.setFlag(range);
+		if (min == 0){
+			if (!(result.contains(c))){
+				if (c instanceof Vide)
+					result.add(c);	
+				if ((c instanceof Obstacle) && shoot)
+					result.add(c);
+				if ((c instanceof Hero) && (shoot || charge))
+					result.add(c);
+			}
+		}else{
+			if (result.contains(c))
+				result.remove(c);
+		}
+		if ((range == 0) || (this.cases[x][y] instanceof Hero && charge))
+			return;
+		int xmin = x-1<=0 ? 0 : x-1;
+		int xmax = x+1>=this.maxX ? this.maxX-1 : x+1;
+		int ymin = y-1<=0 ? 0 : y-1;
+		int ymax = y+1>=this.maxY ? this.maxY-1 : y+1;
+		int tmpmin = min-1<=0 ? 0 : min-1;
+		ArrayList<Case> tmp = new ArrayList<Case>();
+		tmp.add(this.cases[xmin][y]);
+		tmp.add(this.cases[xmax][y]);
+		tmp.add(this.cases[x][ymin]);
+		tmp.add(this.cases[x][ymax]);
+		for (Case cc:tmp){
+			if (c.getFlag() < range-1)
+			{
+				if (cc instanceof Vide)
+					progressByOne(result, cc.x, cc.y, tmpmin, range-1, shoot, charge);
+				if ((cc instanceof Obstacle) && shoot)
+					progressByOne(result, cc.x, cc.y, tmpmin, range-1, shoot, charge);
+				if ((cc instanceof Hero) && (shoot || charge))
+					progressByOne(result, cc.x, cc.y, tmpmin, range-1, shoot, charge);
+			}
+		}
+		return;
+	}
+	public ArrayList<Case> getInRangeCases(Case c, int min, int max, boolean shoot, boolean charge) {
+		return getInRangeCases(c.getX(), c.getY(), min, max, shoot, charge);
 	}
 
 	public Bitmap getImageFond() {

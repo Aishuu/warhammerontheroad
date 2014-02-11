@@ -329,7 +329,7 @@ public class Player extends Hero {
 			return;
 		if (isengaged)
 		{
-			ArrayList<Case> enemy = game.getMap().getInRangeCases(this, 1, 1);
+			ArrayList<Case> enemy = game.getMap().getInRangeCases(this, 1, 1, false, false);
 			for(Case c: enemy)
 				if(c instanceof Hero)
 					if(!(c instanceof Player))
@@ -345,7 +345,7 @@ public class Player extends Hero {
 			return;
 		if (isengaged)
 		{
-			ArrayList<Case> enemy = game.getMap().getInRangeCases(this, 1, 1);
+			ArrayList<Case> enemy = game.getMap().getInRangeCases(this, 1, 1, false, true);
 			for(Case c: enemy)
 				if(c instanceof Hero)
 					if(!(c instanceof Player))
@@ -400,7 +400,7 @@ public class Player extends Hero {
 	
 	public boolean nextToEnemy(Game game)
 	{
-		ArrayList<Case> enemy = game.getMap().getInRangeCases(this, 1, 1);
+		ArrayList<Case> enemy = game.getMap().getInRangeCases(this, 1, 1, false, true);
 		for(Case c: enemy)
 			if(c instanceof Hero)
 				if(!(c instanceof Player))
