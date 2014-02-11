@@ -47,7 +47,7 @@ public class Game {
 	public final static String CMD_REMOVE_HERO			= "RMH";
 	public final static String CMD_INITIATIVE			= "INI";
 	public final static String CMD_TURN					= "TRN";
-	
+
 	public final static int SLEEP_TIME					= 200;
 
 	private final static String TAG						= "Game";
@@ -116,7 +116,7 @@ public class Game {
 		if(p != null)
 			removeHero(p);
 	}
-	
+
 	public ArrayList<Hero> getHeros() {
 		return this.heros;
 	}
@@ -209,7 +209,7 @@ public class Game {
 	}
 
 	public void endFight() {
-		if((!this.isGM && this.state == STATE_GAME_WAIT_TURN) || (this.isGM && this.state == STATE_GAME_CONFIRM_ACTION)) {
+		if((!this.isGM && this.state == STATE_GAME_WAIT_TURN) || (this.isGM && this.state == STATE_GAME_CONFIRM_ACTION) || (this.isGM && this.state == STATE_GAME_WAIT_ACTION)) {
 			this.isInFight = false;
 			change_state(STATE_GAME_LAUNCHED);
 		}
@@ -246,14 +246,14 @@ public class Game {
 			this.firePrepareFight();
 			return;
 		}
-		
+
 		else if(msg.equals(CMD_END_FIGHT) && this.isInFight) {
 			if(this.checkEndFight() < 0)
 				return;
 			this.displayEndFight((this.checkEndFight() == 1 && isGM) || (this.checkEndFight() == 0 && !isGM));
 			return;
 		}
-		
+
 		else if(msg.equals(CMD_REMOVE_HERO)) {
 			Hero h = this.getHero(name);
 			if(h == null || h instanceof Player)
@@ -373,7 +373,7 @@ public class Game {
 				this.incrInitCounter();
 			}
 	}
-	
+
 	private synchronized void incrInitCounter() {
 		this.cmp_init ++;
 		if(this.cmp_init >= this.heros.size()) {
@@ -398,14 +398,14 @@ public class Game {
 			}
 		}
 	}
-	
+
 	private void reDisplayMenu(Hero h) {
-		if(this.PA > 0 && this.combatThread != null)
+		if(this.PA > 0 && this.combatThread != null && h.isAlive() && this.checkEndFight() == -1)
 			this.combatThread.displayMenu(h);
 		else
 			this.endTurn();
 	}
-	
+
 	public void performAndSendAttaqueStandard(Hero h, Hero cible) {
 		if(this.combatThread != null)
 			this.combatThread.hideMenu();
@@ -418,7 +418,7 @@ public class Game {
 			this.mService.getNetworkParser().sendDicedAction(CombatAction.STD_ATTACK, d, cible.representInString());
 		this.reDisplayMenu(h);
 	}
-	
+
 	public void performAndSendAttaqueRapide(Hero h, Hero cible) {
 		if(this.combatThread != null)
 			this.combatThread.hideMenu();
@@ -431,7 +431,7 @@ public class Game {
 			this.mService.getNetworkParser().sendDicedAction(CombatAction.ATTAQUE_RAPIDE, d, cible.representInString());
 		this.reDisplayMenu(h);
 	}
-	
+
 	public void performAndSendCharge(Hero h, Hero cible, Case dest) {
 		if(this.combatThread != null)
 			this.combatThread.hideMenu();
@@ -446,7 +446,7 @@ public class Game {
 			this.mService.getNetworkParser().sendDicedAction(CombatAction.CHARGE, d, cible.representInString(), Integer.toString(dest.getX()), Integer.toString(dest.getY()));
 		this.reDisplayMenu(h);
 	}
-	
+
 	public void performAndSendDegainer(Hero h) {
 		if(this.combatThread != null)
 			this.combatThread.hideMenu();
@@ -458,7 +458,7 @@ public class Game {
 			this.mService.getNetworkParser().sendDicedAction(CombatAction.DEGAINER, null);
 		this.reDisplayMenu(h);
 	}
-	
+
 	public void performAndSendMove(Hero h, Case dest) {
 		if(this.combatThread != null)
 			this.combatThread.hideMenu();
@@ -473,7 +473,7 @@ public class Game {
 			this.mService.getNetworkParser().sendDicedAction(CombatAction.MOVE, d, Integer.toString(dest.getX()), Integer.toString(dest.getY()));
 		this.reDisplayMenu(h);
 	}
-	
+
 	public void performAndSendDesengager(Hero h, Case dest) {
 		if(this.combatThread != null)
 			this.combatThread.hideMenu();
@@ -487,11 +487,11 @@ public class Game {
 			this.mService.getNetworkParser().sendDicedAction(CombatAction.DESENGAGER, null, Integer.toString(dest.getX()), Integer.toString(dest.getY()));
 		this.reDisplayMenu(h);
 	}
-	
+
 	public void performAndSendRecharger(Hero h) {
 		if(this.combatThread != null)
 			this.combatThread.hideMenu();
-		
+
 		h.recharger(this);
 		if(this.isGM)
 			this.mService.getNetworkParser().sendDicedAction(CombatAction.RECHARGER, null, h);
@@ -499,7 +499,7 @@ public class Game {
 			this.mService.getNetworkParser().sendDicedAction(CombatAction.RECHARGER, null);
 		this.reDisplayMenu(h);
 	}
-	
+
 	public void performAndSendViser(Hero h) {
 		if(this.combatThread != null)
 			this.combatThread.hideMenu();
@@ -520,12 +520,26 @@ public class Game {
 			this.turnNext();
 			return;
 		}
-		
+
 		h.nextTurn();
-		
-		if(this.combatThread != null)
-			this.combatThread.displayMenu(h);
-		
+
+		int cmp = 0;
+		do {
+			if(this.combatThread != null) {
+				this.combatThread.displayMenu(h);
+				break;
+			} else {
+				cmp++;
+				try {
+					Thread.sleep(500);
+				} catch (InterruptedException e) {
+				}
+			}
+		} while(cmp<5);
+
+		if(cmp == 5)
+			this.turnNext();
+
 		/* --- TEST --- */
 		/*
 		Hero cible;
@@ -542,11 +556,11 @@ public class Game {
 				i = (i+1)%this.heros.size();
 			} while (cible instanceof Player || !cible.isAlive());
 		}
-		
+
 		this.performAndSendAttaqueStandard(h, cible);
-		*/
+		 */
 		/* ------------ */
-		
+
 	}
 
 	private void turnNext() {
@@ -563,10 +577,10 @@ public class Game {
 					break;
 				}
 	}
-	
+
 	public void endTurn() {
 		this.combatThread.hideMenu();
-		
+
 		if(this.checkEndFight() == -1)
 			this.turnNext();
 		else {
@@ -576,14 +590,14 @@ public class Game {
 			this.displayEndFight((this.checkEndFight() == 1 && isGM) || (this.checkEndFight() == 0 && !isGM));
 		}
 	}
-	
+
 	private void displayEndFight(boolean victory) {
 		if(this.combatThread != null)
 			this.combatThread.displayEnd(victory);
 		this.combatThread = null;
 		this.endFight();
 	}
-	
+
 	public int checkEndFight() {
 		boolean isPlayerAlive = false, isEnemyAlive = false;
 		for(Hero htmp : this.heros)
@@ -740,37 +754,37 @@ public class Game {
 	public void removeGameServiceListener(GameServiceListener listener) {
 		gameServiceListeners.remove(listener);
 	}
-	
+
 	public void registerCombatThread(CombatView.CombatThread combatThread) {
 		Log.d(TAG, "register combatthread");
 		this.combatThread = combatThread;
 	}
-	
+
 	public void unRegisterCombatThread() {
 		this.combatThread = null;
 	}
-	
+
 	public void printDamage(int x, int y, int dmg) {
 		if(this.combatThread != null)
 			this.combatThread.printDamage(x, y, dmg);
 	}
 
-	
+
 	public void printStatus(int x, int y, String status) {
 		if(this.combatThread != null)
 			this.combatThread.printStatus(x, y, status);
 	}
-	
+
 	public void printStandard(int x, int y, String text) {
 		if(this.combatThread != null)
 			this.combatThread.printStandard(x, y, text);
 	}
-	
+
 	public boolean canUsePA(int nbPA)
 	{
 		return PA>=nbPA;
 	}
-	
+
 	public boolean usePA(int value)
 	{
 		if(value > PA)

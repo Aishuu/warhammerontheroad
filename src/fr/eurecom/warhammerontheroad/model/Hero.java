@@ -484,7 +484,7 @@ public class Hero extends Case implements Describable {
 	}
 
 	public void doDraw(Canvas c, int cell_size) {
-		if(this.display && this.x > 0 && this.y > 0) {
+		if(this.display && this.x >= 0 && this.y >= 0) {
 			int xtmp, ytmp;
 			if(this.display_x < 0 || this.display_y < 0) {
 				xtmp = this.x*cell_size;
@@ -941,7 +941,8 @@ public class Hero extends Case implements Describable {
 	public void resetB()
 	{
 		this.display = true;
-		B = stats.getStats(9);
+		if(stats != null)
+			B = stats.getStats(9);
 	}
 
 	public void setId(int id) {

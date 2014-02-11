@@ -22,12 +22,17 @@ public class GMMenuActivity extends WotrActivity {
 	protected void onResume() {
 		super.onResume();
 		int state = this.mService.getGame().getState();
-		if(state != Game.STATE_GAME_CREATED)
-			((WotrButton) findViewById(R.id.btnGMAccessPlay)).setText(R.string.access_fight);
+		if(state != Game.STATE_GAME_CREATED) {
+			WotrButton gmAccessPlay = ((WotrButton) findViewById(R.id.btnGMAccessPlay));
+			gmAccessPlay.setText(R.string.access_fight);
+			gmAccessPlay.setEnabled(this.mService.getGame().getMap() != null);
+
+		}
 		if(state == Game.STATE_GAME_WAIT_ACTION || state == Game.STATE_GAME_CONFIRM_ACTION)
 			((WotrButton) findViewById(R.id.btnCrtMap)).setEnabled(false);
+
 	}
-	
+
 	public void accessChat(View view) {
 		Intent intent = new Intent(this, ChatRoomActivity.class);
 		startActivity(intent);
@@ -57,7 +62,9 @@ public class GMMenuActivity extends WotrActivity {
 		if(this.mService.getGame().getState() == Game.STATE_GAME_CREATED) {
 			this.mService.getGame().gameStarted();
 			this.mService.getNetworkParser().startGame();
-			((WotrButton) findViewById(R.id.btnGMAccessPlay)).setText(R.string.access_fight);
+			WotrButton gmAccessPlay = ((WotrButton) findViewById(R.id.btnGMAccessPlay));
+			gmAccessPlay.setText(R.string.access_fight);
+			gmAccessPlay.setEnabled(this.mService.getGame().getMap() != null);
 		}
 		else {
 			this.mService.getGame().sendNotifPrepareFight();
@@ -66,14 +73,14 @@ public class GMMenuActivity extends WotrActivity {
 			Handler handler = new Handler();
 			handler.postDelayed(new Runnable() {
 
-			    public void run() {
-			        GMMenuActivity.this.startFight();
-			    }
+				public void run() {
+					GMMenuActivity.this.startFight();
+				}
 
 			}, 5000);
 		}
 	}
-	
+
 	private void startFight() {
 		this.mService.getGame().sendNotifStartFight();
 		Intent intent = new Intent(this, CombatActivity.class);

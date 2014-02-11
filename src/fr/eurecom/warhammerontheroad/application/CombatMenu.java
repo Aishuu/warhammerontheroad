@@ -60,6 +60,7 @@ public class CombatMenu {
 		for(int i=0; i<8; i++) {
 			if(canDo[i]) l++;
 		}
+		Log.d("WOTR", "nb of items : "+l);
 		if(l == 0)
 			this.game.endTurn();
 		else {
