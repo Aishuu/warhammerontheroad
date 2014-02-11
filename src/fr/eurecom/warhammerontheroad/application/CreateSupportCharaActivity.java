@@ -9,8 +9,10 @@ import android.view.View;
 import android.view.ViewGroup.LayoutParams;
 import android.webkit.WebView;
 import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
+import android.widget.GridView;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
@@ -21,6 +23,7 @@ import fr.eurecom.warhammerontheroad.model.Race;
 
 public class CreateSupportCharaActivity extends WotrActivity implements OnItemSelectedListener{
 	private Hero h;
+	ArrayList<Hero> enemies=new ArrayList<Hero>();
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -46,7 +49,7 @@ public class CreateSupportCharaActivity extends WotrActivity implements OnItemSe
 		Race r=Race.fromIndex(pos+4);
 		this.createHero(r);
 	}
-	
+
 	private void createHero(Race r) {
 		h=new Hero(this.mService.getContext(),r);
 		WebView s, p, w, a;
@@ -124,42 +127,26 @@ public class CreateSupportCharaActivity extends WotrActivity implements OnItemSe
 	}
 
 	private void showEnemyImage(){
-		ArrayList<Hero> heros=this.mService.getGame().getHeros();
-		LinearLayout lay=(LinearLayout) findViewById(R.id.layCreateSupportIm);
-		lay.removeAllViews();
-		ImageButton im;
-		for(Hero hero:heros){
-			if(!(hero instanceof Player)){
-				im=new ImageButton(this);
-				im.setImageDrawable(hero.getResource());
-				im.setBackgroundColor(0x000000);
-				lay.addView(im, LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
-				im.setOnClickListener(new ClickPerso(hero));
+		ArrayList<Hero> heroes=this.mService.getGame().getHeros();
+		GridView grid=(GridView) findViewById(R.id.gridCreateSupport);
+		enemies.clear();
+		for(Hero hero:heroes){
+			if(!(hero instanceof Player))
+				enemies.add(hero);
+		}
+		grid.setAdapter(new ImageAdapter(this, enemies));
+
+		grid.setOnItemClickListener(new OnItemClickListener() {
+			public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
+				Hero e=enemies.get(position);
+				Intent intent=new Intent(CreateSupportCharaActivity.this,SeeEnemyStatsActivity.class);
+				intent.putExtra("chara id", e.getId());
+				startActivity(intent);
 			}
-		}
+		});
 
 	}
 
-	private class ClickPerso implements View.OnClickListener {
-		private Hero h;
-		
-		public ClickPerso(Hero h) {
-			super();
-			this.h = h;
-		}
-		
-		@Override
-		public void onClick(View v) {
-			openStats(h.getId());	
-		}
-	}
-	
-	public void openStats(int id){
-		Intent i=new Intent(this, SeeEnemyStatsActivity.class);
-		i.putExtra("chara id", id);
-		startActivity(i);
-	}
-	
 	@Override
 	protected void onResume(){
 		super.onResume();

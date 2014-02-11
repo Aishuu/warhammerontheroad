@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -8,7 +9,12 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context=".CreateSupportCharaActivity" >
+    tools:context=".CreateSupportCharaActivity" 
+    android:orientation="vertical">
+<ScrollView 
+    android:layout_width="match_parent"
+    android:layout_height="0dp"
+    android:layout_weight="3" >
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -76,14 +82,18 @@
             android:layout_height="wrap_content"
             android:onClick="saveChara"
             android:text="@string/validate" />
-
-        <LinearLayout
-            android:id="@+id/layCreateSupportIm"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:orientation="horizontal" >
-        </LinearLayout>
     </LinearLayout>
 
 </ScrollView>
+<GridView
+    android:id="@+id/gridCreateSupport"
+    android:layout_width="fill_parent"
+    android:layout_height="0dp"
+    android:layout_weight="1"
+    android:columnWidth="136dp"
+    android:gravity="center"
+    android:horizontalSpacing="5dp"
+    android:numColumns="auto_fit"
+    android:stretchMode="columnWidth"
+    android:verticalSpacing="5dp" />
+</LinearLayout>
