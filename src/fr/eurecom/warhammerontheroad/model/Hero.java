@@ -305,7 +305,7 @@ public class Hero extends Case implements Describable {
 			return;
 		if (isengaged)
 		{
-			ArrayList<Case> enemy = game.getMap().getInRangeCases(this, 1, 1);
+			ArrayList<Case> enemy = game.getMap().getInRangeCases(this, 1, 1, false, true);
 			for(Case c: enemy)
 				if(c instanceof Player)
 					((Hero)(c))._attaqueStandard(game, this, dice, true);
@@ -743,7 +743,7 @@ public class Hero extends Case implements Describable {
 			return;
 		if (isengaged)
 		{
-			ArrayList<Case> enemy = game.getMap().getInRangeCases(this, 1, 1);
+			ArrayList<Case> enemy = game.getMap().getInRangeCases(this, 1, 1, false, false);
 			for(Case c: enemy)
 				if(c instanceof Player)
 					((Hero)(c))._attaqueStandard(game, this, dice, true);
@@ -755,7 +755,7 @@ public class Hero extends Case implements Describable {
 
 	public boolean nextToEnemy(Game game)
 	{
-		ArrayList<Case> enemy = game.getMap().getInRangeCases(this, 1, 1);
+		ArrayList<Case> enemy = game.getMap().getInRangeCases(this, 1, 1, false, true);
 		for(Case c: enemy)
 			if(c instanceof Player)
 				return true;
@@ -1037,7 +1037,7 @@ public class Hero extends Case implements Describable {
 	public ArrayList<Case> whereAttaqueRapide(Game game) {
 		if(game.canUsePA(2) && weapons.getWeapon() instanceof MeleeWeapon)
 		{
-			ArrayList<Case> all = game.getMap().getInRangeCases(this, 1, 1);
+			ArrayList<Case> all = game.getMap().getInRangeCases(this, 1, 1, false, true);
 			if(all == null)
 				return null;
 			ArrayList<Case> result = new ArrayList<Case>();
@@ -1055,18 +1055,18 @@ public class Hero extends Case implements Describable {
 			return null;
 		if (hasAttacked)
 			return null;
-		int rangeMin = 1;
-		int rangeMax = 1;
+		ArrayList<Case> all = new ArrayList<Case>();
 		if (weapons.getWeapon() instanceof RangedWeapon)
 		{
 			if (isengaged)
 				return null;
-			rangeMin = 2;
-			rangeMax = ((RangedWeapon) (weapons.getWeapon())).getRange();	
 			if (!loaded)
 				return null;
+			all = game.getMap().getInRangeCases(this, 2, ((RangedWeapon) (weapons.getWeapon())).getRange(), true, false);
+		}else{
+			all = game.getMap().getInRangeCases(this, 1, 1, false, true);
 		}
-		ArrayList<Case> all = game.getMap().getInRangeCases(this, rangeMin, rangeMax);
+		
 		if(all == null)
 			return null;
 		ArrayList<Case> result = new ArrayList<Case>();
@@ -1081,7 +1081,7 @@ public class Hero extends Case implements Describable {
 	public ArrayList<Case> whereCharge(Game game) {
 		if (game.canUsePA(2) && weapons.getWeapon() instanceof MeleeWeapon)
 		{
-			ArrayList<Case> all = game.getMap().getInRangeCases(this, 1, 2*stats.getStats(12)+1);
+			ArrayList<Case> all = game.getMap().getInRangeCases(this, 1, 2*stats.getStats(12)+1, false, true);
 			if(all == null)
 				return null;
 			ArrayList<Case> interResult = new ArrayList<Case>();
@@ -1099,7 +1099,7 @@ public class Hero extends Case implements Describable {
 			for(Case c:all)
 				if(c instanceof Vide)
 					for(Case c1 : interResult)
-						if(game.getMap().getInRangeCases(c1, 1, 1).contains(c))
+						if(game.getMap().getInRangeCases(c1, 1, 1, false, true).contains(c))
 							result.add(c);
 			return result;
 		}
@@ -1108,7 +1108,7 @@ public class Hero extends Case implements Describable {
 
 	public ArrayList<Case> whereDesengager(Game game) {
 		if (game.canUsePA(2) && isengaged){
-			ArrayList<Case> all = game.getMap().getInRangeCases(this, 1, stats.getStats(12));
+			ArrayList<Case> all = game.getMap().getInRangeCases(this, 1, stats.getStats(12), false, false);
 			if(all == null)
 				return null;
 			ArrayList<Case> result = new ArrayList<Case>();
@@ -1125,7 +1125,7 @@ public class Hero extends Case implements Describable {
 	public ArrayList<Case> whereMovement(Game game) {
 		if(!game.canUsePA(1))
 			return null;
-		ArrayList<Case> all = game.getMap().getInRangeCases(this, 1, stats.getStats(12));
+		ArrayList<Case> all = game.getMap().getInRangeCases(this, 1, stats.getStats(12), false, false);
 		if(all == null)
 			return null;
 		ArrayList<Case> result = new ArrayList<Case>();
