@@ -127,12 +127,16 @@ public class Map implements Describable{
 		ArrayList<Case> result = new ArrayList<Case>();
 
 		progressByOne(result, x, y, min, max, shoot, charge);
+		for(int i = 0; i<maxX; i++)
+			for(int j=0; j<maxY; j++)
+				this.cases[i][j].setFlag(0);
 		return result;
 	}
 
 	private void progressByOne (ArrayList<Case> result, int x, int y, int min, int range, boolean shoot, boolean charge){
+		Case c = this.cases[x][y];
+		c.setFlag(range);
 		if (min == 0){
-			Case c = this.cases[x][y];
 			if (!(result.contains(c))){
 				if (c instanceof Vide)
 					result.add(c);	
@@ -141,6 +145,9 @@ public class Map implements Describable{
 				if ((c instanceof Hero) && (shoot || charge))
 					result.add(c);
 			}
+		}else{
+			if (result.contains(c))
+				result.remove(c);
 		}
 		if ((range == 0) || (this.cases[x][y] instanceof Hero && charge))
 			return;
@@ -154,13 +161,16 @@ public class Map implements Describable{
 		tmp.add(this.cases[xmax][y]);
 		tmp.add(this.cases[x][ymin]);
 		tmp.add(this.cases[x][ymax]);
-		for (Case c:tmp){
-			if (c instanceof Vide)
-				progressByOne(result, c.x, c.y, tmpmin, range-1, shoot, charge);
-			if ((c instanceof Obstacle) && shoot)
-				progressByOne(result, c.x, c.y, tmpmin, range-1, shoot, charge);
-			if ((c instanceof Hero) && (shoot || charge))
-				progressByOne(result, c.x, c.y, tmpmin, range-1, shoot, charge);
+		for (Case cc:tmp){
+			if (c.getFlag() < range-1)
+			{
+				if (cc instanceof Vide)
+					progressByOne(result, cc.x, cc.y, tmpmin, range-1, shoot, charge);
+				if ((cc instanceof Obstacle) && shoot)
+					progressByOne(result, cc.x, cc.y, tmpmin, range-1, shoot, charge);
+				if ((cc instanceof Hero) && (shoot || charge))
+					progressByOne(result, cc.x, cc.y, tmpmin, range-1, shoot, charge);
+			}
 		}
 		return;
 	}
