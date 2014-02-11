@@ -333,7 +333,7 @@ public class Player extends Hero {
 			for(Case c: enemy)
 				if(c instanceof Hero)
 					if(!(c instanceof Player))
-						((Hero)(c)).attaqueStandard(game, this, dice, true);
+						((Hero)(c))._attaqueStandard(game, this, dice, true);
 		}
 		hasVisee = false;
 		isengaged = false;
@@ -349,7 +349,7 @@ public class Player extends Hero {
 			for(Case c: enemy)
 				if(c instanceof Hero)
 					if(!(c instanceof Player))
-						((Hero)(c)).attaqueStandard(game, this, dice, true);
+						((Hero)(c))._attaqueStandard(game, this, dice, true);
 		}
 		Log.d(TAG, this.representInString()+" charges "+hero.representInString());
 		game.printStandard(this.x, this.y, CombatAction.CHARGE.getLabel());
@@ -395,11 +395,9 @@ public class Player extends Hero {
 			Log.d(TAG, this.representInString()+" misses "+hero.representInString());
 		}
 		hasVisee = false;
-		if (nextToEnemy(game))
-			isengaged = true;
-		else
-			isengaged = false;
+		isengaged = nextToEnemy(game);
 	}
+	
 	public boolean nextToEnemy(Game game)
 	{
 		ArrayList<Case> enemy = game.getMap().getInRangeCases(this, 1, 1);

@@ -216,13 +216,11 @@ public class Hero extends Case implements Describable {
 		game.printStandard(this.x, this.y, CombatAction.ATTAQUE_RAPIDE.getLabel());
 		this.waitABit();
 		for (int i = 0; i<stats.getStats(8); i++) {
-			attaqueStandard(game, hero, dice, false);
+			_attaqueStandard(game, hero, dice, false);
 		}
 	}
 
-	public void attaqueStandard(Game game, Hero hero, Dice dice, boolean describe) {
-		if(!game.usePA(1))
-			return;
+	public void _attaqueStandard(Game game, Hero hero, Dice dice, boolean describe) {
 		String nameAttacker, nameDefender;
 		if(this instanceof Player)
 			nameAttacker = ((Player) this).getName();
@@ -293,6 +291,13 @@ public class Hero extends Case implements Describable {
 			Log.d(TAG, nameAttacker+" failed to hit "+nameDefender);
 		}
 		hasVisee = false;
+
+	}
+
+	public void attaqueStandard(Game game, Hero hero, Dice dice) {
+		if(!game.usePA(1))
+			return;
+		this._attaqueStandard(game, hero, dice, true);
 	}
 
 	public void charge(Game game, Hero hero, Case dest, Dice dice) {
@@ -303,7 +308,7 @@ public class Hero extends Case implements Describable {
 			ArrayList<Case> enemy = game.getMap().getInRangeCases(this, 1, 1);
 			for(Case c: enemy)
 				if(c instanceof Player)
-					((Hero)(c)).attaqueStandard(game, this, dice, true);
+					((Hero)(c))._attaqueStandard(game, this, dice, true);
 		}
 		Log.d(TAG, this.representInString()+" charges "+hero.representInString());
 		game.printStandard(this.x, this.y, CombatAction.CHARGE.getLabel());
@@ -349,10 +354,7 @@ public class Hero extends Case implements Describable {
 			Log.d(TAG, this.representInString()+" misses "+hero.representInString());
 		}
 		hasVisee = false;
-		if (nextToEnemy(game))
-			isengaged = true;
-		else
-			isengaged = false;
+		isengaged = nextToEnemy(game);
 	}
 
 	protected void chooseImage() {
@@ -744,7 +746,7 @@ public class Hero extends Case implements Describable {
 			ArrayList<Case> enemy = game.getMap().getInRangeCases(this, 1, 1);
 			for(Case c: enemy)
 				if(c instanceof Player)
-					((Hero)(c)).attaqueStandard(game, this, dice, true);
+					((Hero)(c))._attaqueStandard(game, this, dice, true);
 		}
 		hasVisee = false;
 		isengaged = false;
@@ -759,6 +761,7 @@ public class Hero extends Case implements Describable {
 				return true;
 		return false;
 	}
+
 	public void nextTurn()
 	{
 		hasBlocked = false;
@@ -787,7 +790,7 @@ public class Hero extends Case implements Describable {
 				if(h == null)
 					return;
 				d = new SimulatedDice(msg.split(NetworkParser.SEPARATOR, 3)[2]);
-				this.attaqueStandard(game, h, d, true);
+				this.attaqueStandard(game, h, d);
 				break;
 			case ATTAQUE_RAPIDE:
 				if(parts.length < 3)
@@ -896,7 +899,7 @@ public class Hero extends Case implements Describable {
 		else
 			nameDefender = this.getRace().toString();
 
-		
+
 		if (weapons.getLeftHand() != null && !hasBlocked)
 		{
 			hasBlocked = true;
@@ -1145,5 +1148,5 @@ public class Hero extends Case implements Describable {
 	public Drawable getResource() {
 		return resource;
 	}
-	
+
 }

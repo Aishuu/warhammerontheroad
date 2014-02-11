@@ -411,7 +411,7 @@ public class Game {
 			this.combatThread.hideMenu();
 
 		Dice d = new Dice();
-		h.attaqueStandard(this, cible, d, true);
+		h.attaqueStandard(this, cible, d);
 		if(this.isGM)
 			this.mService.getNetworkParser().sendDicedAction(CombatAction.STD_ATTACK, d, h, cible.representInString());
 		else

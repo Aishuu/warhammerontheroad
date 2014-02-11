@@ -229,6 +229,10 @@ public class CombatView extends SurfaceView implements SurfaceHolder.Callback {
 
 	@Override
 	public void surfaceDestroyed(SurfaceHolder arg0) {
+		this.stop();
+	}
+	
+	public void stop() {
 		boolean retry = true;
 		combatThread.setRunning(false);
 		while(retry)  {

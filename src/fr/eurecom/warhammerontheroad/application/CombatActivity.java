@@ -1,5 +1,7 @@
 package fr.eurecom.warhammerontheroad.application;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import fr.eurecom.warhammerontheroad.R;
 import fr.eurecom.warhammerontheroad.model.Game;
@@ -56,5 +58,30 @@ public class CombatActivity extends WotrActivity implements GameServiceListener 
 
 	@Override
 	public void prepareFight() {
+	}
+	
+
+	@Override
+	public void onBackPressed() {
+		if(this.mService.getGame().isGM()) {
+			this.combatView.stop();
+		} else {
+		new AlertDialog.Builder(this)
+		.setIcon(android.R.drawable.ic_dialog_alert)
+		.setTitle(R.string.quit)
+		.setMessage(R.string.disconnected)
+		.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				CombatActivity.this.combatView.stop();
+				CombatActivity.this.mService.reinit();
+				CombatActivity.this.finish();    
+			}
+
+		})
+		.setNegativeButton(R.string.no, null)
+		.show();
+	}
 	}
 }

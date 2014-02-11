@@ -44,6 +44,10 @@ public class CreateSupportCharaActivity extends WotrActivity implements OnItemSe
 	public void onItemSelected(AdapterView<?> parent, View view, 
 			int pos, long id){
 		Race r=Race.fromIndex(pos+4);
+		this.createHero(r);
+	}
+	
+	private void createHero(Race r) {
 		h=new Hero(this.mService.getContext(),r);
 		WebView s, p, w, a;
 		s=(WebView) findViewById(R.id.createSupportStats);
@@ -116,6 +120,7 @@ public class CreateSupportCharaActivity extends WotrActivity implements OnItemSe
 		this.mService.getGame().addHero(h);
 		this.mService.getNetworkParser().createHero(h);
 		showEnemyImage();
+		this.createHero(h.getRace());
 	}
 
 	private void showEnemyImage(){
