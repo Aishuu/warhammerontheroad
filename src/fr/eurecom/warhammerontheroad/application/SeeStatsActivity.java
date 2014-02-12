@@ -23,6 +23,8 @@ public class SeeStatsActivity extends WotrActivity implements GameServiceListene
 		Intent i=getIntent();
 		String s=i.getStringExtra("chara id");
 		player=(Player) this.mService.getGame().getHero(s);
+		if(this.mService.getGame().isGM())
+			setTitle("See "+s+" stats");
 
 		//Info principales
 		TextView name, rC, mvt, charge, running, inj;

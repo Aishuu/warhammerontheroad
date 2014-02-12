@@ -658,7 +658,8 @@ public class Game {
 			return act instanceof NewGameIntroActivity;
 		case STATE_GAME_CREATED:
 			return (act instanceof NewGameIntroActivity || act instanceof GMMenuActivity || act instanceof PlayerMenuActivity || act instanceof ChatRoomActivity || (act instanceof WriteAndReadStoryActivity && this.isGM) || act instanceof CreateMapActivity ||
-					act instanceof CreateSupportCharaActivity || act instanceof SeeEnemyStatsActivity || act instanceof SeeCharaDataActivity || act instanceof CharaCreationDetailsActivity);
+					act instanceof CreateSupportCharaActivity || act instanceof SeeEnemyStatsActivity || act instanceof SeeCharaDataActivity || (act instanceof SeeStatsActivity && this.isGM)|| (act instanceof StatsProfilActivity && this.isGM)|| 
+					(act instanceof StatsObjectActivity&& this.isGM)|| (act instanceof StatsSkillActivity && this.isGM) || act instanceof CharaCreationDetailsActivity);
 		case STATE_GAME_PERSO_CREATED:
 			return (act instanceof PlayerMenuActivity || act instanceof ChatRoomActivity || act instanceof CharaCreationDetailsActivity);
 		case STATE_GAME_LAUNCHED:
@@ -672,7 +673,8 @@ public class Game {
 					act instanceof StatsObjectActivity|| act instanceof StatsSkillActivity);
 		case STATE_GAME_WAIT_ACTION:
 		case STATE_GAME_CONFIRM_ACTION:
-			return (act instanceof GMMenuActivity || act instanceof ChatRoomActivity || act instanceof WriteAndReadStoryActivity || act instanceof SeeCharaDataActivity || act instanceof SeeEnemyStatsActivity || act instanceof CombatActivity);
+			return (act instanceof GMMenuActivity || act instanceof ChatRoomActivity || act instanceof WriteAndReadStoryActivity || act instanceof SeeCharaDataActivity || act instanceof SeeEnemyStatsActivity || act instanceof SeeStatsActivity || act instanceof StatsProfilActivity|| 
+					act instanceof StatsObjectActivity|| act instanceof StatsSkillActivity || act instanceof CombatActivity);
 		default:
 			return false;
 		}

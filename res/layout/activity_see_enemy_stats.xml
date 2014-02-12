@@ -15,6 +15,12 @@
         android:layout_height="wrap_content"
         android:gravity="center"
         android:orientation="vertical" >
+        
+        <fr.eurecom.warhammerontheroad.application.WotrTextView
+            android:id="@+id/txtSeeEnemyId"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"/>
 
         <fr.eurecom.warhammerontheroad.application.WotrTextView
             android:layout_width="wrap_content"

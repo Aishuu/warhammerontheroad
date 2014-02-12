@@ -36,8 +36,10 @@ public class CombatActivity extends WotrActivity implements GameServiceListener 
 		Intent intent;
 		if(this.mService.getGame().isGM())
 			intent = new Intent(this, SeeCharaDataActivity.class);
-		else
+		else {
 			intent = new Intent(this, SeeStatsActivity.class);
+			intent.putExtra("chara id", this.mService.getGame().getMe().getName());
+		}
 		startActivity(intent);
 	}
 	

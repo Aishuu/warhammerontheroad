@@ -25,6 +25,9 @@ public class SeeEnemyStatsActivity extends WotrActivity {
 		if(hero==null)
 			this.finish();
 		
+		TextView t=(TextView) findViewById(R.id.txtSeeEnemyId);
+		t.setText("Race "+hero.getRace().toString()+"\t Id "+hero.getId());
+		
 		WebView s, p, w, a;
 		s=(WebView) findViewById(R.id.seeEnemyStats);
 		p=(WebView) findViewById(R.id.seeEnemyProfil);
