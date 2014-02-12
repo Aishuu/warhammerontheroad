@@ -290,13 +290,14 @@ public class CombatView extends SurfaceView implements SurfaceHolder.Callback {
 
 	public CombatView(Context context, AttributeSet attrs) {
 		super(context, attrs);
-
+		this.initThread(context);
+		setFocusable(true);
+	}
+	
+	public void initThread(Context context) {
 		SurfaceHolder holder = getHolder();
 		holder.addCallback(this);
-
 		this.combatThread = new CombatThread(holder, context);
-
-		setFocusable(true);
 	}
 
 	public CombatThread getThread() {

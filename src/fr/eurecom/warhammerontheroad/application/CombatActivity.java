@@ -2,7 +2,9 @@ package fr.eurecom.warhammerontheroad.application;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 import fr.eurecom.warhammerontheroad.R;
 import fr.eurecom.warhammerontheroad.model.Game;
 
@@ -25,10 +27,33 @@ public class CombatActivity extends WotrActivity implements GameServiceListener 
 			this.combatThread.restoreState(savedInstanceState);
 	}
 	
+	public void displayChat(View view) {
+		Intent intent = new Intent(this, ChatRoomActivity.class);
+		startActivity(intent);
+	}
+	
+	public void displayChara(View view) {
+		Intent intent;
+		if(this.mService.getGame().isGM())
+			intent = new Intent(this, SeeCharaDataActivity.class);
+		else
+			intent = new Intent(this, SeeStatsActivity.class);
+		startActivity(intent);
+	}
+	
 	@Override
 	public void onSaveInstanceState(Bundle outState) {
 		super.onSaveInstanceState(outState);
 		this.combatThread.saveState(outState);
+	}
+	
+	@Override
+	public void onRestart() {
+		super.onRestart();
+		this.combatView.initThread(this);
+		this.combatThread = this.combatView.getThread();
+		this.mService.getGame().registerCombatThread(this.combatThread);
+		this.combatThread.setGame(this.mService.getGame());
 	}
 	
 	@Override

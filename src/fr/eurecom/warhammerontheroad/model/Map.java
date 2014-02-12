@@ -43,17 +43,17 @@ public class Map implements Describable{
 	public Map(WotrService service, String s) {
 		this.constructFromString(service, s);
 	}
-	
+
 	public void setHighlighted(boolean highlighted) {
 		for(int i = 0; i<maxX; i++)
 			for(int j=0; j<maxY; j++)
 				this.cases[i][j].setHighlighted(highlighted);
 	}
-	
+
 	public int getMaxX() {
 		return this.maxX;
 	}
-	
+
 	public int getMaxY() {
 		return this.maxY;
 	}
@@ -61,7 +61,7 @@ public class Map implements Describable{
 	public int getCellSize() {
 		return this.cell_size;
 	}
-	
+
 	public Case getCase(int x, int y) {
 		if(x<0 || x>=this.maxX || y<0 || y>=this.maxY) {
 			Log.e(TAG, "Position ("+x+","+y+") is not in Map ("+this.maxX+","+this.maxY+")...");
@@ -69,7 +69,7 @@ public class Map implements Describable{
 		}
 		return cases[x][y];
 	}
-	
+
 	public void removeCase(Case c) {
 		if(c == null) {
 			Log.e(TAG, "Can't remove null case...");
@@ -125,15 +125,15 @@ public class Map implements Describable{
 			return null;
 		}
 		ArrayList<Case> result = new ArrayList<Case>();
-
-		progressByOne(result, x, y, min, max, shoot, charge);
+		progressByOne(result, x, y, min, max, shoot, charge, true);
 		for(int i = 0; i<maxX; i++)
 			for(int j=0; j<maxY; j++)
-				this.cases[i][j].setFlag(0);
+				this.cases[i][j].setFlag(-1);
+
 		return result;
 	}
 
-	private void progressByOne (ArrayList<Case> result, int x, int y, int min, int range, boolean shoot, boolean charge){
+	private void progressByOne (ArrayList<Case> result, int x, int y, int min, int range, boolean shoot, boolean charge, boolean first_case){
 		Case c = this.cases[x][y];
 		c.setFlag(range);
 		if (min == 0){
@@ -149,12 +149,12 @@ public class Map implements Describable{
 			if (result.contains(c))
 				result.remove(c);
 		}
-		if ((range == 0) || (this.cases[x][y] instanceof Hero && charge))
+		if ((range == 0) || (!first_case && c instanceof Hero && charge))
 			return;
 		int xmin = x-1<=0 ? 0 : x-1;
-		int xmax = x+1>=this.maxX ? this.maxX-1 : x+1;
+		int xmax = x+1>=this.maxX-1 ? this.maxX-1 : x+1;
 		int ymin = y-1<=0 ? 0 : y-1;
-		int ymax = y+1>=this.maxY ? this.maxY-1 : y+1;
+		int ymax = y+1>=this.maxY-1 ? this.maxY-1 : y+1;
 		int tmpmin = min-1<=0 ? 0 : min-1;
 		ArrayList<Case> tmp = new ArrayList<Case>();
 		tmp.add(this.cases[xmin][y]);
@@ -162,18 +162,19 @@ public class Map implements Describable{
 		tmp.add(this.cases[x][ymin]);
 		tmp.add(this.cases[x][ymax]);
 		for (Case cc:tmp){
-			if (c.getFlag() < range-1)
+			if (cc.getFlag() < range-1)
 			{
 				if (cc instanceof Vide)
-					progressByOne(result, cc.x, cc.y, tmpmin, range-1, shoot, charge);
-				if ((cc instanceof Obstacle) && shoot)
-					progressByOne(result, cc.x, cc.y, tmpmin, range-1, shoot, charge);
-				if ((cc instanceof Hero) && (shoot || charge))
-					progressByOne(result, cc.x, cc.y, tmpmin, range-1, shoot, charge);
+					progressByOne(result, cc.getX(), cc.getY(), tmpmin, range-1, shoot, charge, false);
+				else if ((cc instanceof Obstacle) && shoot)
+					progressByOne(result, cc.getX(), cc.getY(), tmpmin, range-1, shoot, charge, false);
+				else if ((cc instanceof Hero) && (shoot || charge))
+					progressByOne(result, cc.getX(), cc.getY(), tmpmin, range-1, shoot, charge, false);
 			}
 		}
 		return;
 	}
+
 	public ArrayList<Case> getInRangeCases(Case c, int min, int max, boolean shoot, boolean charge) {
 		return getInRangeCases(c.getX(), c.getY(), min, max, shoot, charge);
 	}
@@ -195,12 +196,12 @@ public class Map implements Describable{
 			}
 		}
 	}
-	
+
 	public void scaleImage(int width, int height) {
 		this.imageFond = Bitmap.createScaledBitmap(this.imageFond, width, height, true);
 		this.cell_size = width/this.maxX < height/this.maxY ? (int) (width/this.maxX) : (int) (height/this.maxY);
 	}
-	
+
 	@Override
 	public String describeAsString() {
 		String result = this.imageFondFileName+NetworkParser.SEPARATOR+this.maxX+NetworkParser.SEPARATOR+this.maxY;

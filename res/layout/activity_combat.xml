@@ -10,5 +10,20 @@
         android:layout_centerInParent="true"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"/>
+    <ImageButton 
+        android:id="@+id/combatImChat"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/feather"
+        android:contentDescription="@null"
+        android:onClick="displayChat"/>
+    <ImageButton 
+        android:id="@+id/combatImChara"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/axes"
+        android:contentDescription="@null"
+        android:layout_toRightOf="@id/combatImChat"
+        android:onClick="displayChara"/>
     
 </RelativeLayout>

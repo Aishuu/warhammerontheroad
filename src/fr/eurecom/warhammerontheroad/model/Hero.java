@@ -327,6 +327,7 @@ public class Hero extends Case implements Describable {
 			localisation = 2;
 		else
 			localisation = 3;
+		hero.setEngaged(true);
 		if (skillTest(false, 0, result, 20))
 		{
 			damages = dice.tenDice();
@@ -355,6 +356,10 @@ public class Hero extends Case implements Describable {
 		}
 		hasVisee = false;
 		isengaged = nextToEnemy(game);
+	}
+	
+	public void setEngaged(boolean engaged) {
+		this.isengaged = engaged;
 	}
 
 	protected void chooseImage() {
@@ -493,8 +498,11 @@ public class Hero extends Case implements Describable {
 				xtmp = this.display_x;
 				ytmp = this.display_y;
 			}
-			this.resource.setBounds(xtmp, ytmp, xtmp+cell_size, ytmp+cell_size);
-			this.resource.draw(c);
+
+			if(this.resource != null) {
+				this.resource.setBounds(xtmp, ytmp, xtmp+cell_size, ytmp+cell_size);
+				this.resource.draw(c);
+			}
 		}
 	}
 
@@ -1067,7 +1075,7 @@ public class Hero extends Case implements Describable {
 		}else{
 			all = game.getMap().getInRangeCases(this, 1, 1, false, true);
 		}
-		
+
 		if(all == null)
 			return null;
 		ArrayList<Case> result = new ArrayList<Case>();
@@ -1080,7 +1088,7 @@ public class Hero extends Case implements Describable {
 	}
 
 	public ArrayList<Case> whereCharge(Game game) {
-		if (game.canUsePA(2) && weapons.getWeapon() instanceof MeleeWeapon)
+		if (game.canUsePA(2) && weapons.getWeapon() instanceof MeleeWeapon && !isengaged)
 		{
 			ArrayList<Case> all = game.getMap().getInRangeCases(this, 1, 2*stats.getStats(12)+1, false, true);
 			if(all == null)
@@ -1102,6 +1110,8 @@ public class Hero extends Case implements Describable {
 					for(Case c1 : interResult)
 						if(game.getMap().getInRangeCases(c1, 1, 1, false, true).contains(c))
 							result.add(c);
+			if(result.size() == 0)
+				return null;
 			return result;
 		}
 		return null;
