@@ -9,7 +9,6 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.GridView;
-import android.widget.Toast;
 import fr.eurecom.warhammerontheroad.R;
 import fr.eurecom.warhammerontheroad.model.Hero;
 import fr.eurecom.warhammerontheroad.model.Player;

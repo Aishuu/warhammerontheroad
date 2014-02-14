@@ -66,6 +66,7 @@ public class Game {
 	private CombatView.CombatThread combatThread;
 	private WotrService mService;
 	private int PA;
+	private Hero heroTurn;
 
 	public Game(WotrService mService) {
 		this.mService = mService;
@@ -515,6 +516,8 @@ public class Game {
 	private void turnInFight(Hero h) {
 		if(!this.isGM)
 			this.myTurnNow();
+		
+		this.heroTurn = h;
 
 		if(!h.isAlive()) {
 			this.turnNext();
@@ -564,6 +567,7 @@ public class Game {
 	}
 
 	private void turnNext() {
+		this.heroTurn = null;
 		this.turnOf = (this.turnOf+1)%this.heros.size();
 		this.mService.getNetworkParser().nextTurn(this.turnOf, this.isGM);
 		this.PA = 2;
@@ -636,6 +640,10 @@ public class Game {
 
 	public int getIdGame() {
 		return this.id_game;
+	}
+	
+	public Hero getHeroTurn() {
+		return this.heroTurn;
 	}
 
 	public boolean mustBind() {

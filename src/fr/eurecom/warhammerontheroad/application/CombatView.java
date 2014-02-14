@@ -57,6 +57,12 @@ public class CombatView extends SurfaceView implements SurfaceHolder.Callback {
 
 		public void setGame(Game g) {
 			this.g = g;
+			if(this.g != null) {
+				Hero h = this.g.getHeroTurn();
+				if(h != null)
+					this.displayMenu(h);
+			}
+				
 		}
 
 		public Game getGame() {
@@ -89,7 +95,12 @@ public class CombatView extends SurfaceView implements SurfaceHolder.Callback {
 
 		public void resumePause() {
 			if(this.savedStatePause != null) {
-				this.restoreState(this.savedStatePause);
+				//this.restoreState(this.savedStatePause);
+				if(this.g != null) {
+					Hero h = this.g.getHeroTurn();
+					if(h != null)
+						this.displayMenu(h);
+				}
 				this.savedStatePause = null;
 			}
 		}
